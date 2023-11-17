@@ -1,0 +1,26 @@
+#include "button_system.hpp"
+#include "widget_components.hpp"
+#include "../include/raygui.h"
+
+void ButtonSystem::proccessEvents(const entt::registry &registry)
+{
+    auto view = registry.view<const ButtonComponent, const WidgetCallbackComponent>();
+    for (auto [entity, button_component, widget_callback] : view.each()) {
+        if (GuiButton(button_component.rect, button_component.text)) {
+            if (widget_callback.callback) 
+                widget_callback.callback(widget_callback.data);
+        }
+    }
+}
+
+void ButtonSystem::update(entt::registry &registry)
+{
+    ;
+}
+
+void ButtonSystem::draw(const entt::registry &registry) 
+{
+    auto view = registry.view<const ButtonComponent>();
+    for (const auto [entity, button_component] : view.each())
+        GuiButton(button_component.rect, button_component.text);
+}
