@@ -6,8 +6,7 @@
 class MainMenu final : public Scene {
 public:
     MainMenu();
-    ~MainMenu()
-    { BackgroundSystem::clear(m_menu_registry); }
+    ~MainMenu() = default;
     void proccessEvents() override;
     void update() override;
     void draw() const override;

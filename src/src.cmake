@@ -10,4 +10,5 @@ set(game_source
     src/dropdown_box_system.cpp
     src/label_system.cpp
     src/background_system.cpp
-    src/gui.cpp)
+    src/gui.cpp
+    src/resource_system.cpp)

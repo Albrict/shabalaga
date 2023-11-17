@@ -1,5 +1,6 @@
 #pragma once
 #include "scene.hpp"
+#include "resource_system.hpp"
 
 class Game {
 public:
@@ -25,7 +26,7 @@ public:
     void initFirstScene();
     void run();
     void closeGame()
-    { delete game_instance; CloseWindow(); }
+    { delete game_instance; ResourceSystem::unloadTextures(); CloseWindow(); }
 private:
     Game();
     
@@ -36,6 +37,7 @@ private:
             proccessMessages(event, emmiter);
         });
     }
+    void loadResources();
     void proccessMessages(const Scene::Messages &message, Scene::Emmiter &emmiter);
     void proccessEvents();
     void update();

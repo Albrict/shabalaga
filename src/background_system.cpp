@@ -2,15 +2,6 @@
 #include "background_component.hpp"
 #include "game.hpp"
 
-void BackgroundSystem::clear(entt::registry &registry)
-{
-    auto view = registry.view<BackgroundComponent>();
-    for (auto [entity, background] : view.each()) {
-        UnloadTexture(background.background);
-        registry.destroy(entity);
-    }
-}
-
 void BackgroundSystem::update(entt::registry &registry)
 {
     auto view = registry.view<BackgroundComponent>();

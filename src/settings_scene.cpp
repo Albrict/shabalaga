@@ -22,7 +22,7 @@ SettingsScene::SettingsScene()
     
     const auto background_entity = m_widget_registry.create();
     m_widget_registry.emplace<BackgroundComponent>(background_entity, 
-                                                 BackgroundComponent(bg_path, 0.f, 0.f));
+                                                 BackgroundComponent(ResourceSystem::getTexture("menu_background"), 0.f, 0.f));
 }
 
 void SettingsScene::initWidgets()
