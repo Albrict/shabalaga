@@ -1,7 +1,6 @@
 #include "../include/raygui.h"
 #include "../include/raymath.h"
 #include "../include/style_cyber.h"
-
 #include "game.hpp"
 #include "main_menu.hpp"
 #include "settings_scene.hpp"
@@ -24,6 +23,7 @@ Game::Game()
     current_resolution = {1920.f, 1200.f};
     target = LoadRenderTexture(current_resolution.x, current_resolution.y);
     running = true;
+    loadResources();
 }
 
 void Game::initFirstScene() 
@@ -122,4 +122,9 @@ void Game::proccessMessages(const Scene::Messages &message,
     default:
         break;
     }
+}
+
+void Game::loadResources()
+{
+    ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
 }

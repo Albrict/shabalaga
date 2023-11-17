@@ -9,8 +9,8 @@ MainMenu::MainMenu()
 {
     const std::filesystem::path bg_path = "assets/backgrounds/main_menu.png";
     const Vector2 resolution = Game::Instance()->getCurrentResolution();
-    const float button_width = 150.f;
-    const float button_height = 70.f;
+    const float button_width = resolution.x / 10.f;
+    const float button_height = resolution.y / 20.f;
     const float initial_x = resolution.x / 2 - button_width / 2;
     const size_t widgets = 3; 
     const std::array<const char*, 3> button_labels = { "Play", "Settings", "Exit" };
@@ -33,7 +33,7 @@ MainMenu::MainMenu()
     // Init background
     const auto background_entity = m_menu_registry.create();
     m_menu_registry.emplace<BackgroundComponent>(background_entity, 
-                                                 BackgroundComponent(bg_path, 0.f, 0.f));
+                                                 BackgroundComponent(ResourceSystem::getTexture("menu_background"), 0.f, 0.f));
 }
 
 void MainMenu::proccessEvents()
