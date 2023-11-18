@@ -1,5 +1,6 @@
 #pragma once
 #include "../include/entt.hpp"
+#include "../include/raylib.h"
 
 enum class WidgetComponentType {
     BUTTON,

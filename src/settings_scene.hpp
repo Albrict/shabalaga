@@ -1,6 +1,7 @@
 #pragma once
 #include "scene.hpp"
 #include "../include/glfw3.h"
+#include "../include/raylib.h"
 
 class SettingsScene final : public Scene {
 public:
