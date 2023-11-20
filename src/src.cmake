@@ -11,4 +11,5 @@ set(game_source
     src/label_system.cpp
     src/background_system.cpp
     src/gui.cpp
-    src/resource_system.cpp)
+    src/resource_system.cpp
+    src/graphics.cpp)

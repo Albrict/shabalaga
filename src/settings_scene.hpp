@@ -21,7 +21,6 @@ private:
     static void backToMainMenuCallback(entt::any data);
 private:
     int choosen_resolution = 0;
-    int m_resolutions_count = 0;
     float brightness_value = 0.f;
     const GLFWvidmode *m_modes = nullptr;
     entt::registry m_widget_registry {}; 

@@ -1,6 +1,7 @@
 #include "main_menu.hpp"
 #include "button_system.hpp"
 #include "game.hpp"
+#include "graphics.hpp"
 #include "widget_components.hpp"
 #include "background_component.hpp"
 #include "background_system.hpp"
@@ -8,7 +9,7 @@
 MainMenu::MainMenu()
 {
     const std::filesystem::path bg_path = "assets/backgrounds/main_menu.png";
-    const Vector2 resolution = Game::Instance()->getCurrentResolution();
+    const Vector2 resolution = Graphics::getCurrentResolution();
     const float button_width = resolution.x / 10.f;
     const float button_height = resolution.y / 20.f;
     const float initial_x = resolution.x / 2 - button_width / 2;

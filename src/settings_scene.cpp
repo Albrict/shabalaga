@@ -3,23 +3,18 @@
 #include "../include/raymath.h"
 #include "background_component.hpp"
 #include "background_system.hpp"
+#include "graphics.hpp"
 #include "widget_components.hpp"
 #include "widget_system.hpp"
 #include "game.hpp"
 
 SettingsScene::SettingsScene()
 {
-    const std::filesystem::path bg_path = "assets/backgrounds/main_menu.png";
     resolution_list = std::make_unique<std::string>();
-    m_modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &m_resolutions_count);
-    for (size_t i = 0; i < m_resolutions_count; ++i) {
-        Vector2 resolution = { static_cast<float>(m_modes[i].width), static_cast<float>(m_modes[i].height) };
-        resolution_vector.emplace_back(resolution);
-    }
-    resolution_vector.erase(std::unique(resolution_vector.begin(), resolution_vector.end(), Vector2Equals), resolution_vector.end());
+    resolution_vector = Graphics::getPossibleResolutions();
     choosen_resolution = resolution_vector.size() - 1;
     initWidgets();
-    
+
     const auto background_entity = m_widget_registry.create();
     m_widget_registry.emplace<BackgroundComponent>(background_entity, 
                                                  BackgroundComponent(ResourceSystem::getTexture("menu_background"), 0.f, 0.f));
@@ -27,7 +22,7 @@ SettingsScene::SettingsScene()
 
 void SettingsScene::initWidgets()
 {
-    const Vector2 resolution = Game::Instance()->getCurrentResolution();
+    const Vector2 resolution = Graphics::getCurrentResolution();
     const float panel_width = resolution.x / 2.f;
     const float panel_height = resolution.y / 2.f;
     const float panel_x = resolution.x / 2.f - panel_width / 2.f;
@@ -118,12 +113,7 @@ void SettingsScene::initButtons(const Rectangle panel_rect)
 void SettingsScene::saveValueCallback(entt::any data)
 {
     SettingsScene *scene = entt::any_cast<SettingsScene*>(data);
-    const int choosen_res = scene->choosen_resolution;
-    const int width = static_cast<int>(scene->resolution_vector[choosen_res].x);
-    const int height = static_cast<int>(scene->resolution_vector[choosen_res].y);
-
-    printf("%s", TextFormat("Selected resolution: %ix%i", width, height));
-    Game::Instance()->setCurrentResolution({static_cast<float>(width), static_cast<float>(height)});
+    Graphics::setVideoMode(scene->choosen_resolution);
     // Redraw scene
     scene->emmiter.publish(Scene::Messages::SETTINGS);
 }
