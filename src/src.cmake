@@ -1,2 +1,15 @@
 set(game_source
-    src/main.cpp)
+    src/main.cpp
+    src/main_menu.cpp
+    src/button_system.cpp
+    src/settings_scene.cpp
+    src/game.cpp
+    src/slider_system.cpp
+    src/panel_system.cpp
+    src/widget_system.cpp
+    src/dropdown_box_system.cpp
+    src/label_system.cpp
+    src/background_system.cpp
+    src/gui.cpp
+    src/resource_system.cpp
+    src/graphics.cpp)
