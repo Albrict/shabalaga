@@ -1,7 +1,6 @@
 #pragma once
+#include "graphics.hpp"
 #include "scene.hpp"
-#include "../include/glfw3.h"
-#include "../include/raylib.h"
 
 class SettingsScene final : public Scene {
 public:
@@ -20,9 +19,8 @@ private:
     static void saveValueCallback(entt::any data);
     static void backToMainMenuCallback(entt::any data);
 private:
-    int choosen_resolution = 0;
-    float brightness_value = 0.f;
-    const GLFWvidmode *m_modes = nullptr;
+    int choosen_resolution = Graphics::getCurrentVideoModeId();
+    float brightness_value = Graphics::getBrightnessValue();
     entt::registry m_widget_registry {}; 
     std::vector<Vector2> resolution_vector {};
     std::unique_ptr<std::string> resolution_list;
