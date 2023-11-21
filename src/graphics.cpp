@@ -21,7 +21,7 @@ void Graphics::init()
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT); // Dirty hack to read resolutions
     InitWindow(800, 600, "Shabalaga");
     int count = 0;
-    int font_size = 28;
+    int font_size = 30;
     std::vector<Vector2> resolutions;
     const GLFWvidmode *modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
     for (size_t i = 0; i < count; ++i) {
@@ -137,4 +137,10 @@ std::vector<Vector2> Graphics::getPossibleResolutions()
     for (size_t i = 0; i < video_mode_vector.size(); ++i)
         resolutions.push_back(video_mode_vector[i].resolution);
     return resolutions;
+}
+
+int Graphics::getCurrentVideoModeId()
+{
+    auto it = std::find(video_mode_vector.begin(), video_mode_vector.end(), *current_video_mode);
+    return it - video_mode_vector.begin();
 }

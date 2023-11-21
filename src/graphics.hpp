@@ -1,5 +1,6 @@
 #pragma once
 #include "../include/raylib.h"
+#include "../include/raymath.h"
 #include <vector>
 
 namespace Graphics {
@@ -18,19 +19,24 @@ namespace Graphics {
             this->resolution = mode.resolution;
             return *this;
         }
+        friend bool operator==(const VideoMode &rhs, const VideoMode &lhs)
+        {
+            return ((rhs.font_size == lhs.font_size) && (Vector2Equals(rhs.resolution, lhs.resolution))); 
+        }
     };
     void init();
 
     void setVideoMode(VideoMode mode);
     void setVideoMode(const int video_mode_id);
-    std::vector<VideoMode> getPossibleVideoModes();
-    std::vector<Vector2> getPossibleResolutions();
-    Vector2 getCurrentResolution();
+    [[nodiscard]] int getCurrentVideoModeId();
+    [[nodiscard]] std::vector<VideoMode> getPossibleVideoModes();
+    [[nodiscard]] std::vector<Vector2> getPossibleResolutions();
+    [[nodiscard]] Vector2 getCurrentResolution();
     
     void setBrightness(const float value);
-    float getBrightnessValue();
+    [[nodiscard]] float getBrightnessValue();
 
-    int getCurrentFontSize();      
+    [[nodiscard]] int getCurrentFontSize();      
     void beginRender();
     void endRender();
 };

@@ -1,12 +1,10 @@
 #include "settings_scene.hpp"
-#include "../include/raygui.h"
-#include "../include/raymath.h"
 #include "background_component.hpp"
 #include "background_system.hpp"
 #include "graphics.hpp"
 #include "widget_components.hpp"
 #include "widget_system.hpp"
-#include "game.hpp"
+#include "resource_system.hpp"
 
 SettingsScene::SettingsScene()
 {
@@ -61,7 +59,8 @@ void SettingsScene::initResolutionDropdownBox(const Rectangle slider_rect)
     const float dropdown_box_y = slider_rect.y + slider_rect.height;
     const Rectangle dropdown_box_rect = { dropdown_box_x, dropdown_box_y, dropdown_box_width, dropdown_box_height };
     const char *label_text = "Resolution:";
-    const Rectangle label_rect = { dropdown_box_x - MeasureText(label_text, 27), dropdown_box_y, static_cast<float>(MeasureText(label_text, 28)), 28.f};
+    const Rectangle label_rect = { dropdown_box_x - MeasureText(label_text, 27), dropdown_box_y, 
+                                static_cast<float>(MeasureText(label_text, Graphics::getCurrentFontSize())), static_cast<float>(Graphics::getCurrentFontSize())};
 
     for (size_t i = 0; i < resolution_vector.size(); ++i) {
         if (i == resolution_vector.size() - 1) {
@@ -127,7 +126,7 @@ void SettingsScene::backToMainMenuCallback(entt::any data)
 void SettingsScene::proccessEvents() 
 {
     WidgetSystem::proccessEvents(m_widget_registry);
-    Game::Instance()->setBrightness(brightness_value);
+    Graphics::setBrightness(brightness_value);
 }
 
 void SettingsScene::update() 
