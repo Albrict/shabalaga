@@ -8,4 +8,5 @@ int main()
     Game::Instance()->initFirstScene();
     Game::Instance()->run();
     Game::Instance()->closeGame();
+    return 0;
 }
