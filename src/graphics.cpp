@@ -2,7 +2,7 @@
 #include "../include/glfw3.h"
 #include "../include/raygui.h"
 #include "../include/raymath.h"
-#include "../include/style_cyber.h"
+#include "gui.hpp"
 #include <algorithm>
 #include <memory>
 #include <vector>
@@ -45,9 +45,7 @@ void Graphics::init()
     SetWindowMinSize(video_mode_vector.front().resolution.x, video_mode_vector.front().resolution.y);
     SetTargetFPS(GetMonitorRefreshRate(0));
 
-    GuiLoadStyleCyber();
-    GuiSetStyle(DEFAULT, TEXT_SIZE, current_video_mode->font_size);
-    
+    GUI::init(current_video_mode->font_size); 
     // Init render texture
     target = LoadRenderTexture(current_video_mode->resolution.x, current_video_mode->resolution.y);
 }
