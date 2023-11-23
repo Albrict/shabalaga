@@ -5,6 +5,7 @@
 #include "graphics.hpp"
 #include "main_menu.hpp"
 #include "settings_scene.hpp"
+#include "game_scene.hpp"
 
 Game *Game::game_instance = nullptr;
 
@@ -40,6 +41,7 @@ void Game::proccessEvents()
     if (change_to_scene != Scenes::NONE) {
         switch (change_to_scene) {
         case Scenes::PLAY:
+            changeSceneTo(new GameScene);
             change_to_scene = Scenes::NONE;
             break;
         case Scenes::SETTINGS:
@@ -73,6 +75,7 @@ void Game::proccessMessages(const Scene::Messages &message,
     switch (message) {
     using Messages = Scene::Messages;
     case Messages::PLAY:
+        change_to_scene = Scenes::PLAY;
         break;
     case Messages::SETTINGS:
         change_to_scene = Scenes::SETTINGS;
@@ -91,4 +94,5 @@ void Game::proccessMessages(const Scene::Messages &message,
 void Game::loadResources()
 {
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
+    ResourceSystem::loadTexture("assets/objects/ship.png", "ship_spritesheet");
 }
