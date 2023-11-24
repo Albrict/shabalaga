@@ -2,7 +2,7 @@
 
 namespace {
     std::map<std::string_view, Texture2D> texture_storage;
-    std::map<std::string_view, std::shared_ptr<AsepriteWrapper>> aseprite_storage;
+    std::map<std::string_view, std::shared_ptr<Sprite>> aseprite_storage;
 };
 
 void ResourceSystem::loadTexture(const char *path, const std::string_view &key)
@@ -24,13 +24,13 @@ Texture2D ResourceSystem::getTexture(const std::string_view &key)
 }
 
 
-void ResourceSystem::loadAseprite(const char *path, const std::string_view &key)
+void ResourceSystem::loadSprite(const char *path, const std::string_view &key)
 {
-    std::shared_ptr<AsepriteWrapper> sprite = std::make_shared<AsepriteWrapper>(path);
+    std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(path);
     aseprite_storage.insert({key, sprite});
 }
 
-std::shared_ptr<AsepriteWrapper> ResourceSystem::getAseprite(const std::string_view &key)
+std::shared_ptr<Sprite> ResourceSystem::getSprite(const std::string_view &key)
 {
     return aseprite_storage[key];
 }
