@@ -16,4 +16,4 @@ set(game_source
     src/game_scene.cpp
     src/ship_system.cpp
     src/player_system.cpp
-    src/aseprite_wrapper.cpp)
+    src/sprite.cpp)

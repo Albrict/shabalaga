@@ -1,6 +1,6 @@
 #pragma once
 #include "../include/raylib-aseprite.hpp"
-
+#include <vector>
 class Sprite {
 public:
     Sprite(const char *path_to_aseprite); 
@@ -20,5 +20,5 @@ public:
     void updateTag();
 private:
     Aseprite *aseprite_ptr = nullptr;
-    AsepriteTag *aseprite_tag_ptr = nullptr;
+    AsepriteTag *current_tag = nullptr;
 };

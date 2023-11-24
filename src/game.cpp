@@ -97,4 +97,5 @@ void Game::loadResources()
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
     ResourceSystem::loadSprite("assets/objects/ship/full_health.aseprite", "ship");
     ResourceSystem::loadSprite("assets/objects/engines/base_engine_powering.aseprite", "engine");
+    ResourceSystem::loadSprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
 }

@@ -2,7 +2,8 @@
 #define RAYLIB_ASEPRITE_IMPLEMENTATION
 #include "../include/raylib-aseprite.hpp"
 #undef RAYLIB_ASEPRITE_IMPLEMENTATION
-#include "aseprite_wrapper.hpp"
+#include "sprite.hpp"
+#include <cassert>
 
 Sprite::Sprite(const char *path_to_aseprite)
 {
@@ -18,18 +19,22 @@ Sprite::~Sprite()
         UnloadAseprite(*aseprite_ptr); 
         free(aseprite_ptr);
     }
-    if (aseprite_tag_ptr)
-        free(aseprite_tag_ptr);
+    if (current_tag)
+        free(current_tag);
 }
 
 bool Sprite::loadAsepriteTag(const char *name)
 {
-    aseprite_tag_ptr = static_cast<AsepriteTag*>(malloc(sizeof(struct AsepriteTag)));
+    AsepriteTag *aseprite_tag_ptr = static_cast<AsepriteTag*>(malloc(sizeof(struct AsepriteTag)));
     *aseprite_tag_ptr = LoadAsepriteTag(*aseprite_ptr, name);
-    if (!IsAsepriteTagReady(*aseprite_tag_ptr)) 
+    if (!IsAsepriteTagReady(*aseprite_tag_ptr)) {
         return false;
-    else
+    } else {
+        if (current_tag)
+            free(current_tag);
+        current_tag = aseprite_tag_ptr;
         return true;
+    }
 }
 
 void Sprite::draw(const int frame, const int x, const int y, const Color tint) const
@@ -54,24 +59,24 @@ void Sprite::drawEx(const int frame, const Vector2 position, const float rotatio
 
 void Sprite::drawTag(const int x, const int y, const Color tint) const
 {
-    DrawAsepriteTag(*aseprite_tag_ptr, x, y, tint);
+    DrawAsepriteTag(*current_tag, x, y, tint);
 }
 void Sprite::drawTagPro(const Rectangle dest, const Vector2 origin, const float rotation, const Color tint)
 {
-    DrawAsepriteTagPro(*aseprite_tag_ptr, dest, origin, rotation, tint);
+    DrawAsepriteTagPro(*current_tag, dest, origin, rotation, tint);
 }
 
 void Sprite::drawTagV(const Vector2 position, const Color tint)
 {
-    DrawAsepriteTagV(*aseprite_tag_ptr, position, tint);
+    DrawAsepriteTagV(*current_tag, position, tint);
 }
 
 void Sprite::drawTagEx(const Vector2 position, const float rotation, const float scale, const Color tint)
 {
-    DrawAsepriteTagEx(*aseprite_tag_ptr, position, rotation, scale, tint);
+    DrawAsepriteTagEx(*current_tag, position, rotation, scale, tint);
 }
 
 void Sprite::updateTag()
 {
-    UpdateAsepriteTag(aseprite_tag_ptr);
+    UpdateAsepriteTag(current_tag);
 }
