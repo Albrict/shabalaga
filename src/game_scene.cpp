@@ -10,7 +10,8 @@ GameScene::GameScene()
     const auto entity = registry.create();
     registry.emplace<PlayerComponent>(entity, 
                                       PlayerComponent(ResourceSystem::getSprite("ship"),
-                                                      ResourceSystem::getSprite("engine")));
+                                                      ResourceSystem::getSprite("engine"),
+                                                      ResourceSystem::getSprite("auto_cannon")));
     registry.emplace<ShipComponent>(entity, ShipComponent({0.f, 0.f, 0.f, 0.f}, {500.f, 500.f}, {0.f, 0.f}, 100));
     registry.emplace<ShipType>(entity, ShipType::PLAYER);
 }

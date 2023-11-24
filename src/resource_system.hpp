@@ -1,6 +1,6 @@
 #pragma once
 #include "../include/entt.hpp"
-#include "aseprite_wrapper.hpp"
+#include "sprite.hpp"
 
 namespace ResourceSystem {
     void loadTexture(const char *path, const std::string_view &key);

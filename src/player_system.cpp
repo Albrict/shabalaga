@@ -6,20 +6,24 @@
 
 void PlayerSystem::proccessEvents(entt::registry &registry)
 {
-    auto view = registry.view<ShipComponent>();
-    for (auto [entity, ship] : view.each()) {
+    auto view = registry.view<ShipComponent, PlayerComponent>();
+    for (auto [entity, ship, player] : view.each()) {
         if (IsKeyDown(KEY_A))
             ship.velocity.x -= 10.f * GetFrameTime();
         if (IsKeyDown(KEY_D))
             ship.velocity.x += 10.f * GetFrameTime();
+        if (IsKeyPressed(KEY_SPACE))
+            player.weapon_sprite->loadAsepriteTag("Firing"); 
     }
 }
 
 void PlayerSystem::update(entt::registry &registry)
 {
     auto view = registry.view<PlayerComponent, ShipComponent>();
-    for (auto [entity, player, ship] : view.each())
+    for (auto [entity, player, ship] : view.each()) {
         player.engine_sprite->updateTag(); 
+        player.weapon_sprite->updateTag();
+    }
 }
 
 void PlayerSystem::draw(const entt::registry &registry)
@@ -32,6 +36,7 @@ void PlayerSystem::draw(const entt::registry &registry)
 
         const Rectangle dest = {ship.position.x, ship.position.y, width, height};
         player.engine_sprite->drawTagPro(dest, {0.f, 0.f}, 0.f, WHITE);
+        player.weapon_sprite->drawTagPro(dest, {0.f, 0.f}, 0.f, WHITE); 
         player.ship_sprite->drawPro(0, dest, {0.f, 0.f}, 0.f, WHITE); 
     }
 }
