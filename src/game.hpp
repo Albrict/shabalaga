@@ -18,7 +18,7 @@ public:
     void initFirstScene();
     void run();
     void closeGame()
-    { delete game_instance; ResourceSystem::unloadTextures(); CloseWindow(); }
+    { delete game_instance; ResourceSystem::unloadResources(); CloseWindow(); }
 private:
     Game();
     

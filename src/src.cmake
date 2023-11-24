@@ -1,5 +1,4 @@
 set(game_source
-    src/aseprite.cpp
     src/main.cpp
     src/main_menu.cpp
     src/button_system.cpp
@@ -16,4 +15,5 @@ set(game_source
     src/graphics.cpp
     src/game_scene.cpp
     src/ship_system.cpp
-    src/player_system.cpp)
+    src/player_system.cpp
+    src/aseprite_wrapper.cpp)

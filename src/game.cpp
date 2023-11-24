@@ -4,6 +4,7 @@
 #include "game.hpp"
 #include "graphics.hpp"
 #include "main_menu.hpp"
+#include "resource_system.hpp"
 #include "settings_scene.hpp"
 #include "game_scene.hpp"
 
@@ -95,4 +96,5 @@ void Game::loadResources()
 {
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
     ResourceSystem::loadTexture("assets/objects/ship.png", "ship_spritesheet");
+    ResourceSystem::loadAseprite("assets/objects/full_health.aseprite", "ship");
 }
