@@ -95,6 +95,6 @@ void Game::proccessMessages(const Scene::Messages &message,
 void Game::loadResources()
 {
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
-    ResourceSystem::loadTexture("assets/objects/ship.png", "ship_spritesheet");
-    ResourceSystem::loadAseprite("assets/objects/full_health.aseprite", "ship");
+    ResourceSystem::loadSprite("assets/objects/ship/full_health.aseprite", "ship");
+    ResourceSystem::loadSprite("assets/objects/engines/base_engine_powering.aseprite", "engine");
 }

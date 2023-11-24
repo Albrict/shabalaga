@@ -1,34 +1,24 @@
 #pragma once
 #include "../include/raylib-aseprite.hpp"
-#include <cstdlib>
 
-class AsepriteWrapper {
+class Sprite {
 public:
-    friend class AsepriteTagWrapper;
-    AsepriteWrapper(const char *path_to_aseprite); 
-    ~AsepriteWrapper();
+    Sprite(const char *path_to_aseprite); 
+    ~Sprite();
     
+    bool loadAsepriteTag(const char *name);
     void draw(const int frame, const int x, const int y, const Color tint) const;
     void drawPro(const int frame, const Rectangle dest, const Vector2 origin, const float rotation, const Color tint);
     void drawV(const int frame, const Vector2 position, const Color tint);
-    void drawEx(const int frame, const Vector2 position, const float rotation, const float scale, const Color tint); 
+    void drawEx(const int frame, const Vector2 position, const float rotation, const float scale, const Color tint);
+
+    void drawTag(const int x, const int y, const Color tint) const;
+    void drawTagPro(const Rectangle dest, const Vector2 origin, const float rotation, const Color tint);
+    void drawTagV(const Vector2 position, const Color tint);
+    void drawTagEx(const Vector2 position, const float rotation, const float scale, const Color tint); 
+
+    void updateTag();
 private:
     Aseprite *aseprite_ptr = nullptr;
-};
-
-class AsepriteTagWrapper {
-public:
-    AsepriteTagWrapper(const AsepriteWrapper &aseprite, const char *tag_name);
-    ~AsepriteTagWrapper()
-    {
-        if (aseprite_tag_ptr)
-            free(aseprite_tag_ptr);
-    }
-
-    void draw(const int x, const int y, const Color tint) const;
-    void drawPro(const Rectangle dest, const Vector2 origin, const float rotation, const Color tint);
-    void drawV(const Vector2 position, const Color tint);
-    void drawEx(const Vector2 position, const float rotation, const float scale, const Color tint); 
-private:
     AsepriteTag *aseprite_tag_ptr = nullptr;
 };
