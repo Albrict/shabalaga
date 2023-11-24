@@ -22,5 +22,5 @@ void PlayerSystem::draw(const entt::registry &registry)
 {
     auto view = registry.view<PlayerComponent, ShipComponent>();
     for (auto [entity, player, ship] : view.each())
-        DrawTextureV(player.texture, ship.position, WHITE);
+        player.sprite->draw(0, ship.position.x, ship.position.y, WHITE); 
 }

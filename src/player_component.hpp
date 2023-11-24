@@ -1,10 +1,10 @@
 #pragma once
-#include "animation_component.hpp"
-#include "../include/raylib-aseprite.hpp"
+#include "aseprite_wrapper.hpp"
 #include <array>
+#include <memory>
 
 struct PlayerComponent {
-    Texture2D texture;
-    PlayerComponent(const Texture2D texture) 
-        : texture(texture) {}
+    std::shared_ptr<AsepriteWrapper> sprite;
+    PlayerComponent(std::shared_ptr<AsepriteWrapper> sprite) 
+        : sprite(sprite) {}
 };
