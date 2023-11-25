@@ -98,4 +98,5 @@ void Game::loadResources()
     ResourceSystem::loadSprite("assets/objects/ship/full_health.aseprite", "ship");
     ResourceSystem::loadSprite("assets/objects/engines/base_engine_powering.aseprite", "engine");
     ResourceSystem::loadSprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
+    ResourceSystem::loadSprite("assets/objects/projectiles/auto_cannon_projectile.aseprite", "auto_cannon_projectile");
 }

@@ -16,4 +16,5 @@ set(game_source
     src/game_scene.cpp
     src/ship_system.cpp
     src/player_system.cpp
-    src/sprite.cpp)
+    src/weapon_system.cpp
+    src/projectile_system.cpp)
