@@ -7,7 +7,7 @@ namespace ResourceSystem {
     Texture2D getTexture(const std::string_view &key);
 
     void loadSprite(const char *path, const std::string_view &key);
-    Sprite getSprite(const std::string_view &key);
+    Aseprite *getSprite(const std::string_view &key);
 
     void unloadResources();
 };
