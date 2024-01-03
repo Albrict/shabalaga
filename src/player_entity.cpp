@@ -42,6 +42,9 @@ namespace PlayerEntity {
 
     void collisionCallback(entt::registry &registry, const entt::entity a_entity, const entt::entity b_entity)
     {
+        const auto type = registry.get<ObjectType>(b_entity);
+        if (type == ObjectType::PROJECTILE)
+            return;
         auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity);
         int current_frame = sprite.sprite->getCurrentSpriteFrame();
         if (current_frame < 3) {
