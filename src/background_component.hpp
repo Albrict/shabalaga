@@ -1,22 +1,17 @@
 #pragma once
 #include "../include/raylib.h"
-#include <filesystem>
+#include "../include/entt.hpp"
 
-struct BackgroundComponent {
-    const Texture2D background;
-    float width;
-    float height;
-    Vector2 offset;
-    const float scroll_speed_y;
-    const float scroll_speed_x;
 
-    BackgroundComponent(const Texture2D bg_texture, const float scroll_speed_x, const float scroll_speed_y)
-        : background(bg_texture),
-        offset({0.f, 0.f}),
-        scroll_speed_x(scroll_speed_x),
-        scroll_speed_y(scroll_speed_y)
-    { 
-        width = background.width;
-        height = background.height;
-    }
-};
+namespace BackgroundComponent {
+    struct Background {
+        Texture2D background;
+        float width;
+        float height;
+        float scroll_speed_x;
+        float scroll_speed_y;
+        Vector2 offset;
+    };
+    
+    entt::entity create(entt::registry &object_registry, const Texture2D texture, const float scroll_speed_y = 0.f, const float scroll_speed_x = 0.f);
+}

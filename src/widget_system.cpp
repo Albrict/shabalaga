@@ -6,12 +6,14 @@
 #include "panel_system.hpp"
 #include "label_system.hpp"
 
+using WidgetComponents::Type;
+
 void WidgetSystem::proccessEvents(entt::registry &registry)
 {
-    auto view = registry.view<const WidgetComponentType>();   
+    auto view = registry.view<const Type>();   
     for (auto [entity, type] : view.each()) {
         switch(type) {
-        using enum WidgetComponentType;
+        using enum Type;
         case BUTTON:
             ButtonSystem::proccessEvents(registry);
             break;
@@ -32,10 +34,10 @@ void WidgetSystem::proccessEvents(entt::registry &registry)
 
 void WidgetSystem::update(entt::registry &registry)
 {
-    auto view = registry.view<const WidgetComponentType>();   
+    auto view = registry.view<const Type>();   
     for (auto [entity, type] : view.each()) {
         switch(type) {
-        using enum WidgetComponentType;
+        using enum Type;
         case BUTTON:
             ButtonSystem::update(registry);
             break;
@@ -49,31 +51,6 @@ void WidgetSystem::update(entt::registry &registry)
             PanelSystem::update(registry);
             break;
         default:
-            break;
-        }
-    }
-}
-
-void WidgetSystem::draw(const entt::registry &registry)
-{
-    auto view = registry.view<const WidgetComponentType>();   
-    for (auto [entity, type] : view.each()) {
-        switch(type) {
-        using enum WidgetComponentType;
-        case BUTTON:
-            ButtonSystem::draw(registry);
-            break;
-        case SLIDER:
-            SliderSystem::draw(registry);
-            break; 
-        case DROPDOWNBOX:
-            DropdownBoxSystem::draw(registry);
-            break;
-        case LABEL:
-            LabelSystem::draw(registry);
-            break;
-        case PANEL:
-            PanelSystem::draw(registry);
             break;
         }
     }

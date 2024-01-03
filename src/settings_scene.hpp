@@ -21,7 +21,6 @@ private:
 private:
     int choosen_resolution = Graphics::getCurrentVideoModeId();
     float brightness_value = Graphics::getBrightnessValue();
-    entt::registry m_widget_registry {}; 
     std::vector<Vector2> resolution_vector {};
-    std::unique_ptr<std::string> resolution_list;
+    std::unique_ptr<std::string> resolution_list {};
 };

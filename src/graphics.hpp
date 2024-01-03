@@ -1,6 +1,8 @@
 #pragma once
 #include "../include/raylib.h"
 #include "../include/raymath.h"
+#include "../include/entt.hpp"
+
 #include <vector>
 
 namespace Graphics {
@@ -25,6 +27,9 @@ namespace Graphics {
         }
     };
     void init();
+    
+    void beginRender();
+    void endRender();
 
     void setVideoMode(VideoMode mode);
     void setVideoMode(const int video_mode_id);
@@ -35,8 +40,5 @@ namespace Graphics {
     
     void setBrightness(const float value);
     [[nodiscard]] float getBrightnessValue();
-
     [[nodiscard]] int getCurrentFontSize();      
-    void beginRender();
-    void endRender();
 };

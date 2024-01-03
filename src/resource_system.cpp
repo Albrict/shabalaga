@@ -1,21 +1,33 @@
+#include "sprite.hpp"
 #include "resource_system.hpp"
 
-namespace {
+namespace ResourceSystem {
+    struct SpriteResource {
+        Aseprite *aseprite;
+        std::shared_ptr<std::vector<AsepriteTag*>> tags; 
+        std::shared_ptr<std::vector<AsepriteSlice*>> slices;
+
+        ~SpriteResource()
+        {
+            AsepriteWrapper::UnloadAseprite(aseprite);
+        }
+    };
     std::map<std::string_view, Texture2D> texture_storage;
-    std::map<std::string_view, std::shared_ptr<Sprite>> aseprite_storage;
+    std::map<std::string_view, Aseprite*> aseprite_storage;
 };
 
 void ResourceSystem::loadTexture(const char *path, const std::string_view &key)
 {
     Texture2D texture = LoadTexture(path);
-    texture_storage.insert({key, texture});
+    texture_storage.insert_or_assign(key, texture);
 }
 
 void ResourceSystem::unloadResources()
 {
     for (auto texture : texture_storage)
         UnloadTexture(texture.second);
-    aseprite_storage.clear();
+    for (auto aseprite : aseprite_storage)
+        AsepriteWrapper::UnloadAseprite(aseprite.second);
 }
 
 Texture2D ResourceSystem::getTexture(const std::string_view &key)
@@ -23,14 +35,14 @@ Texture2D ResourceSystem::getTexture(const std::string_view &key)
     return texture_storage.at(key);
 }
 
-
 void ResourceSystem::loadSprite(const char *path, const std::string_view &key)
 {
-    std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(path);
-    aseprite_storage.insert({key, sprite});
+    Aseprite *aseprite = AsepriteWrapper::loadAseprite(path);
+    if (aseprite)
+        aseprite_storage.insert({key, aseprite});
 }
 
-std::shared_ptr<Sprite> ResourceSystem::getSprite(const std::string_view &key)
+Aseprite* ResourceSystem::getSprite(const std::string_view &key)
 {
-    return aseprite_storage[key];
+    return aseprite_storage.at(key);
 }

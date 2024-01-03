@@ -2,9 +2,12 @@
 #include "widget_components.hpp"
 #include "../include/raygui.h"
 
+using WidgetComponents::Button;
+using WidgetComponents::WidgetCallback;
+
 void ButtonSystem::proccessEvents(const entt::registry &registry)
 {
-    auto view = registry.view<const ButtonComponent, const WidgetCallbackComponent>();
+    auto view = registry.view<const Button, const WidgetCallback>();
     for (auto [entity, button_component, widget_callback] : view.each()) {
         if (GuiButton(button_component.rect, button_component.text)) {
             if (widget_callback.callback) 
@@ -20,7 +23,7 @@ void ButtonSystem::update(entt::registry &registry)
 
 void ButtonSystem::draw(const entt::registry &registry) 
 {
-    auto view = registry.view<const ButtonComponent>();
+    auto view = registry.view<const Button>();
     for (const auto [entity, button_component] : view.each())
         GuiButton(button_component.rect, button_component.text);
 }

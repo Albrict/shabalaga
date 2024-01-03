@@ -1,0 +1,107 @@
+[
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/main.cpp.o -c /home/albrict/prog/shabalaga/src/main.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/main.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/game.cpp.o -c /home/albrict/prog/shabalaga/src/game.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/game.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/main_menu.cpp.o -c /home/albrict/prog/shabalaga/src/main_menu.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/main_menu.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/button_system.cpp.o -c /home/albrict/prog/shabalaga/src/button_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/button_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/slider_system.cpp.o -c /home/albrict/prog/shabalaga/src/slider_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/slider_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/panel_system.cpp.o -c /home/albrict/prog/shabalaga/src/panel_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/panel_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/widget_system.cpp.o -c /home/albrict/prog/shabalaga/src/widget_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/widget_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/dropdown_box_system.cpp.o -c /home/albrict/prog/shabalaga/src/dropdown_box_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/dropdown_box_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/label_system.cpp.o -c /home/albrict/prog/shabalaga/src/label_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/label_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/background_system.cpp.o -c /home/albrict/prog/shabalaga/src/background_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/background_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/gui.cpp.o -c /home/albrict/prog/shabalaga/src/gui.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/gui.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/resource_system.cpp.o -c /home/albrict/prog/shabalaga/src/resource_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/resource_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/graphics.cpp.o -c /home/albrict/prog/shabalaga/src/graphics.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/graphics.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/object_system.cpp.o -c /home/albrict/prog/shabalaga/src/object_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/object_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/ship_component_system.cpp.o -c /home/albrict/prog/shabalaga/src/ship_component_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/ship_component_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/player_system.cpp.o -c /home/albrict/prog/shabalaga/src/player_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/player_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/weapon_system.cpp.o -c /home/albrict/prog/shabalaga/src/weapon_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/weapon_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/projectile_system.cpp.o -c /home/albrict/prog/shabalaga/src/projectile_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/projectile_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/engine_system.cpp.o -c /home/albrict/prog/shabalaga/src/engine_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/engine_system.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/sprite.cpp.o -c /home/albrict/prog/shabalaga/src/sprite.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/sprite.cpp"
+},
+{
+  "directory": "/home/albrict/prog/shabalaga/src",
+  "command": "/bin/c++   -g -fsanitize=address,undefined -std=gnu++20 -o CMakeFiles/shabalaga.dir/message_system.cpp.o -c /home/albrict/prog/shabalaga/src/message_system.cpp",
+  "file": "/home/albrict/prog/shabalaga/src/message_system.cpp"
+}
+]

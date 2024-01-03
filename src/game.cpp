@@ -1,101 +1,101 @@
 #include "../include/raygui.h"
-#include "../include/raymath.h"
 #include "../include/style_cyber.h"
 #include "game.hpp"
 #include "graphics.hpp"
 #include "main_menu.hpp"
+#include "message_system.hpp"
 #include "resource_system.hpp"
 #include "settings_scene.hpp"
 #include "game_scene.hpp"
 
-Game *Game::game_instance = nullptr;
+namespace Game {
+    entt::registry object_registry;
+    std::unique_ptr<Scene> current_scene;
+    bool running = false;
+    
+    void proccessMessages(MessageSystem::Message msg);
+    void proccessSceneMessages(MessageSystem::SceneMessage msg);
+    void proccessEvents();
+    void update();
+    void draw();
+    void loadResources();
+}
 
-Game::Game() 
+void Game::init()
 {
+    auto listener = std::make_unique<MessageSystem::Listener>();
+    listener->cb = proccessMessages;
+    MessageSystem::registrListener(std::move(listener), "game_loop");
     Graphics::init();
-    running = true;
     loadResources();
+    
+    current_scene = std::make_unique<MainMenuScene>();
+
+    running = true;
+    SetExitKey(KEY_NULL);
 }
 
-void Game::initFirstScene() 
+void Game::run()
 {
-    current_scene = std::make_unique<MainMenu>();
-    current_scene->getEmmiter().on<Scene::Messages>(
-    [this](const Scene::Messages &event, Scene::Emmiter &emmiter) {
-        proccessMessages(event, emmiter);
-    });
-}
-
-void Game::run() 
-{
-    while (running) {
+    while(running) {
         if (WindowShouldClose())
             running = false;
-        proccessEvents();
-        update();
-        draw();
-    }
-}
-
-void Game::proccessEvents() 
-{
-    if (change_to_scene != Scenes::NONE) {
-        switch (change_to_scene) {
-        case Scenes::PLAY:
-            changeSceneTo(new GameScene);
-            change_to_scene = Scenes::NONE;
-            break;
-        case Scenes::SETTINGS:
-            changeSceneTo(new SettingsScene);
-            change_to_scene = Scenes::NONE;
-            break;
-        case Scenes::MAIN_MENU:
-            changeSceneTo(new MainMenu);
-            change_to_scene = Scenes::NONE;
-            break;
-        default:
-            break;
-        };
-    }
-    current_scene->proccessEvents();
-}
-
-void Game::update() { current_scene->update(); }
-
-void Game::draw() const 
-{
-    Graphics::beginRender();
+        current_scene->proccessEvents();
+        MessageSystem::update();
+        current_scene->update();
         current_scene->draw();
-        DrawFPS(0, 0);
-    Graphics::endRender();
+    }
 }
 
-void Game::proccessMessages(const Scene::Messages &message,
-                            Scene::Emmiter &emmiter)
+void Game::quit()
 {
-    switch (message) {
-    using Messages = Scene::Messages;
-    case Messages::PLAY:
-        change_to_scene = Scenes::PLAY;
-        break;
-    case Messages::SETTINGS:
-        change_to_scene = Scenes::SETTINGS;
-        break;
-    case Messages::MAIN_MENU:
-        change_to_scene = Scenes::MAIN_MENU;
-        break;
-    case Messages::EXIT:
-        running = false;
-        break;
-    default:
-        break;
-    }
+    MessageSystem::unregistrListener("game_loop");
+    ResourceSystem::unloadResources();
 }
 
 void Game::loadResources()
 {
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
+    ResourceSystem::loadTexture("assets/backgrounds/battle.png", "battle_background");
     ResourceSystem::loadSprite("assets/objects/ship/full_health.aseprite", "ship");
-    ResourceSystem::loadSprite("assets/objects/engines/base_engine_powering.aseprite", "engine");
+    ResourceSystem::loadSprite("assets/objects/engines/base_engine_powering.aseprite", "base_engine");
     ResourceSystem::loadSprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
+    ResourceSystem::loadSprite("assets/objects/projectiles/auto_cannon_projectile.aseprite", "auto_cannon_projectile");
+    ResourceSystem::loadSprite("assets/objects/enemies/fighter.aseprite", "fighter");
+    ResourceSystem::loadSprite("assets/objects/engines/fighter_engine.aseprite", "fighter_engine");
+    ResourceSystem::loadSprite("assets/objects/weapons/fighter_weapon.aseprite", "fighter_weapon");
+    ResourceSystem::loadSprite("assets/effects/small_explosion.aseprite", "small_explosion");
+    ResourceSystem::loadSprite("assets/effects/fighter_explosion.aseprite", "fighter_explosion");
+    ResourceSystem::loadSprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
+}
+
+void Game::proccessMessages(MessageSystem::Message msg)
+{
+    switch(msg.type) {
+    using enum MessageSystem::Type;
+    case SCENE_MESSAGE:
+        proccessSceneMessages(entt::any_cast<MessageSystem::SceneMessage>(msg.msg));
+        break;
+    default: 
+        break;
+    }
+}
+
+void Game::proccessSceneMessages(MessageSystem::SceneMessage msg)
+{
+    switch(msg) {
+    using enum MessageSystem::SceneMessage;
+    case MENU:
+        current_scene.reset(new MainMenuScene);
+        break;
+    case PLAY:
+        current_scene.reset(new GameScene);
+        break;
+    case SETTINGS:
+        current_scene.reset(new SettingsScene);
+        break;
+    case EXIT:
+        running = false;
+        break;
+    } 
 }

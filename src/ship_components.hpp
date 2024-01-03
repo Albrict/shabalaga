@@ -1,18 +1,20 @@
 #pragma once
-#include "../include/raylib.h"
+#include "../include/entt.hpp"
 
-enum class ShipType {
-    PLAYER
-};
+namespace ShipComponents {
+    struct Container {
+        entt::entity ship = entt::null;
+        entt::entity weapon = entt::null;
+        entt::entity engine = entt::null;
+    };
 
-struct ShipComponent {
-    Rectangle hitbox;
-    Vector2 position;
-    Vector2 velocity;
-    int health;
-    ShipComponent(const Rectangle hitbox, const Vector2 position, const Vector2 velocity, const int health)
-        : hitbox(hitbox),
-        position(position),
-        velocity(velocity),
-        health(health) {}
-};
+    inline void attachComponents(entt::registry &registry, const entt::entity ship, const entt::entity weapon, const entt::entity engine )
+    {
+        auto &container = registry.get<Container>(ship);
+        container = {
+            .ship = ship,
+            .weapon = weapon,
+            .engine = engine
+        };
+    }
+}

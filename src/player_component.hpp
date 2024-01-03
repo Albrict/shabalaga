@@ -1,18 +1,21 @@
 #pragma once
-#include "sprite.hpp"
-#include <memory>
+#include "../include/entt.hpp"
 
-struct PlayerComponent {
-    std::shared_ptr<Sprite> ship_sprite;
-    std::shared_ptr<Sprite> engine_sprite;
-    std::shared_ptr<Sprite> weapon_sprite;
+namespace PlayerComponent {
+    struct Container {
+        entt::entity engine = entt::null;
+        entt::entity weapon = entt::null;
+    };
 
-    PlayerComponent(std::shared_ptr<Sprite> ship, std::shared_ptr<Sprite> engine, std::shared_ptr<Sprite> weapon) 
-        : ship_sprite(ship),
-        engine_sprite(engine),
-        weapon_sprite(weapon)
+    inline void attachWeapon(entt::registry &object_registry, const entt::entity player, const entt::entity weapon)
     {
-        engine_sprite->loadAsepriteTag("Powering");
-        weapon_sprite->loadAsepriteTag("Idle");
+        auto &container = object_registry.get<Container>(player);
+        container.weapon = weapon;
     }
-};
+
+    inline void attachEngine(entt::registry &object_registry, const entt::entity player, const entt::entity engine)
+    {
+        auto &container = object_registry.get<Container>(player);
+        container.engine = engine;
+    }
+}
