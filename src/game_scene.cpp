@@ -1,6 +1,7 @@
 #include "game_scene.hpp"
 #include "background_component.hpp"
 #include "clean_up_system.hpp"
+#include "game_master_system.hpp"
 #include "graphics.hpp"
 #include "graphics_system.hpp"
 #include "input_system.hpp"
@@ -25,6 +26,7 @@ GameScene::GameScene()
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("battle_background"), -50.f);
     bg_music = ResourceSystem::getMusic("bg_music");
     PlayMusicStream(bg_music);
+    GameMasterSystem::resetSystem();
 }
 
 void GameScene::proccessEvents()
@@ -154,10 +156,11 @@ void GameScene::initGameObjects()
 {
     auto player = object_registry.create();
     const Vector2 resolution = Graphics::getCurrentResolution();
+    const Rectangle score_rect = {resolution.x / 2.f, 0.f, resolution.x / 2.f, resolution.y / 10.f};
     const Vector2 position = {resolution.x / 2.f, resolution.y / 1.2f};
     const float width = resolution.x / 10.f;
     const Rectangle rect = {position.x, position.y, width, width};
-
+    
     const std::string_view player_sprite = "ship";
     const std::string_view engine_sprite = "engine"; 
      
@@ -167,6 +170,8 @@ void GameScene::initGameObjects()
 
     const auto game_master = GameMasterEntity::create(object_registry, player);
     ShipComponents::attachComponents(object_registry, player, weapon, engine);
+
+    WidgetComponents::createScoreLabel(object_registry, score_rect, GameMasterSystem::getScorePointer());
 }
 
 void GameScene::initPauseWidgets()

@@ -8,6 +8,7 @@
 #include "hitbox_component.hpp"
 #include "object_component.hpp"
 #include "panel_system.hpp"
+#include "score_label_system.hpp"
 #include "slider_system.hpp"
 #include "widget_components.hpp"
 #include "fade_component.hpp"
@@ -128,6 +129,9 @@ namespace GraphicsSystem {
             case PANEL:
                 PanelSystem::draw(registry);
                 break;
+            case SCORE_LABEL:
+                ScoreLabelSystem::draw(registry);
+                break;
             }
         }
     }
@@ -194,5 +198,4 @@ void GraphicsSystem::draw(const entt::registry &registry)
     renderHitboxes(registry);
     renderWidget(registry);
     renderFade(registry);
-    DrawFPS(0, 0);
 }

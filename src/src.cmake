@@ -39,4 +39,6 @@ set(game_source
     src/small_explosion_entity.cpp
     src/timer_system.cpp
     src/fleet.cpp
-    src/fighter_explosion_entity.cpp)
+    src/fighter_explosion_entity.cpp
+    src/player_explosion_entity.cpp
+    src/score_label_system.cpp)

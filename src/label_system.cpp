@@ -7,6 +7,6 @@ using WidgetComponents::Label;
 void LabelSystem::draw(const entt::registry &registry)
 {
     auto view = registry.view<const Label>();
-    for (const auto [entity, label] : view.each())
+    for (const auto [entity, label] : view.each()) 
         GuiLabel(label.rect, label.text);
 }

@@ -71,7 +71,8 @@ void Game::loadResources()
     ResourceSystem::loadSprite("assets/effects/small_explosion.aseprite", "small_explosion");
     ResourceSystem::loadSprite("assets/effects/fighter_explosion.aseprite", "fighter_explosion");
     ResourceSystem::loadSprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
-
+    ResourceSystem::loadSprite("assets/effects/player_explosion.aseprite", "player_explosion");
+    
     ResourceSystem::loadSound("assets/sound/enemy_defeated_01.wav", "enemy_destroyed_01");
     ResourceSystem::loadSound("assets/sound/enemy_defeated_02.wav", "enemy_destroyed_02");
     ResourceSystem::loadSound("assets/sound/attack_01.wav", "attack_01");
