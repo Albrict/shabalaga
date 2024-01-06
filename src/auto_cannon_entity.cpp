@@ -12,6 +12,7 @@ namespace AutoCannonEntity {
                  
         if (state == WeaponState::IDLE) {
             const auto hitboxes = registry.get<HitboxComponent::Container>(entity).hitboxes; // get hitboxes from container
+            const int sound = GetRandomValue(0, 1);
             for (const auto hitbox : hitboxes) {
                 Rectangle rect = hitbox.rect;
                 rect.x -= rect.width / 2.f;
@@ -21,6 +22,10 @@ namespace AutoCannonEntity {
             }
             state = WeaponState::FIRING;
             sprite.sprite->loadAsepriteTag("Firing");
+            if (sound > 0) 
+                PlaySound(ResourceSystem::getSound("attack_01"));
+            else
+                PlaySound(ResourceSystem::getSound("attack_02"));
         }
     }
     

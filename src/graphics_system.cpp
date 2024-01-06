@@ -10,6 +10,7 @@
 #include "panel_system.hpp"
 #include "slider_system.hpp"
 #include "widget_components.hpp"
+#include "fade_component.hpp"
 
 namespace GraphicsSystem {
     void updateBackground(entt::registry &registry)
@@ -20,6 +21,14 @@ namespace GraphicsSystem {
             background.offset.y += GetFrameTime() * background.scroll_speed_y;
         }
     }
+    
+    void updateFade(entt::registry &registry)
+    {
+        auto view = registry.view<FadeComponent::Component>();
+        for (auto [entity, fade] : view.each())
+            fade.alpha += fade.fade_value; 
+    }
+
     void updateAnimation(entt::registry &registry)
     {
         auto view = registry.view<GraphicsComponent::Animation>();
@@ -47,6 +56,16 @@ namespace GraphicsSystem {
         }
     }
     
+    void renderFade(const entt::registry &registry)
+    {
+        const auto &view = registry.view<FadeComponent::Component>();
+        for (auto [entity, fade] : view.each()) {
+            const Vector2 resolution = Graphics::getCurrentResolution();
+            const Rectangle rect = { 0.f, 0.f, resolution.x, resolution.y };
+            DrawRectanglePro(rect, {0.f, 0.f}, 0.f, ColorAlpha(BLACK, fade.alpha));
+        }
+    }
+
     void renderEntity(const entt::registry &registry, const entt::entity entity)
     {
         const auto render_type = registry.get<GraphicsComponent::RenderType>(entity);
@@ -161,6 +180,7 @@ namespace GraphicsSystem {
 }
 void GraphicsSystem::update(entt::registry &registry)
 { 
+    updateFade(registry);
     updateBackground(registry);
     updateAnimation(registry);
 }
@@ -173,5 +193,6 @@ void GraphicsSystem::draw(const entt::registry &registry)
     renderPriorityLow(registry);
     renderHitboxes(registry);
     renderWidget(registry);
+    renderFade(registry);
     DrawFPS(0, 0);
 }

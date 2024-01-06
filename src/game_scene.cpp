@@ -21,6 +21,8 @@ GameScene::GameScene()
     initGameObjects();
     initPauseWidgets();
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("battle_background"), -50.f);
+    bg_music = ResourceSystem::getMusic("bg_music");
+    PlayMusicStream(bg_music);
 }
 
 void GameScene::proccessEvents()
@@ -45,6 +47,7 @@ void GameScene::update()
         updatePause();
         break;
     }
+    UpdateMusicStream(bg_music);
 }
 
 void GameScene::draw() const 
@@ -63,8 +66,11 @@ void GameScene::draw() const
 
 void GameScene::proccessPause()
 {
-    if (IsKeyPressed(KEY_ESCAPE))
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        PlaySound(ResourceSystem::getSound("pause_out"));
+        ResumeMusicStream(bg_music);
         current_state = State::GAME;
+    }
     WidgetSystem::proccessEvents(pause_registry);
 }
 
@@ -81,8 +87,11 @@ void GameScene::drawPause() const
 
 void GameScene::proccessGame()
 {
-    if (IsKeyPressed(KEY_ESCAPE))
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        PauseMusicStream(bg_music);
+        PlaySound(ResourceSystem::getSound("pause_in"));
         current_state = State::PAUSE;
+    }
     InputSystem::proccessEvents(object_registry);
     ObjectSystem::proccessEvents(object_registry);
 }

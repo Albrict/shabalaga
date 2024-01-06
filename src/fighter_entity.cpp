@@ -24,6 +24,7 @@ namespace FighterEntity {
             health.health -= damage;
             if (health.health <= 0) {
                 const auto ship_components = registry.try_get<ShipComponents::Container>(a_entity);
+                const int sound = GetRandomValue(0, 1);
                 if (ship_components) {
                     const auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity); 
                     
@@ -36,6 +37,10 @@ namespace FighterEntity {
                     registry.emplace<CleanUpComponent::Component>(a_entity); 
                     
                     FighterExplosionEntity::create(registry, rect);
+                    if (sound > 0)
+                        PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
+                    else
+                        PlaySound(ResourceSystem::getSound("enemy_destroyed_02"));
                 }
             }
         } 
@@ -50,8 +55,8 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Vector
     const int explosion_tag = 1;
     const int last_frame = 7;
     const Vector2 velocity = {0.f, 400.f};
-    const int timer_id = 1;
-    
+    const int random_direction_timer = 1;
+
     auto &fighter_sprite = object_registry.emplace<GraphicsComponent::Sprite>(fighter_entity);
     auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(fighter_entity, fighter_entity);
     auto &collider = object_registry.emplace<CollisionComponent::Component>(fighter_entity); 
@@ -77,6 +82,6 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Vector
     
     ShipComponents::attachComponents(object_registry, fighter_entity, fighter_weapon, fighter_engine);
 
-    TimerComponent::createTimerInContainer(timer_container, 1.f, timer_id);
+    TimerComponent::createTimerInContainer(timer_container, 1.f, random_direction_timer);
     return fighter_entity;
 }
