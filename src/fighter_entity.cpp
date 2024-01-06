@@ -5,6 +5,7 @@
 #include "engine_entity.hpp"
 #include "fighter_weapon_entity.hpp"
 #include "fighter_explosion_entity.hpp"
+#include "game_master_system.hpp"
 #include "graphics_component.hpp"
 #include "hitbox_component.hpp"
 #include "object_component.hpp"
@@ -27,7 +28,8 @@ namespace FighterEntity {
                 const int sound = GetRandomValue(0, 1);
                 if (ship_components) {
                     const auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity); 
-                    
+                    const int score = registry.get<ObjectComponent::Score>(a_entity).score; 
+
                     registry.emplace<CleanUpComponent::Component>(ship_components->engine); 
                     registry.emplace<CleanUpComponent::Component>(ship_components->weapon); 
 
@@ -41,6 +43,7 @@ namespace FighterEntity {
                         PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
                     else
                         PlaySound(ResourceSystem::getSound("enemy_destroyed_02"));
+                    GameMasterSystem::increaseScore(score);
                 }
             }
         } 
@@ -65,7 +68,8 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Vector
     object_registry.emplace<Rectangle>(fighter_entity, Rectangle{position.x, position.y, width, height});
     object_registry.emplace<HealthComponent>(fighter_entity, 100);
     object_registry.emplace<VelocityComponent>(fighter_entity, velocity);
-    
+    object_registry.emplace<ObjectComponent::Score>(fighter_entity, 50); 
+
     object_registry.emplace<ShipComponents::Container>(fighter_entity);
 
     object_registry.emplace<GraphicsComponent::RenderPriority>(fighter_entity, GraphicsComponent::RenderPriority::MIDDLE);

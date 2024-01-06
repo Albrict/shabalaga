@@ -58,6 +58,23 @@ entt::entity WidgetComponents::createLabel(entt::registry &object_registry, cons
     auto label_entity = object_registry.create();
     object_registry.emplace<Label>(label_entity, rect, text);
     object_registry.emplace<Type>(label_entity, Type::LABEL);
+    object_registry.emplace<ObjectType>(label_entity, ObjectType::WIDGET);
     object_registry.emplace<GraphicsComponent::RenderType>(label_entity, GraphicsComponent::RenderType::WIDGET);
     return label_entity;
+}
+
+entt::entity WidgetComponents::createScoreLabel(entt::registry &object_registry, const Rectangle rect, const int *score)
+{
+    const auto entity = object_registry.create();
+    auto &score_label = object_registry.emplace<ScoreLabel>(entity);
+    score_label = {
+        .rect = rect,
+        .score_ptr = score,
+        .old_score = *score,
+        .text = TextFormat("%d", *score)
+    };
+    object_registry.emplace<Type>(entity, Type::SCORE_LABEL);
+    object_registry.emplace<ObjectType>(entity, ObjectType::WIDGET);
+    object_registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::WIDGET);
+    return entity;
 }

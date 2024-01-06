@@ -5,6 +5,7 @@
 #include "slider_system.hpp"
 #include "panel_system.hpp"
 #include "label_system.hpp"
+#include "score_label_system.hpp"
 
 using WidgetComponents::Type;
 
@@ -38,6 +39,9 @@ void WidgetSystem::update(entt::registry &registry)
     for (auto [entity, type] : view.each()) {
         switch(type) {
         using enum Type;
+        case SCORE_LABEL:
+            ScoreLabelSystem::update(registry);            
+            break;
         case BUTTON:
             ButtonSystem::update(registry);
             break;

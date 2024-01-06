@@ -6,8 +6,7 @@
 
 namespace GameMasterSystem {
     unsigned int difficulty = 1;
-    unsigned int score = 0;
-    unsigned int ship_amount = 0;
+    int score = 0;
     
     // Internal timer that belongs only to this module
     TimerComponent::Component fleet_spawn_duration {
@@ -26,8 +25,8 @@ void GameMasterSystem::proccessEvents(entt::registry &registry, const entt::enti
         const float ship_size = resolution.x / 8.f;
         float rand_x = static_cast<float>(GetRandomValue(ship_size, max_rand)); 
         
-        if (rand_x + ship_size * ship_amount * ship_size >= max_rand)
-            rand_x -= (ship_size * ship_amount * ship_size);
+        if (rand_x + ship_size * rand_ship_amount >= resolution.x)
+            rand_x -= (ship_size * rand_ship_amount);
         Fleet::createFleet(registry, {rand_x, -200.f}, rand_ship_amount, Fleet::Type::FIGHTER_FLEET_LONG_LINE);
         TimerComponent::reset(fleet_spawn_duration);
     }
@@ -36,4 +35,20 @@ void GameMasterSystem::proccessEvents(entt::registry &registry, const entt::enti
 void GameMasterSystem::update(entt::registry &registry, const entt::entity game_master)
 {
     TimerSystem::update(fleet_spawn_duration);
+}
+
+void GameMasterSystem::increaseScore(const int amount)
+{
+    score += amount;
+}
+
+void GameMasterSystem::resetSystem()
+{
+    difficulty = 1;
+    score = 0;
+}
+
+const int *GameMasterSystem::getScorePointer()
+{
+    return &score;
 }

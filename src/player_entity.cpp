@@ -1,11 +1,12 @@
 #include "player_entity.hpp"
+#include "clean_up_component.hpp"
 #include "collison_component.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
 #include "hitbox_component.hpp"
 #include "input_component.hpp"
-#include "message_system.hpp"
 #include "object_component.hpp"
+#include "player_explosion_entity.hpp"
 #include "ship_components.hpp"
 
 namespace PlayerEntity {
@@ -53,9 +54,21 @@ namespace PlayerEntity {
         auto &health = registry.get<HealthComponent>(a_entity);
         health.health -= damage;
         if (health.health <= 0) {
-            MessageSystem::Message msg = {.msg = MessageSystem::PlaySceneMessage::PLAYER_DIED, 
-            .type = MessageSystem::Type::PLAY_SCENE_MESSAGE};
-            MessageSystem::sendMessage(msg);
+            const auto ship_components = registry.try_get<ShipComponents::Container>(a_entity);
+            if (ship_components) {
+                const auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity); 
+                const auto &rectangle = registry.get<Rectangle>(a_entity); 
+
+                registry.emplace<CleanUpComponent::Component>(ship_components->engine); 
+                registry.emplace<CleanUpComponent::Component>(ship_components->weapon); 
+
+                registry.remove<ShipComponents::Container>(a_entity);
+                registry.remove<CollisionComponent::Component>(a_entity);
+                registry.emplace<CleanUpComponent::Component>(a_entity); 
+                
+                PlayerExplosionEntity::create(registry, rectangle);
+                PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
+            }
         }
         int current_frame = sprite.sprite->getCurrentSpriteFrame();
         if (current_frame < 3) {

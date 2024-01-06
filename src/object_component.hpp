@@ -29,3 +29,9 @@ struct HealthComponent {
 struct DamageComponent {
     int damage;
 };
+
+namespace ObjectComponent {
+    struct Score {
+        const int score;
+    };
+}

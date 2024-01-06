@@ -13,6 +13,11 @@ public:
     void update() override;
     void draw() const override;
 private:
+    void onPlayerDestroy()
+    {
+        current_state = State::GAME_OVER; 
+    }
+
     // Pause state
     void proccessPause();
     void updatePause();
