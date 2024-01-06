@@ -14,7 +14,8 @@ namespace Game {
     bool running = false;
     
     void proccessMessages(MessageSystem::Message msg);
-    void proccessSceneMessages(MessageSystem::SceneMessage msg);
+    void proccessSceneMessages(const MessageSystem::SceneMessage msg);
+    void proccessGameSceneMessages(const MessageSystem::PlaySceneMessage msg);
     void proccessEvents();
     void update();
     void draw();
@@ -93,12 +94,15 @@ void Game::proccessMessages(MessageSystem::Message msg)
     case SCENE_MESSAGE:
         proccessSceneMessages(entt::any_cast<MessageSystem::SceneMessage>(msg.msg));
         break;
+    case PLAY_SCENE_MESSAGE:
+        current_scene->sendMessage(msg);
+        break;
     default: 
         break;
     }
 }
 
-void Game::proccessSceneMessages(MessageSystem::SceneMessage msg)
+void Game::proccessSceneMessages(const MessageSystem::SceneMessage msg)
 {
     switch(msg) {
     using enum MessageSystem::SceneMessage;
@@ -115,4 +119,8 @@ void Game::proccessSceneMessages(MessageSystem::SceneMessage msg)
         running = false;
         break;
     } 
+}
+
+void Game::proccessGameSceneMessages(const MessageSystem::PlaySceneMessage msg)
+{
 }

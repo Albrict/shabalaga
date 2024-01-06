@@ -5,12 +5,17 @@
 namespace MessageSystem {
     enum class Type {
         SCENE_MESSAGE,
+        PLAY_SCENE_MESSAGE
     };
     enum class SceneMessage {
         MENU,
         PLAY,
         SETTINGS,
         EXIT
+    };
+    
+    enum class PlaySceneMessage {
+        PLAYER_DIED 
     };
 
     struct Message {
@@ -21,8 +26,9 @@ namespace MessageSystem {
         typedef void(*proccessMessagesCallback)(Message msg);
         void proccessMessages(Message msg)
         { cb(msg); }
-        proccessMessagesCallback cb; 
+        proccessMessagesCallback cb;
     };
+    
     void registrListener(std::unique_ptr<Listener> listener, const std::string_view &key);
     void unregistrListener(const std::string_view &key);
     void sendMessage(Message msg);
