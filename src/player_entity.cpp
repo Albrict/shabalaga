@@ -4,6 +4,7 @@
 #include "graphics_component.hpp"
 #include "hitbox_component.hpp"
 #include "input_component.hpp"
+#include "message_system.hpp"
 #include "object_component.hpp"
 #include "ship_components.hpp"
 
@@ -43,9 +44,19 @@ namespace PlayerEntity {
     void collisionCallback(entt::registry &registry, const entt::entity a_entity, const entt::entity b_entity)
     {
         const auto type = registry.get<ObjectType>(b_entity);
+        int damage = 0;
         if (type == ObjectType::PROJECTILE)
             return;
+        if (type == ObjectType::ENEMY_PROJECTILE)
+            damage = registry.get<DamageComponent>(b_entity).damage;
         auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity);
+        auto &health = registry.get<HealthComponent>(a_entity);
+        health.health -= damage;
+        if (health.health <= 0) {
+            MessageSystem::Message msg = {.msg = MessageSystem::PlaySceneMessage::PLAYER_DIED, 
+            .type = MessageSystem::Type::PLAY_SCENE_MESSAGE};
+            MessageSystem::sendMessage(msg);
+        }
         int current_frame = sprite.sprite->getCurrentSpriteFrame();
         if (current_frame < 3) {
             ++current_frame;

@@ -4,6 +4,7 @@
 #include "graphics.hpp"
 #include "graphics_system.hpp"
 #include "input_system.hpp"
+#include "message_system.hpp"
 #include "player_entity.hpp"
 #include "object_system.hpp"
 #include "engine_entity.hpp"
@@ -17,9 +18,10 @@
 
 GameScene::GameScene()
 {
-    auto listener = std::make_unique<MessageSystem::Listener>();
     initGameObjects();
     initPauseWidgets();
+    initGameOverWidgets();
+
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("battle_background"), -50.f);
     bg_music = ResourceSystem::getMusic("bg_music");
     PlayMusicStream(bg_music);
@@ -27,12 +29,24 @@ GameScene::GameScene()
 
 void GameScene::proccessEvents()
 {
+    if (is_received) {
+        const auto msg = entt::any_cast<MessageSystem::PlaySceneMessage>(received_msg.msg);
+        switch(msg) {
+        case MessageSystem::PlaySceneMessage::PLAYER_DIED:
+            current_state = State::GAME_OVER;
+            break; 
+        }
+        is_received = false;
+    }
     switch(current_state) {
     case State::GAME:
         proccessGame();
         break;
     case State::PAUSE:
         proccessPause();
+        break;
+    case State::GAME_OVER:
+        proccessGameOver();
         break;
     }
 }
@@ -45,6 +59,9 @@ void GameScene::update()
         break;
     case State::PAUSE:
         updatePause();
+        break;
+    case State::GAME_OVER:
+        updateGameOver();
         break;
     }
     UpdateMusicStream(bg_music);
@@ -59,6 +76,9 @@ void GameScene::draw() const
             break;
         case State::PAUSE:
             drawPause();
+            break;
+        case State::GAME_OVER:
+            drawGameOver();
             break;
         }
     Graphics::endRender();
@@ -109,6 +129,27 @@ void GameScene::drawGame() const
     GraphicsSystem::draw(object_registry);
 }
 
+void GameScene::proccessGameOver()
+{
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::MENU,
+                                      .type = MessageSystem::Type::SCENE_MESSAGE };
+        MessageSystem::sendMessage(msg);
+    }
+    WidgetSystem::proccessEvents(game_over_registry);
+}
+
+void GameScene::updateGameOver()
+{
+    WidgetSystem::update(game_over_registry);
+}
+
+void GameScene::drawGameOver() const
+{
+    GraphicsSystem::draw(object_registry);
+    GraphicsSystem::draw(game_over_registry);
+}
+
 void GameScene::initGameObjects()
 {
     auto player = object_registry.create();
@@ -147,4 +188,25 @@ void GameScene::initPauseWidgets()
     button_rect = {initial_x, initial_y, button_width, button_height};
     entity = WidgetComponents::createButton(pause_registry, button_rect, back_to_menu);
     pause_registry.emplace<WidgetCallback>(entity, exitCallback, nullptr);
+}
+
+void GameScene::initGameOverWidgets()
+{
+    using WidgetComponents::WidgetCallback;
+    const Vector2 resolution = Graphics::getCurrentResolution();
+    const float button_width = resolution.x / 10.f;
+    const float button_height = resolution.y / 20.f;
+    const float initial_x = resolution.x / 2 - button_width / 2;
+    const char *continue_label = "Restart";
+    const char *back_to_menu = "Main menu";
+
+    float initial_y = resolution.y / 3 - button_height;
+    Rectangle button_rect = {initial_x, initial_y, button_width, button_height};
+    auto entity = WidgetComponents::createButton(game_over_registry, button_rect, continue_label);
+    game_over_registry.emplace<WidgetCallback>(entity, restartCallback, nullptr);
+    initial_y += button_height * 2;
+
+    button_rect = {initial_x, initial_y, button_width, button_height};
+    entity = WidgetComponents::createButton(game_over_registry, button_rect, back_to_menu);
+    game_over_registry.emplace<WidgetCallback>(entity, exitCallback, nullptr);
 }

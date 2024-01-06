@@ -40,7 +40,7 @@ entt::entity BulletEntity::create(entt::registry &object_registry, const Rectang
     auto &container = object_registry.emplace<HitboxComponent::Container>(projectile_entity, projectile_entity);
     
     object_registry.emplace<Rectangle>(projectile_entity, rect);
-    object_registry.emplace<DamageComponent>(projectile_entity, 10); 
+    object_registry.emplace<DamageComponent>(projectile_entity, 33); 
     object_registry.emplace<VelocityComponent>(projectile_entity, velocity);
 
     object_registry.emplace<GraphicsComponent::RenderPriority>(projectile_entity, GraphicsComponent::RenderPriority::HIGH);
