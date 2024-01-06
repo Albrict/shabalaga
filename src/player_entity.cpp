@@ -11,7 +11,7 @@ namespace PlayerEntity {
     void moveLeft(entt::registry &registry, const entt::entity entity)
     {
         const Vector2 resolution = Graphics::getCurrentResolution();
-        const float movement = resolution.x / 4.f * GetFrameTime();
+        const float movement = resolution.x / 3.f * GetFrameTime();
         auto &position = registry.get<Rectangle>(entity);
         position.x -= movement; 
     }
@@ -19,7 +19,7 @@ namespace PlayerEntity {
     void moveRight(entt::registry &registry, const entt::entity entity)
     {
         const Vector2 resolution = Graphics::getCurrentResolution();
-        const float movement = resolution.x / 4.f * GetFrameTime();
+        const float movement = resolution.x / 3.f * GetFrameTime();
         auto &position = registry.get<Rectangle>(entity);
         position.x += movement; 
     }
@@ -27,7 +27,7 @@ namespace PlayerEntity {
     void moveUp(entt::registry &registry, const entt::entity entity)
     {
         const Vector2 resolution = Graphics::getCurrentResolution();
-        const float movement = resolution.x / 4.f * GetFrameTime();
+        const float movement = resolution.x / 3.f * GetFrameTime();
         auto &position = registry.get<Rectangle>(entity);
         position.y -= movement; 
     }
@@ -35,7 +35,7 @@ namespace PlayerEntity {
     void moveDown(entt::registry &registry, const entt::entity entity)
     {
         const Vector2 resolution = Graphics::getCurrentResolution();
-        const float movement = resolution.x / 4.f * GetFrameTime();
+        const float movement = resolution.x / 3.f * GetFrameTime();
         auto &position = registry.get<Rectangle>(entity);
         position.y += movement; 
     }

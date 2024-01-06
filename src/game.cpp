@@ -27,8 +27,9 @@ void Game::init()
     listener->cb = proccessMessages;
     MessageSystem::registrListener(std::move(listener), "game_loop");
     Graphics::init();
+    InitAudioDevice();
     loadResources();
-    
+       
     current_scene = std::make_unique<MainMenuScene>();
 
     running = true;
@@ -51,12 +52,14 @@ void Game::quit()
 {
     MessageSystem::unregistrListener("game_loop");
     ResourceSystem::unloadResources();
+    CloseAudioDevice();
 }
 
 void Game::loadResources()
 {
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
     ResourceSystem::loadTexture("assets/backgrounds/battle.png", "battle_background");
+
     ResourceSystem::loadSprite("assets/objects/ship/full_health.aseprite", "ship");
     ResourceSystem::loadSprite("assets/objects/engines/base_engine_powering.aseprite", "base_engine");
     ResourceSystem::loadSprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
@@ -67,6 +70,20 @@ void Game::loadResources()
     ResourceSystem::loadSprite("assets/effects/small_explosion.aseprite", "small_explosion");
     ResourceSystem::loadSprite("assets/effects/fighter_explosion.aseprite", "fighter_explosion");
     ResourceSystem::loadSprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
+
+    ResourceSystem::loadSound("assets/sound/enemy_defeated_01.wav", "enemy_destroyed_01");
+    ResourceSystem::loadSound("assets/sound/enemy_defeated_02.wav", "enemy_destroyed_02");
+    ResourceSystem::loadSound("assets/sound/attack_01.wav", "attack_01");
+    ResourceSystem::loadSound("assets/sound/attack_02.wav", "attack_02");
+    ResourceSystem::loadSound("assets/sound/hitsound_01.wav", "hitsound_01");
+    ResourceSystem::loadSound("assets/sound/hitsound_02.wav", "hitsound_02");
+    ResourceSystem::loadSound("assets/sound/player_hitsound_01.wav", "player_hitsound_01");
+    ResourceSystem::loadSound("assets/sound/player_hitsound_02.wav", "player_hitsound_02");
+    ResourceSystem::loadSound("assets/sound/player_defeated.wav", "player_defeated");
+    ResourceSystem::loadSound("assets/sound/ui_01.wav", "ui_01");
+    ResourceSystem::loadSound("assets/sound/pause_in.wav", "pause_in");
+    ResourceSystem::loadSound("assets/sound/pause_out.wav", "pause_out");
+    ResourceSystem::loadMusic("assets/sound/systems.mp3", "bg_music");
 }
 
 void Game::proccessMessages(MessageSystem::Message msg)

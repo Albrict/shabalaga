@@ -13,11 +13,16 @@ namespace BulletEntity {
         const auto type = registry.get<ObjectType>(b_entity);
         if (type == ObjectType::PLAYER_SHIP) {
             // Create explosion
+            const int sound = GetRandomValue(0, 1);
             Rectangle rect = registry.get<Rectangle>(a_entity);
             registry.emplace_or_replace<CleanUpComponent::Component>(a_entity);
             rect.width *= 6.f;
             rect.height *= 6.f;
             SmallExplosionEntity::create(registry, rect);
+            if (sound > 0)
+                PlaySound(ResourceSystem::getSound("player_hitsound_01"));
+            else 
+                PlaySound(ResourceSystem::getSound("player_hitsound_02"));
         } else {
             return;
         }

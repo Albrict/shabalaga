@@ -2,6 +2,7 @@
 #include "message_system.hpp"
 #include "scene.hpp"
 #include "../include/entt.hpp"
+#include "../include/raylib.h"
 
 class GameScene final : public Scene {
 public:
@@ -45,4 +46,5 @@ private:
     };
     State current_state = State::GAME;
     entt::registry pause_registry {};
+    Music bg_music {};
 };

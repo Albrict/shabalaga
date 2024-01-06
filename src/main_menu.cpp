@@ -29,7 +29,7 @@ MainMenuScene::MainMenuScene()
         object_registry.emplace<WidgetCallback>(entity, button_callback[i], nullptr);
         initial_y += button_height * 2;
     }
-    BackgroundComponent::create(object_registry, ResourceSystem::getTexture("menu_background"));
+    BackgroundComponent::create(object_registry, ResourceSystem::getTexture("menu_background"), -30.f);
 }
 
 void MainMenuScene::proccessEvents()
@@ -39,6 +39,7 @@ void MainMenuScene::proccessEvents()
 
 void MainMenuScene::update()
 {
+    GraphicsSystem::update(object_registry);
     ObjectSystem::update(object_registry);
 }
 

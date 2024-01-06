@@ -8,6 +8,11 @@ namespace ResourceSystem {
 
     void loadSprite(const char *path, const std::string_view &key);
     Aseprite *getSprite(const std::string_view &key);
-
+    
+    void loadSound(const char *path, const std::string_view &key);
+    Sound getSound(const std::string_view &key);
+    
+    void loadMusic(const char *path, const std::string_view &key);
+    Music getMusic(const std::string_view &key);
     void unloadResources();
 };
