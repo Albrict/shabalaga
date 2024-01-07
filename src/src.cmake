@@ -14,7 +14,6 @@ set(game_source
     src/graphics.cpp
     src/game_scene.cpp
     src/object_system.cpp
-    src/sprite.cpp
     src/message_system.cpp
     src/widget_components.cpp
     src/background_component.cpp
@@ -22,7 +21,6 @@ set(game_source
     src/engine_entity.cpp
     src/hitbox_system.cpp
     src/physics_system.cpp
-    src/sprite_component.cpp
     src/input_system.cpp
     src/collision_system.cpp
     src/fighter_entity.cpp
@@ -41,4 +39,5 @@ set(game_source
     src/fleet.cpp
     src/fighter_explosion_entity.cpp
     src/player_explosion_entity.cpp
-    src/score_label_system.cpp)
+    src/score_label_system.cpp
+    src/aseprite.cpp)

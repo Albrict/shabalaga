@@ -70,18 +70,15 @@ namespace PlayerEntity {
                 PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
             }
         }
-        int current_frame = sprite.sprite->getCurrentSpriteFrame();
-        if (current_frame < 3) {
-            ++current_frame;
-            sprite.sprite->setFrame(current_frame);
-        }
+        if (sprite.current_frame < 3)
+            ++sprite.current_frame;
     }
 }
 
-entt::entity PlayerEntity::create(entt::registry &object_registry, const Vector2 position, const std::string_view &sprite,
-                                     const float width, const float height)
+entt::entity PlayerEntity::create(entt::registry &object_registry, const Vector2 position, const float width, const float height)
 {
     const Rectangle entity_rectangle = { position.x, position.y, width, height };
+    const std::string_view player_sprite_key = "ship";
     auto player_entity = object_registry.create();
 
     auto &player_sprite = object_registry.emplace<GraphicsComponent::Sprite>(player_entity);
@@ -97,19 +94,19 @@ entt::entity PlayerEntity::create(entt::registry &object_registry, const Vector2
     object_registry.emplace<GraphicsComponent::RenderType>(player_entity, GraphicsComponent::RenderType::SPRITE);
     object_registry.emplace<ObjectType>(player_entity, ObjectType::PLAYER_SHIP);
 
-    player_sprite = GraphicsComponent::createSprite(sprite, width, height);
+    player_sprite = GraphicsComponent::createSprite(player_sprite_key, width, height);
     
     InputComponent::create(input_container, moveLeft, KEY_A, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveRight, KEY_D, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveUp, KEY_W, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveDown, KEY_S, InputComponent::Type::DOWN);
 
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, player_sprite, "hitbox_1",  position);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, player_sprite, "hitbox_2",  position);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, player_sprite, "hitbox_3",  position);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, player_sprite, "hitbox_4",  position);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, player_sprite, "hitbox_5",  position);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, player_sprite, "hitbox_6",  position);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 0,  position, player_sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 1,  position, player_sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 2,  position, player_sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 3,  position, player_sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 4,  position, player_sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 5,  position, player_sprite.scale);
 
     collider = CollisionComponent::create(true, CollisionComponent::Type::BOUNDS, collisionCallback, nullptr); 
      

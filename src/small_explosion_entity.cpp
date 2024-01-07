@@ -20,7 +20,7 @@ entt::entity SmallExplosionEntity::create(entt::registry &registry, const Rectan
     registry.emplace<GraphicsComponent::RenderPriority>(explosion, GraphicsComponent::RenderPriority::HIGH);
     registry.emplace<GraphicsComponent::RenderType>(explosion, GraphicsComponent::RenderType::EFFECT);
     registry.emplace<Rectangle>(explosion, rect);
-    sprite = GraphicsComponent::createAnimation("small_explosion", "explosion", rect.width, rect.height);
+    sprite = GraphicsComponent::createAnimation("small_explosion", 0, rect.width, rect.height);
     GraphicsComponent::addCallback(sprite, explosion_tag_id, last_frame, animationCallback);
     return explosion;
 }

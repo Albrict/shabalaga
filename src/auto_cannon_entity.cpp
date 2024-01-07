@@ -4,6 +4,7 @@
 #include "input_component.hpp"
 #include "object_component.hpp"
 #include "auto_cannon_projectile_entity.hpp"
+
 namespace AutoCannonEntity {
     void fireAutoCannon(entt::registry &registry, const entt::entity entity)
     {
@@ -13,6 +14,7 @@ namespace AutoCannonEntity {
         if (state == WeaponState::IDLE) {
             const auto hitboxes = registry.get<HitboxComponent::Container>(entity).hitboxes; // get hitboxes from container
             const int sound = GetRandomValue(0, 1);
+            const std::string_view key = "auto_cannon";
             for (const auto hitbox : hitboxes) {
                 Rectangle rect = hitbox.rect;
                 rect.x -= rect.width / 2.f;
@@ -21,7 +23,9 @@ namespace AutoCannonEntity {
                 AutoCannonProjectileEntity::create(registry, rect);
             }
             state = WeaponState::FIRING;
-            sprite.sprite->loadAsepriteTag("Firing");
+            sprite.tag = ResourceSystem::getAsepriteTag(key, 1);
+            sprite.current_tag_id = 1;
+
             if (sound > 0) 
                 PlaySound(ResourceSystem::getSound("attack_01"));
             else
@@ -33,8 +37,9 @@ namespace AutoCannonEntity {
     {
         auto &sprite = registry.get<GraphicsComponent::Animation>(entity);
         auto &state = registry.get<WeaponState>(entity);
-        sprite.sprite->setTagFrame(1);
-        sprite.sprite->loadAsepriteTag("Idle");
+        sprite.tag.currentFrame = 1;
+        sprite.current_tag_id = 0;
+        sprite.tag = ResourceSystem::getAsepriteTag("auto_cannon", 0);
         state = WeaponState::IDLE;
     }
 }
@@ -58,11 +63,11 @@ entt::entity AutoCannonEntity::create(entt::registry &object_registry, const Rec
 
         InputComponent::create(input_container, fireAutoCannon, KEY_SPACE, InputComponent::Type::DOWN);
 
-        sprite = GraphicsComponent::createAnimation("auto_cannon", "Idle", rect.width, rect.height);
+        sprite = GraphicsComponent::createAnimation("auto_cannon", 0, rect.width, rect.height);
         
         GraphicsComponent::addCallback(sprite, firing_tag_id, firing_last_frame, autoCannonCallback);
-        HitboxComponent::createHitboxInContainerFromSprite(object_registry, container, sprite, "left_cannon", {rect.x, rect.y});
-        HitboxComponent::createHitboxInContainerFromSprite(object_registry, container, sprite, "right_cannon", {rect.x, rect.y});
+        HitboxComponent::createHitboxInContainerFromAseprite(object_registry, container, "auto_cannon", 0, {rect.x, rect.y}, sprite.scale);
+        HitboxComponent::createHitboxInContainerFromAseprite(object_registry, container, "auto_cannon", 1, {rect.x, rect.y}, sprite.scale);
 
         return weapon_entity;
 }

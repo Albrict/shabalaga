@@ -15,10 +15,10 @@ entt::entity EngineEntity::create(entt::registry &object_registry, const Type ty
     
     switch(type) {
     case Type::BASIC:
-        sprite = GraphicsComponent::createAnimation("base_engine", "powering", width, height);
+        sprite = GraphicsComponent::createAnimation("base_engine", 0, width, height);
         break;
     case Type::FIGHTER:
-        sprite = GraphicsComponent::createAnimation("fighter_engine", "powering", width, height);
+        sprite = GraphicsComponent::createAnimation("fighter_engine", 0, width, height);
         break;
     }
     return engine_entity;

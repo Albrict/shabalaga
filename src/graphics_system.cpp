@@ -36,13 +36,13 @@ namespace GraphicsSystem {
         for (auto [entity, animation] : view.each()) {
             if (!animation.callbacks.empty()) {
                 for (const auto binded_frame : animation.callbacks) {
-                    if (animation.sprite->getCurrentTagId() == binded_frame.tag_id) {
-                        if (animation.sprite->getCurrentTagFrame() == binded_frame.frame)
+                    if (animation.tag.tagId == binded_frame.tag_id) {
+                        if (animation.tag.currentFrame == binded_frame.frame)
                             binded_frame.cb(registry, entity);
                     }
                 }
             }
-            animation.sprite->updateTag(); 
+            Aseprite::UpdateAsepriteTag(&animation.tag);
         }
     }
      
@@ -73,11 +73,11 @@ namespace GraphicsSystem {
         if (render_type == GraphicsComponent::RenderType::SPRITE) {
             const auto &sprite = registry.get<GraphicsComponent::Sprite>(entity);
             const auto &dest_rect = registry.get<Rectangle>(entity);
-            sprite.sprite->drawPro(dest_rect, {0.f, 0.f}, 0.f, WHITE);
+            Aseprite::DrawAsepritePro(sprite.sprite, sprite.current_frame, dest_rect, {0.f, 0.f}, 0.f, WHITE);
         } else {
             const auto &animation = registry.get<GraphicsComponent::Animation>(entity);
             const auto &dest_rect = registry.get<Rectangle>(entity);
-            animation.sprite->drawTagPro(dest_rect, {0.f, 0.f}, 0.f, WHITE);
+            Aseprite::DrawAsepriteTagPro(animation.tag, dest_rect, {0.f, 0.f}, 0.f, WHITE);
         }
     }
 

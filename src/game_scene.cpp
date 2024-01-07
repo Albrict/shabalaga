@@ -161,10 +161,9 @@ void GameScene::initGameObjects()
     const float width = resolution.x / 10.f;
     const Rectangle rect = {position.x, position.y, width, width};
     
-    const std::string_view player_sprite = "ship";
     const std::string_view engine_sprite = "engine"; 
      
-    player = PlayerEntity::create(object_registry, position, player_sprite, width, width);
+    player = PlayerEntity::create(object_registry, position, width, width);
     const auto engine = EngineEntity::create(object_registry, EngineEntity::Type::BASIC, position,width, width);
     const auto weapon = AutoCannonEntity::create(object_registry, rect);
 
