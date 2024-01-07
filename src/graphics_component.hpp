@@ -1,7 +1,7 @@
 #pragma once
 #include "../include/entt.hpp"
 #include "resource_system.hpp"
-#include "sprite.hpp"
+#include "aseprite.hpp"
 
 namespace GraphicsComponent {
     typedef void(*animationCallback)(entt::registry &registry, const entt::entity entity);
@@ -26,25 +26,24 @@ namespace GraphicsComponent {
             int tag_id = 0;
             animationCallback cb = nullptr;
         };
-        std::unique_ptr<Sprite> sprite {};
+        Aseprite::AsepriteTag tag;
         std::vector<bindedFrame> callbacks {};
         float scale = 0.f;
+        int current_tag_id = 0;
     };
     
     struct Sprite {
-        std::unique_ptr<::Sprite> sprite {};
+        Aseprite::Aseprite sprite {};
         float scale = 0.f;
+        int current_frame = 0;
     };
 
-    inline Animation createAnimation(const std::string_view &key, const char *inital_tag, const float width, const float height)
+    inline Animation createAnimation(const std::string_view &key, const unsigned int initial_tag_id, const float width, const float height)
     {
         Animation animation {};   
-        animation.sprite = std::make_unique<::Sprite>();
-        animation.sprite->loadAseprite(ResourceSystem::getSprite(key));
-        animation.sprite->loadAsepriteTag(inital_tag);
-
-        const float sprite_width = animation.sprite->getWidth();
-        const float sprite_height = animation.sprite->getWidth();
+        animation.tag = ResourceSystem::getAsepriteTag(key, initial_tag_id);
+        const float sprite_width = Aseprite::GetAsepriteWidth(animation.tag.aseprite);
+        const float sprite_height = Aseprite::GetAsepriteHeight(animation.tag.aseprite);
 
         animation.scale = std::min(sprite_width / width, sprite_height / height);
         return animation;
@@ -53,10 +52,9 @@ namespace GraphicsComponent {
     inline Sprite createSprite(const std::string_view &key,  const float width, const float height)
     {
         Sprite sprite {};
-        sprite.sprite = std::make_unique<::Sprite>(ResourceSystem::getSprite(key));
-        const float sprite_width = sprite.sprite->getWidth();
-        const float sprite_height = sprite.sprite->getWidth();
-
+        sprite.sprite = ResourceSystem::getAseprite(key); 
+        const float sprite_width = Aseprite::GetAsepriteWidth(sprite.sprite);
+        const float sprite_height = Aseprite::GetAsepriteHeight(sprite.sprite);
         sprite.scale = std::min(sprite_width / width, sprite_height / height);
         return sprite;
     }

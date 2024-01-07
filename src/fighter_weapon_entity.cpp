@@ -3,6 +3,7 @@
 #include "graphics_component.hpp"
 #include "hitbox_component.hpp"
 #include "object_component.hpp"
+#include "resource_system.hpp"
 #include "timer_component.hpp"
 
 namespace FighterWeaponEntity {
@@ -10,8 +11,9 @@ namespace FighterWeaponEntity {
     {
         auto &sprite = registry.get<GraphicsComponent::Animation>(entity);
         auto &state = registry.get<WeaponState>(entity);
-        sprite.sprite->setTagFrame(1);
-        sprite.sprite->loadAsepriteTag("idle");
+        sprite.tag.currentFrame = 1;
+        sprite.current_tag_id = 1; 
+        sprite.tag =  ResourceSystem::getAsepriteTag("fighter_weapon", 1);
         state = WeaponState::IDLE;
     }
 }
@@ -32,10 +34,10 @@ entt::entity FighterWeaponEntity::create(entt::registry &object_registry, const 
     object_registry.emplace<ObjectType>(weapon_entity, ObjectType::SHIP_COMPONENT);
     object_registry.emplace<GraphicsComponent::RenderType>(weapon_entity, GraphicsComponent::RenderType::ANIMATION);
 
-    sprite = GraphicsComponent::createAnimation("fighter_weapon", "idle", rect.width, rect.height);
+    sprite = GraphicsComponent::createAnimation("fighter_weapon", 1, rect.width, rect.height);
     GraphicsComponent::addCallback(sprite, tag_id, last_firing_frame, animationCallback);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, sprite, "left_gun", {rect.x, rect.y});
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, sprite, "right_gun", {rect.x, rect.y});
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, "fighter_weapon", 0, {rect.x, rect.y}, sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, "fighter_weapon", 1, {rect.x, rect.y}, sprite.scale);
     TimerComponent::createTimerInContainer(timer_container, 1.0f, 1);
     return weapon_entity;
 }
@@ -56,7 +58,8 @@ void FighterWeaponEntity::fire(entt::registry &registry, const entt::entity enti
             BulletEntity::create(registry, rect);
         }
         state = WeaponState::FIRING;
-        sprite.sprite->loadAsepriteTag("firing");
+        sprite.current_tag_id = 0;
+        sprite.tag = ResourceSystem::getAsepriteTag("fighter_weapon", 0);
         TimerComponent::reset(timer_container, weapon_reload_timer);
     }
 }

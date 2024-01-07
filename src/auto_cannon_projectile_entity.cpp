@@ -51,10 +51,10 @@ entt::entity AutoCannonProjectileEntity::create(entt::registry &object_registry,
     object_registry.emplace<ObjectType>(projectile_entity, ObjectType::PROJECTILE);
     object_registry.emplace<GraphicsComponent::RenderType>(projectile_entity, GraphicsComponent::RenderType::ANIMATION);
 
-    sprite = GraphicsComponent::createAnimation("auto_cannon_projectile", "Fly", rect.width, rect.height); 
+    sprite = GraphicsComponent::createAnimation("auto_cannon_projectile", 0, rect.width, rect.height); 
     collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, playerProjectileCollision);
 
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, container, sprite, "hitbox_1", {rect.x, rect.y});
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, container, "auto_cannon", 0, {rect.x, rect.y}, sprite.scale);
     GraphicsComponent::addCallback(sprite, explosion_tag_id, last_explosion_frame, autoCannonAnimationCallback);
     return projectile_entity;
 }

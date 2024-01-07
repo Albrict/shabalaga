@@ -1,8 +1,7 @@
 #pragma once
 #include "../include/raylib.h"
 #include "../include/entt.hpp"
-#include "graphics_component.hpp"
-#include "sprite_component.hpp"
+#include "resource_system.hpp"
 
 namespace HitboxComponent {
     struct Hitbox {
@@ -16,52 +15,11 @@ namespace HitboxComponent {
         std::vector<Hitbox> hitboxes {};
     };
     
-    inline void createHitboxInContainer(entt::registry &object_registry, HitboxComponent::Container &container, const SpriteComponent::Component &sprite, 
-                        const char *slice_name, const Vector2 position)
+    inline void createHitboxInContainerFromAseprite(entt::registry &object_registry, HitboxComponent::Container &container, const std::string_view &key, 
+                        const unsigned int slice_id, const Vector2 position, const float scale)
     {
-        const float scale = sprite.scale;
         Hitbox hitbox;
-        hitbox.rect = sprite.sprite->getSlice(slice_name);
-        hitbox.rect.x /= scale;
-        hitbox.rect.y /= scale;
-        hitbox.rect.height /= scale;
-        hitbox.rect.width /= scale;
-            
-        hitbox.x_padding = hitbox.rect.x;
-        hitbox.y_padding = hitbox.rect.y;
-        
-        hitbox.rect.x += position.x;
-        hitbox.rect.y += position.y;
-
-        container.hitboxes.push_back(hitbox);
-    }
-
-    inline void createHitboxInContainerFromSprite(entt::registry &object_registry, HitboxComponent::Container &container, const GraphicsComponent::Animation &sprite, 
-                        const char *slice_name, const Vector2 position)
-    {
-        const float scale = sprite.scale;
-        Hitbox hitbox;
-        hitbox.rect = sprite.sprite->getSlice(slice_name);
-        hitbox.rect.x /= scale;
-        hitbox.rect.y /= scale;
-        hitbox.rect.height /= scale;
-        hitbox.rect.width /= scale;
-            
-        hitbox.x_padding = hitbox.rect.x;
-        hitbox.y_padding = hitbox.rect.y;
-        
-        hitbox.rect.x += position.x;
-        hitbox.rect.y += position.y;
-
-        container.hitboxes.push_back(hitbox);
-    }
-
-    inline void createHitboxInContainerFromSprite(entt::registry &object_registry, HitboxComponent::Container &container, const GraphicsComponent::Sprite &sprite, 
-                        const char *slice_name, const Vector2 position)
-    {
-        const float scale = sprite.scale;
-        Hitbox hitbox;
-        hitbox.rect = sprite.sprite->getSlice(slice_name);
+        hitbox.rect = ResourceSystem::getAsepriteSlice(key, slice_id).bounds;
         hitbox.rect.x /= scale;
         hitbox.rect.y /= scale;
         hitbox.rect.height /= scale;

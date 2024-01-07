@@ -59,6 +59,7 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Vector
     const int last_frame = 7;
     const Vector2 velocity = {0.f, 400.f};
     const int random_direction_timer = 1;
+    const std::string_view fighter_sprite_key = "fighter";
 
     auto &fighter_sprite = object_registry.emplace<GraphicsComponent::Sprite>(fighter_entity);
     auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(fighter_entity, fighter_entity);
@@ -80,9 +81,9 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Vector
     fighter_sprite = GraphicsComponent::createSprite("fighter", width, height);
     collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr); 
     
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, fighter_sprite, "hitbox_1", position);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, fighter_sprite, "hitbox_2", position);
-    HitboxComponent::createHitboxInContainerFromSprite(object_registry, hitbox_container, fighter_sprite, "hitbox_3", position);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, fighter_sprite_key, 0, position, fighter_sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, fighter_sprite_key, 1, position, fighter_sprite.scale);
+    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, fighter_sprite_key, 2, position, fighter_sprite.scale);
     
     ShipComponents::attachComponents(object_registry, fighter_entity, fighter_weapon, fighter_engine);
 
