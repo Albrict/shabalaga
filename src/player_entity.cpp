@@ -101,12 +101,7 @@ entt::entity PlayerEntity::create(entt::registry &object_registry, const Vector2
     InputComponent::create(input_container, moveUp, KEY_W, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveDown, KEY_S, InputComponent::Type::DOWN);
 
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 0,  position, player_sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 1,  position, player_sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 2,  position, player_sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 3,  position, player_sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 4,  position, player_sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, player_sprite_key, 5,  position, player_sprite.scale);
+    HitboxComponent::loadHitboxesInContainer(hitbox_container, player_sprite_key, entity_rectangle);
 
     collider = CollisionComponent::create(true, CollisionComponent::Type::BOUNDS, collisionCallback, nullptr); 
      

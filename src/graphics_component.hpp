@@ -28,35 +28,26 @@ namespace GraphicsComponent {
         };
         Aseprite::AsepriteTag tag;
         std::vector<bindedFrame> callbacks {};
-        float scale = 0.f;
         int current_tag_id = 0;
     };
     
     struct Sprite {
         Aseprite::Aseprite sprite {};
-        float scale = 0.f;
         int current_frame = 0;
     };
 
     inline Animation createAnimation(const std::string_view &key, const unsigned int initial_tag_id, const float width, const float height)
     {
-        Animation animation {};   
-        animation.tag = ResourceSystem::getAsepriteTag(key, initial_tag_id);
-        const float sprite_width = Aseprite::GetAsepriteWidth(animation.tag.aseprite);
-        const float sprite_height = Aseprite::GetAsepriteHeight(animation.tag.aseprite);
-
-        animation.scale = std::min(sprite_width / width, sprite_height / height);
-        return animation;
+        return (Animation){
+            .tag = ResourceSystem::getAsepriteTag(key, initial_tag_id)
+        };
     }
 
     inline Sprite createSprite(const std::string_view &key,  const float width, const float height)
     {
-        Sprite sprite {};
-        sprite.sprite = ResourceSystem::getAseprite(key); 
-        const float sprite_width = Aseprite::GetAsepriteWidth(sprite.sprite);
-        const float sprite_height = Aseprite::GetAsepriteHeight(sprite.sprite);
-        sprite.scale = std::min(sprite_width / width, sprite_height / height);
-        return sprite;
+        return (Sprite) {
+            .sprite = ResourceSystem::getAseprite(key) 
+        };
     }
 
     inline void addCallback(Animation &animation, const int tag_id, const int tag_frame, animationCallback cb)
