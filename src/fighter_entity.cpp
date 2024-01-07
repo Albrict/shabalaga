@@ -60,13 +60,14 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Vector
     const Vector2 velocity = {0.f, 400.f};
     const int random_direction_timer = 1;
     const std::string_view fighter_sprite_key = "fighter";
+    const Rectangle rect = {position.x, position.y, width, height};
 
     auto &fighter_sprite = object_registry.emplace<GraphicsComponent::Sprite>(fighter_entity);
     auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(fighter_entity, fighter_entity);
     auto &collider = object_registry.emplace<CollisionComponent::Component>(fighter_entity); 
     auto &timer_container = object_registry.emplace<TimerComponent::Container>(fighter_entity); 
 
-    object_registry.emplace<Rectangle>(fighter_entity, Rectangle{position.x, position.y, width, height});
+    object_registry.emplace<Rectangle>(fighter_entity, rect);
     object_registry.emplace<HealthComponent>(fighter_entity, 100);
     object_registry.emplace<VelocityComponent>(fighter_entity, velocity);
     object_registry.emplace<ObjectComponent::Score>(fighter_entity, 50); 
@@ -81,9 +82,7 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Vector
     fighter_sprite = GraphicsComponent::createSprite("fighter", width, height);
     collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr); 
     
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, fighter_sprite_key, 0, position, fighter_sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, fighter_sprite_key, 1, position, fighter_sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, fighter_sprite_key, 2, position, fighter_sprite.scale);
+    HitboxComponent::loadHitboxesInContainer(hitbox_container, fighter_sprite_key, rect);
     
     ShipComponents::attachComponents(object_registry, fighter_entity, fighter_weapon, fighter_engine);
 

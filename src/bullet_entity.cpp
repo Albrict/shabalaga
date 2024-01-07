@@ -49,6 +49,6 @@ entt::entity BulletEntity::create(entt::registry &object_registry, const Rectang
 
     sprite = GraphicsComponent::createAnimation("bullet_projectile", 0, rect.width, rect.height); 
     collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, container, "bullet_projectile", 0, {rect.x, rect.y}, sprite.scale);
+    HitboxComponent::loadHitboxesInContainer(container, "bullet_projectile", rect);
     return projectile_entity;
 }

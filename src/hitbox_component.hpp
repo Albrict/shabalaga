@@ -1,6 +1,7 @@
 #pragma once
 #include "../include/raylib.h"
 #include "../include/entt.hpp"
+#include "aseprite.hpp"
 #include "resource_system.hpp"
 
 namespace HitboxComponent {
@@ -15,22 +16,28 @@ namespace HitboxComponent {
         std::vector<Hitbox> hitboxes {};
     };
     
-    inline void createHitboxInContainerFromAseprite(entt::registry &object_registry, HitboxComponent::Container &container, const std::string_view &key, 
-                        const unsigned int slice_id, const Vector2 position, const float scale)
+    inline void loadHitboxesInContainer(HitboxComponent::Container &container, const std::string_view &key, const Rectangle rect)
     {
-        Hitbox hitbox;
-        hitbox.rect = ResourceSystem::getAsepriteSlice(key, slice_id).bounds;
-        hitbox.rect.x /= scale;
-        hitbox.rect.y /= scale;
-        hitbox.rect.height /= scale;
-        hitbox.rect.width /= scale;
-            
-        hitbox.x_padding = hitbox.rect.x;
-        hitbox.y_padding = hitbox.rect.y;
-        
-        hitbox.rect.x += position.x;
-        hitbox.rect.y += position.y;
+        const Aseprite::Aseprite aseprite = ResourceSystem::getAseprite(key);
+        const float sprite_width = Aseprite::GetAsepriteWidth(aseprite);
+        const float sprite_height = Aseprite::GetAsepriteHeight(aseprite);
+        const float scale = std::min(sprite_width / rect.width, sprite_height / rect.height);
 
-        container.hitboxes.push_back(hitbox);
+        for (size_t i = 0; i < Aseprite::GetAsepriteSliceCount(aseprite); ++i) {
+            Hitbox hitbox;
+            hitbox.rect = ResourceSystem::getAsepriteSlice(key, i).bounds;
+            hitbox.rect.x /= scale;
+            hitbox.rect.y /= scale;
+            hitbox.rect.height /= scale;
+            hitbox.rect.width /= scale;
+                
+            hitbox.x_padding = hitbox.rect.x;
+            hitbox.y_padding = hitbox.rect.y;
+            
+            hitbox.rect.x += rect.x;
+            hitbox.rect.y += rect.y;
+
+            container.hitboxes.push_back(hitbox);
+        } 
     }
 }

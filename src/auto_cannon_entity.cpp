@@ -66,8 +66,7 @@ entt::entity AutoCannonEntity::create(entt::registry &object_registry, const Rec
         sprite = GraphicsComponent::createAnimation("auto_cannon", 0, rect.width, rect.height);
         
         GraphicsComponent::addCallback(sprite, firing_tag_id, firing_last_frame, autoCannonCallback);
-        HitboxComponent::createHitboxInContainerFromAseprite(object_registry, container, "auto_cannon", 0, {rect.x, rect.y}, sprite.scale);
-        HitboxComponent::createHitboxInContainerFromAseprite(object_registry, container, "auto_cannon", 1, {rect.x, rect.y}, sprite.scale);
+        HitboxComponent::loadHitboxesInContainer(container, "auto_cannon", rect);
 
         return weapon_entity;
 }

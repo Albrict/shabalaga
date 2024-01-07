@@ -36,8 +36,7 @@ entt::entity FighterWeaponEntity::create(entt::registry &object_registry, const 
 
     sprite = GraphicsComponent::createAnimation("fighter_weapon", 1, rect.width, rect.height);
     GraphicsComponent::addCallback(sprite, tag_id, last_firing_frame, animationCallback);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, "fighter_weapon", 0, {rect.x, rect.y}, sprite.scale);
-    HitboxComponent::createHitboxInContainerFromAseprite(object_registry, hitbox_container, "fighter_weapon", 1, {rect.x, rect.y}, sprite.scale);
+    HitboxComponent::loadHitboxesInContainer(hitbox_container, "fighter_weapon", rect);
     TimerComponent::createTimerInContainer(timer_container, 1.0f, 1);
     return weapon_entity;
 }
