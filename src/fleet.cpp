@@ -7,10 +7,11 @@ namespace Fleet {
     {
         const Vector2 resolution = Graphics::getCurrentResolution(); 
         const float ship_size = resolution.x / 8.f;
-        Vector2 initial_position = position;
+        
+        Rectangle rect = {position.x, position.y, ship_size, ship_size };
         for (size_t i = 0; i < ship_amount; ++i) {
-            const auto fighter_entity = FighterEntity::create(registry, initial_position, ship_size, ship_size);
-            initial_position.x += ship_size; 
+            const auto fighter_entity = FighterEntity::create(registry, rect);
+            rect.x += ship_size; 
         }
     }
 }

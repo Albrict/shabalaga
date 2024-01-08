@@ -1,9 +1,10 @@
 #include "player_entity.hpp"
+#include "auto_cannon_entity.hpp"
 #include "clean_up_component.hpp"
 #include "collison_component.hpp"
+#include "engine_entity.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
-#include "hitbox_component.hpp"
 #include "input_component.hpp"
 #include "object_component.hpp"
 #include "player_explosion_entity.hpp"
@@ -75,35 +76,25 @@ namespace PlayerEntity {
     }
 }
 
-entt::entity PlayerEntity::create(entt::registry &object_registry, const Vector2 position, const float width, const float height)
+entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectangle rect)
 {
-    const Rectangle entity_rectangle = { position.x, position.y, width, height };
+    const auto player_entity = object_registry.create();
+    const auto engine = EngineEntity::create(object_registry, EngineEntity::Type::BASIC, rect);
+    const auto weapon = AutoCannonEntity::create(object_registry, rect);
     const std::string_view player_sprite_key = "ship";
-    auto player_entity = object_registry.create();
 
-    auto &player_sprite = object_registry.emplace<GraphicsComponent::Sprite>(player_entity);
-    auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(player_entity, player_entity);
     auto &input_container = object_registry.emplace<InputComponent::Container>(player_entity);
-    auto &collider = object_registry.emplace<CollisionComponent::Component>(player_entity); 
+    auto &collider = object_registry.emplace<CollisionComponent::Component>(player_entity, 
+                         CollisionComponent::create(true, CollisionComponent::Type::BOUNDS, collisionCallback, nullptr));
     
-    object_registry.emplace<Rectangle>(player_entity, entity_rectangle);
-    object_registry.emplace<HealthComponent>(player_entity, 100);
-    object_registry.emplace<ShipComponents::Container>(player_entity);
-    
-    object_registry.emplace<GraphicsComponent::RenderPriority>(player_entity, GraphicsComponent::RenderPriority::MIDDLE);
-    object_registry.emplace<GraphicsComponent::RenderType>(player_entity, GraphicsComponent::RenderType::SPRITE);
-    object_registry.emplace<ObjectType>(player_entity, ObjectType::PLAYER_SHIP);
+    ShipComponents::addShipComponents(object_registry, player_entity, player_sprite_key, rect, ObjectType::PLAYER_SHIP, 100);     
+    ShipComponents::attachComponents(object_registry, player_entity, weapon, engine);
+    GraphicsComponent::addSpriteComponent(object_registry, player_entity, player_sprite_key, rect, 
+                                          GraphicsComponent::RenderPriority::MIDDLE);
 
-    player_sprite = GraphicsComponent::createSprite(player_sprite_key, width, height);
-    
     InputComponent::create(input_container, moveLeft, KEY_A, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveRight, KEY_D, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveUp, KEY_W, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveDown, KEY_S, InputComponent::Type::DOWN);
-
-    HitboxComponent::loadHitboxesInContainer(hitbox_container, player_sprite_key, entity_rectangle);
-
-    collider = CollisionComponent::create(true, CollisionComponent::Type::BOUNDS, collisionCallback, nullptr); 
-     
     return player_entity;
 }

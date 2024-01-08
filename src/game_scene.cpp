@@ -8,12 +8,9 @@
 #include "message_system.hpp"
 #include "player_entity.hpp"
 #include "object_system.hpp"
-#include "engine_entity.hpp"
 #include "resource_system.hpp"
 #include "physics_system.hpp"
-#include "ship_components.hpp"
 #include "game_master_entity.hpp"
-#include "auto_cannon_entity.hpp"
 #include "widget_components.hpp"
 #include "widget_system.hpp"
 
@@ -154,22 +151,14 @@ void GameScene::drawGameOver() const
 
 void GameScene::initGameObjects()
 {
-    auto player = object_registry.create();
     const Vector2 resolution = Graphics::getCurrentResolution();
     const Rectangle score_rect = {resolution.x / 2.f, 0.f, resolution.x / 2.f, resolution.y / 10.f};
-    const Vector2 position = {resolution.x / 2.f, resolution.y / 1.2f};
-    const float width = resolution.x / 10.f;
-    const Rectangle rect = {position.x, position.y, width, width};
-    
+    const float size = resolution.x / 10.f;
+    const Rectangle rect = {resolution.x / 2.f, resolution.y / 1.2f, size, size};
     const std::string_view engine_sprite = "engine"; 
      
-    player = PlayerEntity::create(object_registry, position, width, width);
-    const auto engine = EngineEntity::create(object_registry, EngineEntity::Type::BASIC, position,width, width);
-    const auto weapon = AutoCannonEntity::create(object_registry, rect);
-
+    const auto player = PlayerEntity::create(object_registry, rect);
     const auto game_master = GameMasterEntity::create(object_registry, player);
-    ShipComponents::attachComponents(object_registry, player, weapon, engine);
-
     WidgetComponents::createScoreLabel(object_registry, score_rect, GameMasterSystem::getScorePointer());
 }
 
