@@ -49,6 +49,22 @@ namespace GraphicsComponent {
             .sprite = ResourceSystem::getAseprite(key) 
         };
     }
+    
+    inline void addSpriteComponent(entt::registry &registry, const entt::entity entity, const std::string_view &key, 
+                                     const Rectangle rect, const RenderPriority priority)
+    {
+        registry.emplace<Sprite>(entity, createSprite(key, rect.width, rect.height));
+        registry.emplace<GraphicsComponent::RenderPriority>(entity, priority); 
+        registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::SPRITE);
+    }
+
+    inline void addAnimationComponent(entt::registry &registry, const entt::entity entity, const std::string_view &key, const unsigned int tag_id,
+                                     const Rectangle rect, const RenderPriority priority)
+    {
+        registry.emplace<Animation>(entity, createAnimation(key, tag_id, rect.width, rect.height));
+        registry.emplace<GraphicsComponent::RenderPriority>(entity, priority); 
+        registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::SPRITE);
+    }
 
     inline void addCallback(Animation &animation, const int tag_id, const int tag_frame, animationCallback cb)
     {

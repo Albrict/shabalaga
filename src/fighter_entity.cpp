@@ -50,42 +50,29 @@ namespace FighterEntity {
     }
 }
 
-entt::entity FighterEntity::create(entt::registry &object_registry, const Vector2 position, const float width, const float height)
+entt::entity FighterEntity::create(entt::registry &object_registry, const Rectangle rect)
 {
-    const auto fighter_weapon = FighterWeaponEntity::create(object_registry, {position.x, position.y, width, height});
-    const auto fighter_engine = EngineEntity::create(object_registry, EngineEntity::Type::FIGHTER, position, width, height);
+    const auto fighter_weapon = FighterWeaponEntity::create(object_registry, rect);
+    const auto fighter_engine = EngineEntity::create(object_registry, EngineEntity::Type::FIGHTER, rect);
     const auto fighter_entity = object_registry.create();
     const int explosion_tag = 1;
     const int last_frame = 7;
     const Vector2 velocity = {0.f, 400.f};
     const int random_direction_timer = 1;
     const std::string_view fighter_sprite_key = "fighter";
-    const Rectangle rect = {position.x, position.y, width, height};
 
-    auto &fighter_sprite = object_registry.emplace<GraphicsComponent::Sprite>(fighter_entity);
-    auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(fighter_entity, fighter_entity);
-    auto &collider = object_registry.emplace<CollisionComponent::Component>(fighter_entity); 
     auto &timer_container = object_registry.emplace<TimerComponent::Container>(fighter_entity); 
 
-    object_registry.emplace<Rectangle>(fighter_entity, rect);
-    object_registry.emplace<HealthComponent>(fighter_entity, 100);
+    object_registry.emplace<CollisionComponent::Component>(fighter_entity, 
+                                             CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr));
     object_registry.emplace<VelocityComponent>(fighter_entity, velocity);
     object_registry.emplace<ObjectComponent::Score>(fighter_entity, 50); 
-
-    object_registry.emplace<ShipComponents::Container>(fighter_entity);
-
-    object_registry.emplace<GraphicsComponent::RenderPriority>(fighter_entity, GraphicsComponent::RenderPriority::MIDDLE);
     object_registry.emplace<BehaviorComponent::Type>(fighter_entity, BehaviorComponent::Type::FIGHTER);
-    object_registry.emplace<ObjectType>(fighter_entity, ObjectType::ENEMY_SHIP);
-    object_registry.emplace<GraphicsComponent::RenderType>(fighter_entity, GraphicsComponent::RenderType::SPRITE);
- 
-    fighter_sprite = GraphicsComponent::createSprite("fighter", width, height);
-    collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr); 
-    
-    HitboxComponent::loadHitboxesInContainer(hitbox_container, fighter_sprite_key, rect);
-    
-    ShipComponents::attachComponents(object_registry, fighter_entity, fighter_weapon, fighter_engine);
 
+    ShipComponents::addShipComponents(object_registry, fighter_entity, fighter_sprite_key, rect, ObjectType::ENEMY_SHIP, 50);     
+    ShipComponents::attachComponents(object_registry, fighter_entity, fighter_weapon, fighter_engine);
+    GraphicsComponent::addSpriteComponent(object_registry, fighter_entity, fighter_sprite_key, rect, 
+                                          GraphicsComponent::RenderPriority::MIDDLE);
     TimerComponent::createTimerInContainer(timer_container, 1.f, random_direction_timer);
     return fighter_entity;
 }
