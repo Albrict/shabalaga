@@ -19,8 +19,9 @@ namespace ShipComponents {
             .engine = engine
         };
     }
-    inline void addShipComponents(entt::registry &registry, const entt::entity entity, const std::string_view &sprite_key, const Rectangle rect, 
-                           const ObjectType object_type, const unsigned int health)
+    inline void addShipComponents(entt::registry &registry, const entt::entity entity, 
+            const std::string_view &sprite_key, const Rectangle rect, const ObjectType object_type, 
+            const int health)
     {
         registry.emplace<Rectangle>(entity, rect);
         registry.emplace<HealthComponent>(entity, health);

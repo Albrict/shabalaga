@@ -8,17 +8,11 @@
 #include "small_explosion_entity.hpp"
 
 namespace AutoCannonProjectileEntity {
-    void autoCannonAnimationCallback(entt::registry &registry, const entt::entity entity)
-    {
-        registry.emplace<CleanUpComponent::Component>(entity);
-    }
 
     void playerProjectileCollision(entt::registry &registry, const entt::entity a_entity, const entt::entity b_entity)
     {
         const auto type = registry.get<ObjectType>(b_entity);
-        if (type == ObjectType::PLAYER_SHIP || type == ObjectType::PROJECTILE || type == ObjectType::ENEMY_PROJECTILE) {
-            return;
-        } else {
+        if (type == ObjectType::ENEMY_SHIP) {
             const Rectangle rect = registry.get<Rectangle>(a_entity);
             const int sound = GetRandomValue(0, 1);
             registry.emplace_or_replace<CleanUpComponent::Component>(a_entity);
@@ -27,6 +21,8 @@ namespace AutoCannonProjectileEntity {
                 PlaySound(ResourceSystem::getSound("hitsound_01"));
             else
                 PlaySound(ResourceSystem::getSound("hitsound_02"));
+        } else {
+            return;
         }
     }
 }
@@ -35,8 +31,6 @@ entt::entity AutoCannonProjectileEntity::create(entt::registry &object_registry,
 {
     const Vector2 resolution = Graphics::getCurrentResolution();
     const Vector2 velocity = {0.f, resolution.y / -1.5f};
-    const int explosion_tag_id = 1;
-    const int last_explosion_frame = 2;
 
     auto projectile_entity = object_registry.create();
     auto &sprite = object_registry.emplace<GraphicsComponent::Animation>(projectile_entity); 
@@ -55,6 +49,5 @@ entt::entity AutoCannonProjectileEntity::create(entt::registry &object_registry,
     collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, playerProjectileCollision);
 
     HitboxComponent::loadHitboxesInContainer(container, "auto_cannon_projectile", rect);
-    GraphicsComponent::addCallback(sprite, explosion_tag_id, last_explosion_frame, autoCannonAnimationCallback);
     return projectile_entity;
 }

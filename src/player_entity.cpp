@@ -49,7 +49,7 @@ namespace PlayerEntity {
         int damage = 0;
         if (type == ObjectType::PROJECTILE)
             return;
-        if (type == ObjectType::ENEMY_PROJECTILE)
+        if (type == ObjectType::ENEMY_PROJECTILE || type == ObjectType::EXPLOSION)
             damage = registry.get<DamageComponent>(b_entity).damage;
         auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity);
         auto &health = registry.get<HealthComponent>(a_entity);
@@ -97,4 +97,23 @@ entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectang
     InputComponent::create(input_container, moveUp, KEY_W, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveDown, KEY_S, InputComponent::Type::DOWN);
     return player_entity;
+}
+
+void PlayerEntity::destroy(entt::registry &registry, const entt::entity player)
+{
+    const auto ship_components = registry.try_get<ShipComponents::Container>(player);
+    if (ship_components) {
+        const auto &sprite = registry.get<GraphicsComponent::Sprite>(player); 
+        const auto &rectangle = registry.get<Rectangle>(player); 
+
+        registry.emplace<CleanUpComponent::Component>(ship_components->engine); 
+        registry.emplace<CleanUpComponent::Component>(ship_components->weapon); 
+
+        registry.remove<ShipComponents::Container>(player);
+        registry.remove<CollisionComponent::Component>(player);
+        registry.emplace<CleanUpComponent::Component>(player); 
+        
+        PlayerExplosionEntity::create(registry, rectangle);
+        PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
+    }
 }

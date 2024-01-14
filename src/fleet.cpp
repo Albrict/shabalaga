@@ -20,8 +20,7 @@ void Fleet::createFleet(entt::registry &registry, const Vector2 position, const 
 {
     switch(type) {
     using enum Fleet::Type;
-    case Type::FIGHTER_FLEET_LONG_LINE:
-    case Type::FIGHTER_FLEET_SHORT_LINE:
+    case Type::FIGHTER_FLEET:
         createFighterFleet(registry, position, ship_amount);
         break;
     }

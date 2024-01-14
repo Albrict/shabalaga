@@ -40,4 +40,6 @@ set(game_source
     src/fighter_explosion_entity.cpp
     src/player_explosion_entity.cpp
     src/score_label_system.cpp
-    src/aseprite.cpp)
+    src/aseprite.cpp
+    src/bomber_entity.cpp
+    src/bomber_explosion_entity.cpp)

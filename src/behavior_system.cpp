@@ -1,5 +1,6 @@
 #include "behavior_system.hpp"
 #include "behavior_component.hpp"
+#include "bomber_entity.hpp"
 #include "fighter_weapon_entity.hpp"
 #include "graphics.hpp"
 #include "object_component.hpp"
@@ -24,14 +25,26 @@ namespace BehaviorSystem {
         }
         FighterWeaponEntity::fire(registry, weapon);
     }
+
+    void proccessBomberBehavior(entt::registry &registry, const entt::entity entity)
+    {
+        const Rectangle player_position = registry.get<ObjectComponent::PlayerPosition>(entity).rect;
+        const Rectangle bomber_position = registry.get<Rectangle>(entity);
+        if (CheckCollisionRecs(player_position, bomber_position))
+            BomberEntity::destroy(registry, entity);
+    }
 }
 void BehaviorSystem::proccessEvents(entt::registry &registry)
 {
     auto view = registry.view<BehaviorComponent::Type>();
     for (auto [entity, type] : view.each()) {
         switch(type) {
+        using enum BehaviorComponent::Type;
         case BehaviorComponent::Type::FIGHTER:
             proccessFighterBehavior(registry, entity);
+            break;
+        case BehaviorComponent::Type::BOMBER:
+            proccessBomberBehavior(registry, entity);
             break;
         }
     }
