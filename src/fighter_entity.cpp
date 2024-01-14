@@ -7,7 +7,6 @@
 #include "fighter_explosion_entity.hpp"
 #include "game_master_system.hpp"
 #include "graphics_component.hpp"
-#include "hitbox_component.hpp"
 #include "object_component.hpp"
 #include "ship_components.hpp"
 #include "timer_component.hpp"
@@ -19,7 +18,7 @@ namespace FighterEntity {
         if (rect.y + rect.height <= 0.f)
             return;
         const auto type = registry.get<ObjectType>(b_entity);
-        if (type == ObjectType::PROJECTILE) {
+        if (type == ObjectType::PROJECTILE || type == ObjectType::EXPLOSION) {
             const int damage = registry.get<DamageComponent>(b_entity).damage;
             auto &health = registry.get<HealthComponent>(a_entity); 
             health.health -= damage;

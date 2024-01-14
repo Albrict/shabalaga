@@ -19,6 +19,9 @@ entt::entity EngineEntity::create(entt::registry &object_registry, const Type ty
     case Type::FIGHTER:
         sprite = GraphicsComponent::createAnimation("fighter_engine", 0, rect.width, rect.height);
         break;
+    case Type::BOMBER:
+        sprite = GraphicsComponent::createAnimation("bomber_engine", 0, rect.width, rect.height);
+        break;
     }
     return engine_entity;
 }

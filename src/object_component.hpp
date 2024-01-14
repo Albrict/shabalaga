@@ -7,6 +7,7 @@ enum class ObjectType {
     ENEMY_SHIP,
     SHIP_COMPONENT,
     PROJECTILE,
+    EXPLOSION,
     ENEMY_PROJECTILE,
     WIDGET,
     GAME_MASTER
@@ -33,5 +34,9 @@ struct DamageComponent {
 namespace ObjectComponent {
     struct Score {
         const int score;
+    };
+
+    struct PlayerPosition {
+        Rectangle rect;
     };
 }

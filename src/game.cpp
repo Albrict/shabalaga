@@ -58,21 +58,37 @@ void Game::quit()
 
 void Game::loadResources()
 {
+    // Backgrounds
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
     ResourceSystem::loadTexture("assets/backgrounds/battle.png", "battle_background");
-
+    
+    // Player
     ResourceSystem::loadAseprite("assets/objects/ship/full_health.aseprite", "ship");
-    ResourceSystem::loadAseprite("assets/objects/engines/base_engine_powering.aseprite", "base_engine");
-    ResourceSystem::loadAseprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
-    ResourceSystem::loadAseprite("assets/objects/projectiles/auto_cannon_projectile.aseprite", "auto_cannon_projectile");
-    ResourceSystem::loadAseprite("assets/objects/enemies/fighter.aseprite", "fighter");
+    
+    // Engines
+    ResourceSystem::loadAseprite("assets/objects/engines/bomber_engine.aseprite", "bomber_engine"); 
     ResourceSystem::loadAseprite("assets/objects/engines/fighter_engine.aseprite", "fighter_engine");
+    ResourceSystem::loadAseprite("assets/objects/engines/base_engine_powering.aseprite", "base_engine");
+    
+    // Weapons
+    ResourceSystem::loadAseprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
     ResourceSystem::loadAseprite("assets/objects/weapons/fighter_weapon.aseprite", "fighter_weapon");
+    
+    // Projectiles 
+    ResourceSystem::loadAseprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
+    ResourceSystem::loadAseprite("assets/objects/projectiles/auto_cannon_projectile.aseprite", "auto_cannon_projectile");
+
+    // Enemies 
+    ResourceSystem::loadAseprite("assets/objects/enemies/bomber.aseprite", "bomber"); 
+    ResourceSystem::loadAseprite("assets/objects/enemies/fighter.aseprite", "fighter");
+    
+    // Explosions
+    ResourceSystem::loadAseprite("assets/effects/player_explosion.aseprite", "player_explosion");
+    ResourceSystem::loadAseprite("assets/effects/bomber_explosion.aseprite", "bomber_explosion");
     ResourceSystem::loadAseprite("assets/effects/small_explosion.aseprite", "small_explosion");
     ResourceSystem::loadAseprite("assets/effects/fighter_explosion.aseprite", "fighter_explosion");
-    ResourceSystem::loadAseprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
-    ResourceSystem::loadAseprite("assets/effects/player_explosion.aseprite", "player_explosion");
-    
+
+    // Sounds
     ResourceSystem::loadSound("assets/sound/enemy_defeated_01.wav", "enemy_destroyed_01");
     ResourceSystem::loadSound("assets/sound/enemy_defeated_02.wav", "enemy_destroyed_02");
     ResourceSystem::loadSound("assets/sound/attack_01.wav", "attack_01");
@@ -85,6 +101,8 @@ void Game::loadResources()
     ResourceSystem::loadSound("assets/sound/ui_01.wav", "ui_01");
     ResourceSystem::loadSound("assets/sound/pause_in.wav", "pause_in");
     ResourceSystem::loadSound("assets/sound/pause_out.wav", "pause_out");
+
+    // Music
     ResourceSystem::loadMusic("assets/sound/systems.mp3", "bg_music");
 }
 
@@ -124,4 +142,5 @@ void Game::proccessSceneMessages(const MessageSystem::SceneMessage msg)
 
 void Game::proccessGameSceneMessages(const MessageSystem::PlaySceneMessage msg)
 {
+
 }
