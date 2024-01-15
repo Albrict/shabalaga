@@ -181,6 +181,15 @@ namespace GraphicsSystem {
         }
     }
 
+    void renderUI(const entt::registry &registry)
+    {
+        const auto &view = registry.view<ObjectType>(); 
+        for (auto [entity, type] : view.each()) {
+            if (type == ObjectType::HUD) 
+                renderEntity(registry, entity);
+        } 
+    }
+
 }
 void GraphicsSystem::update(entt::registry &registry)
 { 
@@ -197,5 +206,5 @@ void GraphicsSystem::draw(const entt::registry &registry)
     renderPriorityLow(registry);
     renderHitboxes(registry);
     renderWidget(registry);
-    renderFade(registry);
+    renderUI(registry); 
 }

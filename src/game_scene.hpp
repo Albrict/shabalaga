@@ -13,10 +13,7 @@ public:
     void update() override;
     void draw() const override;
 private:
-    void onPlayerDestroy()
-    {
-        current_state = State::GAME_OVER; 
-    }
+    void fuelOutPlayer();
 
     // Pause state
     void proccessPause();
@@ -42,6 +39,7 @@ private:
     { 
         GameScene *scene = entt::any_cast<GameScene*>(data);
         scene->current_state = State::GAME;
+        ResumeMusicStream(scene->bg_music);
     }
     
     static void restartCallback(entt::any data)
@@ -64,6 +62,7 @@ private:
         GAME,
         GAME_OVER
     };
+    entt::entity player = entt::null;
     State current_state = State::GAME;
     entt::registry pause_registry {};
     entt::registry game_over_registry {};

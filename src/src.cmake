@@ -42,4 +42,7 @@ set(game_source
     src/score_label_system.cpp
     src/aseprite.cpp
     src/bomber_entity.cpp
-    src/bomber_explosion_entity.cpp)
+    src/bomber_explosion_entity.cpp
+    src/fuel_pickup_entity.cpp
+    src/fuel_bar.cpp
+    src/fuel_system.cpp)

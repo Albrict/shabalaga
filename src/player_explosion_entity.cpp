@@ -18,12 +18,10 @@ void PlayerExplosionEntity::create(entt::registry &registry, const Rectangle rec
     const auto explosion = registry.create();
     const int explosion_tag_id = 0;
     const int last_frame = 8;
+    const std::string_view key = "player_explosion";
 
-    auto &sprite = registry.emplace<GraphicsComponent::Animation>(explosion);
-   
-    registry.emplace<GraphicsComponent::RenderPriority>(explosion, GraphicsComponent::RenderPriority::HIGH);
-    registry.emplace<GraphicsComponent::RenderType>(explosion, GraphicsComponent::RenderType::EFFECT);
     registry.emplace<Rectangle>(explosion, rect);
-    sprite = GraphicsComponent::createAnimation("player_explosion", 0, rect.width, rect.height);
-    GraphicsComponent::addCallback(sprite, explosion_tag_id, last_frame, animationCallback);
+
+    GraphicsComponent::addAnimationComponent(registry, explosion, key, explosion_tag_id, rect, GraphicsComponent::RenderPriority::HIGH);
+    GraphicsComponent::addCallback(registry, explosion, explosion_tag_id, last_frame, animationCallback);
 }

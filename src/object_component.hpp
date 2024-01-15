@@ -10,7 +10,9 @@ enum class ObjectType {
     EXPLOSION,
     ENEMY_PROJECTILE,
     WIDGET,
-    GAME_MASTER
+    GAME_MASTER,
+    PICK_UP,
+    HUD
 };
 
 enum class WeaponState {

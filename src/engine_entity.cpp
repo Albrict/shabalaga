@@ -5,22 +5,18 @@
 entt::entity EngineEntity::create(entt::registry &object_registry, const Type type, const Rectangle rect)
 {
     const auto engine_entity = object_registry.create();
-    auto &sprite = object_registry.emplace<GraphicsComponent::Animation>(engine_entity);
     object_registry.emplace<Rectangle>(engine_entity, rect);
-
-    object_registry.emplace<GraphicsComponent::RenderPriority>(engine_entity, GraphicsComponent::RenderPriority::HIGH);
-    object_registry.emplace<GraphicsComponent::RenderType>(engine_entity, GraphicsComponent::RenderType::ANIMATION);
     object_registry.emplace<ObjectType>(engine_entity, ObjectType::SHIP_COMPONENT);
-    
+
     switch(type) {
     case Type::BASIC:
-        sprite = GraphicsComponent::createAnimation("base_engine", 0, rect.width, rect.height);
+        GraphicsComponent::addAnimationComponent(object_registry, engine_entity, "base_engine", 1, rect, GraphicsComponent::RenderPriority::HIGH);
         break;
     case Type::FIGHTER:
-        sprite = GraphicsComponent::createAnimation("fighter_engine", 0, rect.width, rect.height);
+        GraphicsComponent::addAnimationComponent(object_registry, engine_entity, "fighter_engine", 0, rect, GraphicsComponent::RenderPriority::HIGH);
         break;
     case Type::BOMBER:
-        sprite = GraphicsComponent::createAnimation("bomber_engine", 0, rect.width, rect.height);
+        GraphicsComponent::addAnimationComponent(object_registry, engine_entity, "bomber_engine", 0, rect, GraphicsComponent::RenderPriority::HIGH);
         break;
     }
     return engine_entity;
