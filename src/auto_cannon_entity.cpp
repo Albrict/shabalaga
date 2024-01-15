@@ -49,23 +49,18 @@ entt::entity AutoCannonEntity::create(entt::registry &object_registry, const Rec
         const auto weapon_entity = object_registry.create();
         const int firing_tag_id = 1;
         const int firing_last_frame = 5;
+        const std::string_view key = "auto_cannon";
 
-        auto &sprite = object_registry.emplace<GraphicsComponent::Animation>(weapon_entity);
         auto &container = object_registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
         auto &input_container = object_registry.emplace<InputComponent::Container>(weapon_entity);
 
         object_registry.emplace<Rectangle>(weapon_entity, rect);
         object_registry.emplace<WeaponState>(weapon_entity, WeaponState::IDLE);
-        
-        object_registry.emplace<GraphicsComponent::RenderPriority>(weapon_entity, GraphicsComponent::RenderPriority::HIGH);
-        object_registry.emplace<GraphicsComponent::RenderType>(weapon_entity, GraphicsComponent::RenderType::ANIMATION);
         object_registry.emplace<ObjectType>(weapon_entity, ObjectType::SHIP_COMPONENT);
 
         InputComponent::create(input_container, fireAutoCannon, KEY_SPACE, InputComponent::Type::DOWN);
-
-        sprite = GraphicsComponent::createAnimation("auto_cannon", 0, rect.width, rect.height);
-        
-        GraphicsComponent::addCallback(sprite, firing_tag_id, firing_last_frame, autoCannonCallback);
+        GraphicsComponent::addAnimationComponent(object_registry, weapon_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
+        GraphicsComponent::addCallback(object_registry, weapon_entity, firing_tag_id, firing_last_frame, autoCannonCallback);
         HitboxComponent::loadHitboxesInContainer(container, "auto_cannon", rect);
 
         return weapon_entity;

@@ -87,6 +87,12 @@ void Game::loadResources()
     ResourceSystem::loadAseprite("assets/effects/bomber_explosion.aseprite", "bomber_explosion");
     ResourceSystem::loadAseprite("assets/effects/small_explosion.aseprite", "small_explosion");
     ResourceSystem::loadAseprite("assets/effects/fighter_explosion.aseprite", "fighter_explosion");
+    
+    // Pick ups 
+    ResourceSystem::loadAseprite("assets/pickups/fuel.aseprite", "fuel_pickup");
+    
+    // Hud 
+    ResourceSystem::loadAseprite("assets/ui/fuel_bar.aseprite", "fuel_bar");
 
     // Sounds
     ResourceSystem::loadSound("assets/sound/enemy_defeated_01.wav", "enemy_destroyed_01");

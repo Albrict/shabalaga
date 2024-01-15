@@ -1,5 +1,6 @@
 #include "object_system.hpp"
 #include "behavior_system.hpp"
+#include "fuel_system.hpp"
 #include "hitbox_system.hpp"
 #include "object_component.hpp"
 #include "ship_components_system.hpp"
@@ -18,6 +19,9 @@ void ObjectSystem::proccessEvents(entt::registry &registry)
             break;
         case GAME_MASTER:
             GameMasterSystem::proccessEvents(registry, entity);            
+            break;
+        case HUD:
+            FuelSystem::proccessEvents(registry, entity);
             break;
         default:
             break;

@@ -15,7 +15,8 @@ namespace MessageSystem {
     };
     
     enum class PlaySceneMessage {
-        PLAYER_DIED 
+        PLAYER_DIED,
+        OUT_OF_FUEL
     };
 
     struct Message {

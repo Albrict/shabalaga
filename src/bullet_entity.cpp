@@ -31,23 +31,20 @@ namespace BulletEntity {
 
 entt::entity BulletEntity::create(entt::registry &object_registry, const Rectangle rect)
 {
+    const entt::entity projectile_entity = object_registry.create();
     const Vector2 resolution = Graphics::getCurrentResolution();
     const Vector2 velocity = {0.f, resolution.y / 2.f};
-    const auto projectile_entity = object_registry.create();
+    const std::string_view key = "bullet_projectile";
 
-    auto &sprite = object_registry.emplace<GraphicsComponent::Animation>(projectile_entity); 
     auto &collider = object_registry.emplace<CollisionComponent::Component>(projectile_entity);
     auto &container = object_registry.emplace<HitboxComponent::Container>(projectile_entity, projectile_entity);
     
     object_registry.emplace<Rectangle>(projectile_entity, rect);
     object_registry.emplace<DamageComponent>(projectile_entity, 33); 
     object_registry.emplace<VelocityComponent>(projectile_entity, velocity);
-
-    object_registry.emplace<GraphicsComponent::RenderPriority>(projectile_entity, GraphicsComponent::RenderPriority::HIGH);
-    object_registry.emplace<GraphicsComponent::RenderType>(projectile_entity, GraphicsComponent::RenderType::ANIMATION);
     object_registry.emplace<ObjectType>(projectile_entity, ObjectType::ENEMY_PROJECTILE);
 
-    sprite = GraphicsComponent::createAnimation("bullet_projectile", 0, rect.width, rect.height); 
+    GraphicsComponent::addAnimationComponent(object_registry, projectile_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
     collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback);
     HitboxComponent::loadHitboxesInContainer(container, "bullet_projectile", rect);
     return projectile_entity;

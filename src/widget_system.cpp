@@ -4,7 +4,6 @@
 #include "button_system.hpp"
 #include "slider_system.hpp"
 #include "panel_system.hpp"
-#include "label_system.hpp"
 #include "score_label_system.hpp"
 
 using WidgetComponents::Type;

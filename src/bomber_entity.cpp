@@ -16,33 +16,16 @@ namespace BomberEntity {
         if (rect.y + rect.height <= 0.f)
             return;
         const auto type = registry.get<ObjectType>(b_entity);
-        if (type == ObjectType::PROJECTILE || type == ObjectType::EXPLOSION) {
-            const int damage = registry.get<DamageComponent>(b_entity).damage;
+        if (type == ObjectType::PLAYER_SHIP|| type == ObjectType::PROJECTILE) {
             auto &health = registry.get<HealthComponent>(a_entity); 
-            health.health -= damage;
-            if (health.health <= 0) {
-                const auto ship_components = registry.try_get<ShipComponents::Container>(a_entity);
-                const int sound = GetRandomValue(0, 1);
-                if (ship_components) {
-                    const auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity); 
-                    const int score = registry.get<ObjectComponent::Score>(a_entity).score; 
-
-                    registry.emplace<CleanUpComponent::Component>(ship_components->engine); 
-                    registry.emplace<CleanUpComponent::Component>(ship_components->weapon); 
-
-                    registry.remove<BehaviorComponent::Type>(a_entity);  
-                    registry.remove<ShipComponents::Container>(a_entity);
-                    registry.remove<CollisionComponent::Component>(a_entity);
-                    registry.emplace<CleanUpComponent::Component>(a_entity); 
-                    
-                    BomberExplosionEntity::create(registry, rect);
-                    if (sound > 0)
-                        PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
-                    else
-                        PlaySound(ResourceSystem::getSound("enemy_destroyed_02"));
-                    GameMasterSystem::increaseScore(score);
-                }
+            if (type == ObjectType::PLAYER_SHIP) {
+                health.health -= health.health;
+            } else {
+                const int damage = registry.get<DamageComponent>(b_entity).damage;
+                health.health -= damage;
             }
+            if (health.health <= 0)
+                destroy(registry, a_entity);
         } 
     }
 }

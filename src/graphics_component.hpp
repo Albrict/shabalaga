@@ -17,7 +17,8 @@ namespace GraphicsComponent {
     enum class RenderPriority {
         LOW,
         MIDDLE,
-        HIGH
+        HIGH,
+        NONE
     };
 
     struct Animation {
@@ -36,24 +37,11 @@ namespace GraphicsComponent {
         int current_frame = 0;
     };
 
-    inline Animation createAnimation(const std::string_view &key, const unsigned int initial_tag_id, const float width, const float height)
-    {
-        return (Animation){
-            .tag = ResourceSystem::getAsepriteTag(key, initial_tag_id)
-        };
-    }
-
-    inline Sprite createSprite(const std::string_view &key,  const float width, const float height)
-    {
-        return (Sprite) {
-            .sprite = ResourceSystem::getAseprite(key) 
-        };
-    }
-    
     inline void addSpriteComponent(entt::registry &registry, const entt::entity entity, const std::string_view &key, 
                                      const Rectangle rect, const RenderPriority priority)
     {
-        registry.emplace<Sprite>(entity, createSprite(key, rect.width, rect.height));
+        Sprite sprite = {.sprite = ResourceSystem::getAseprite(key) };
+        registry.emplace<Sprite>(entity, sprite);
         registry.emplace<GraphicsComponent::RenderPriority>(entity, priority); 
         registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::SPRITE);
     }
@@ -61,13 +49,15 @@ namespace GraphicsComponent {
     inline void addAnimationComponent(entt::registry &registry, const entt::entity entity, const std::string_view &key, const unsigned int tag_id,
                                      const Rectangle rect, const RenderPriority priority)
     {
-        registry.emplace<Animation>(entity, createAnimation(key, tag_id, rect.width, rect.height));
+        Animation animation = { .tag = ResourceSystem::getAsepriteTag(key, tag_id) };
+        registry.emplace<Animation>(entity, animation); 
         registry.emplace<GraphicsComponent::RenderPriority>(entity, priority); 
-        registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::SPRITE);
+        registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::ANIMATION);
     }
 
-    inline void addCallback(Animation &animation, const int tag_id, const int tag_frame, animationCallback cb)
+    inline void addCallback(entt::registry &registry, const entt::entity entity, const int tag_id, const int tag_frame, animationCallback cb)
     {
+        auto &animation = registry.get<Animation>(entity);
         animation.callbacks.push_back({tag_frame, tag_id, cb});
     }
 }

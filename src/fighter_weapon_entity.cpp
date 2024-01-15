@@ -20,23 +20,21 @@ namespace FighterWeaponEntity {
 
 entt::entity FighterWeaponEntity::create(entt::registry &object_registry, const Rectangle rect)
 {
+    const entt::entity weapon_entity = object_registry.create();
     const int tag_id = 0;
     const int last_firing_frame = 3;
-    const auto weapon_entity = object_registry.create();
-    auto &sprite = object_registry.emplace<GraphicsComponent::Animation>(weapon_entity);
+    const std::string_view key = "fighter_weapon";
+
     auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
     auto &timer_container = object_registry.emplace<TimerComponent::Container>(weapon_entity);
 
     object_registry.emplace<Rectangle>(weapon_entity, rect);
     object_registry.emplace<WeaponState>(weapon_entity, WeaponState::IDLE);
-
-    object_registry.emplace<GraphicsComponent::RenderPriority>(weapon_entity, GraphicsComponent::RenderPriority::HIGH);
     object_registry.emplace<ObjectType>(weapon_entity, ObjectType::SHIP_COMPONENT);
-    object_registry.emplace<GraphicsComponent::RenderType>(weapon_entity, GraphicsComponent::RenderType::ANIMATION);
 
-    sprite = GraphicsComponent::createAnimation("fighter_weapon", 1, rect.width, rect.height);
-    GraphicsComponent::addCallback(sprite, tag_id, last_firing_frame, animationCallback);
-    HitboxComponent::loadHitboxesInContainer(hitbox_container, "fighter_weapon", rect);
+    GraphicsComponent::addAnimationComponent(object_registry, weapon_entity, key, 1, rect, GraphicsComponent::RenderPriority::HIGH);
+    GraphicsComponent::addCallback(object_registry, weapon_entity, tag_id, last_firing_frame, animationCallback);
+    HitboxComponent::loadHitboxesInContainer(hitbox_container, key, rect);
     TimerComponent::createTimerInContainer(timer_container, 1.0f, 1);
     return weapon_entity;
 }

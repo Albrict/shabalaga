@@ -10,11 +10,12 @@
 #include "object_component.hpp"
 #include "ship_components.hpp"
 #include "timer_component.hpp"
+#include "fuel_pickup_entity.hpp"
 
 namespace FighterEntity {
     void collisionCallback(entt::registry &registry, const entt::entity a_entity, const entt::entity b_entity)
     {
-        const auto &rect = registry.get<Rectangle>(a_entity);
+        auto &rect = registry.get<Rectangle>(a_entity);
         if (rect.y + rect.height <= 0.f)
             return;
         const auto type = registry.get<ObjectType>(b_entity);
@@ -25,6 +26,8 @@ namespace FighterEntity {
             if (health.health <= 0) {
                 const auto ship_components = registry.try_get<ShipComponents::Container>(a_entity);
                 const int sound = GetRandomValue(0, 1);
+                const int pick_up_chance_spawn = GetRandomValue(0, 10);
+
                 if (ship_components) {
                     const auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity); 
                     const int score = registry.get<ObjectComponent::Score>(a_entity).score; 
@@ -43,6 +46,12 @@ namespace FighterEntity {
                     else
                         PlaySound(ResourceSystem::getSound("enemy_destroyed_02"));
                     GameMasterSystem::increaseScore(score);
+
+                    if (pick_up_chance_spawn >= 8) {
+                        rect.width /= 3.f;
+                        rect.height /= 3.f;
+                        FuelPickUpEntity::create(registry, rect);
+                    }
                 }
             }
         } 

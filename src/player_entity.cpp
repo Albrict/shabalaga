@@ -47,7 +47,7 @@ namespace PlayerEntity {
     {
         const auto type = registry.get<ObjectType>(b_entity);
         int damage = 0;
-        if (type == ObjectType::PROJECTILE)
+        if (type == ObjectType::PROJECTILE || type == ObjectType::PICK_UP)
             return;
         if (type == ObjectType::ENEMY_PROJECTILE || type == ObjectType::EXPLOSION)
             damage = registry.get<DamageComponent>(b_entity).damage;
@@ -87,10 +87,10 @@ entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectang
     auto &collider = object_registry.emplace<CollisionComponent::Component>(player_entity, 
                          CollisionComponent::create(true, CollisionComponent::Type::BOUNDS, collisionCallback, nullptr));
     
-    ShipComponents::addShipComponents(object_registry, player_entity, player_sprite_key, rect, ObjectType::PLAYER_SHIP, 100);     
-    ShipComponents::attachComponents(object_registry, player_entity, weapon, engine);
     GraphicsComponent::addSpriteComponent(object_registry, player_entity, player_sprite_key, rect, 
                                           GraphicsComponent::RenderPriority::MIDDLE);
+    ShipComponents::addShipComponents(object_registry, player_entity, player_sprite_key, rect, ObjectType::PLAYER_SHIP, 100);     
+    ShipComponents::attachComponents(object_registry, player_entity, weapon, engine);
 
     InputComponent::create(input_container, moveLeft, KEY_A, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveRight, KEY_D, InputComponent::Type::DOWN);

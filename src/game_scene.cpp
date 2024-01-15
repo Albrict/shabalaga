@@ -1,18 +1,23 @@
 #include "game_scene.hpp"
 #include "background_component.hpp"
 #include "clean_up_system.hpp"
+#include "fuel_system.hpp"
 #include "game_master_system.hpp"
 #include "graphics.hpp"
+#include "graphics_component.hpp"
 #include "graphics_system.hpp"
 #include "input_system.hpp"
 #include "message_system.hpp"
+#include "object_component.hpp"
 #include "player_entity.hpp"
 #include "object_system.hpp"
 #include "resource_system.hpp"
 #include "physics_system.hpp"
 #include "game_master_entity.hpp"
+#include "ship_components.hpp"
 #include "widget_components.hpp"
 #include "widget_system.hpp"
+#include "fuel_bar.hpp"
 
 GameScene::GameScene()
 {
@@ -24,6 +29,7 @@ GameScene::GameScene()
     bg_music = ResourceSystem::getMusic("bg_music");
     PlayMusicStream(bg_music);
     GameMasterSystem::resetSystem();
+    FuelSystem::reset();
 }
 
 void GameScene::proccessEvents()
@@ -32,6 +38,10 @@ void GameScene::proccessEvents()
         const auto msg = entt::any_cast<MessageSystem::PlaySceneMessage>(received_msg.msg);
         switch(msg) {
         case MessageSystem::PlaySceneMessage::PLAYER_DIED:
+            current_state = State::GAME_OVER;
+            break; 
+        case MessageSystem::PlaySceneMessage::OUT_OF_FUEL:
+            fuelOutPlayer();
             current_state = State::GAME_OVER;
             break; 
         }
@@ -154,12 +164,16 @@ void GameScene::initGameObjects()
     const Vector2 resolution = Graphics::getCurrentResolution();
     const Rectangle score_rect = {resolution.x / 2.f, 0.f, resolution.x / 2.f, resolution.y / 10.f};
     const float size = resolution.x / 10.f;
+    const float fuel_bar_height = resolution.y / 6.f;
     const Rectangle rect = {resolution.x / 2.f, resolution.y / 1.2f, size, size};
+    const Rectangle fuel_bar_rect = {resolution.x - resolution.x / 10.f, resolution.y - fuel_bar_height * 1.2f, 50.f, fuel_bar_height};
     const std::string_view engine_sprite = "engine"; 
      
-    const auto player = PlayerEntity::create(object_registry, rect);
-    const auto game_master = GameMasterEntity::create(object_registry, player);
+    player = PlayerEntity::create(object_registry, rect);
+    GameMasterEntity::create(object_registry, player);
+    
     WidgetComponents::createScoreLabel(object_registry, score_rect, GameMasterSystem::getScorePointer());
+    FuelBar::create(object_registry, fuel_bar_rect);
 }
 
 void GameScene::initPauseWidgets()
@@ -202,4 +216,16 @@ void GameScene::initGameOverWidgets()
     button_rect = {initial_x, initial_y, button_width, button_height};
     entity = WidgetComponents::createButton(game_over_registry, button_rect, back_to_menu);
     game_over_registry.emplace<WidgetCallback>(entity, exitCallback, nullptr);
+}
+
+void GameScene::fuelOutPlayer()
+{    
+    const entt::entity engine = object_registry.get<ShipComponents::Container>(player).engine; 
+    const Vector2 resolution = Graphics::getCurrentResolution();
+    const float velocity_y = resolution.y / 3.f;
+    const float velocity_x = GetRandomValue(-resolution.x / 2.f, resolution.x / 2.f);
+    auto &engine_animation = object_registry.get<GraphicsComponent::Animation>(engine);
+    
+    object_registry.emplace<VelocityComponent>(player, (VelocityComponent){velocity_x, velocity_y});
+    engine_animation.tag = ResourceSystem::getAsepriteTag("base_engine", 0); 
 }
