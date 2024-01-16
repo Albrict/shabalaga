@@ -35,7 +35,7 @@ struct DamageComponent {
 
 namespace ObjectComponent {
     struct Score {
-        const int score;
+        int score;
     };
 
     struct PlayerPosition {

@@ -13,8 +13,6 @@ public:
     void update() override;
     void draw() const override;
 private:
-    void fuelOutPlayer();
-
     // Pause state
     void proccessPause();
     void updatePause();

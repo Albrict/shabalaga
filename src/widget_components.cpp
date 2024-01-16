@@ -1,6 +1,17 @@
 #include "widget_components.hpp"
 #include "graphics_component.hpp"
+#include "message_system.hpp"
 #include "object_component.hpp"
+
+namespace WidgetComponents {
+    void proccessMessagesScoreLabelCallback(entt::registry &registry, const entt::entity entity, MessageSystem::Message msg)
+    {
+        auto &score_label = registry.get<ScoreLabel>(entity);
+        int score = entt::any_cast<int>(msg.msg);
+        score_label.score += score;
+        score_label.text = TextFormat("%d", score_label.score);
+    }
+}
 
 entt::entity WidgetComponents::createButton(entt::registry &object_registry, const Rectangle rect, const char *text)
 {
@@ -63,18 +74,19 @@ entt::entity WidgetComponents::createLabel(entt::registry &object_registry, cons
     return label_entity;
 }
 
-entt::entity WidgetComponents::createScoreLabel(entt::registry &object_registry, const Rectangle rect, const int *score)
+entt::entity WidgetComponents::createScoreLabel(entt::registry &object_registry, const Rectangle rect)
 {
     const auto entity = object_registry.create();
     auto &score_label = object_registry.emplace<ScoreLabel>(entity);
     score_label = {
         .rect = rect,
-        .score_ptr = score,
-        .old_score = *score,
-        .text = TextFormat("%d", *score)
+        .text = "0" 
     };
+      
     object_registry.emplace<Type>(entity, Type::SCORE_LABEL);
     object_registry.emplace<ObjectType>(entity, ObjectType::WIDGET);
     object_registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::WIDGET);
+
+    MessageSystem::registrEntity(object_registry, entity, MessageSystem::Type::GAME_MASTER_MESSAGE, proccessMessagesScoreLabelCallback);
     return entity;
 }

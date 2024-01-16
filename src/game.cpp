@@ -42,8 +42,8 @@ void Game::run()
     while(running) {
         if (WindowShouldClose())
             running = false;
-        current_scene->proccessEvents();
         MessageSystem::update();
+        current_scene->proccessEvents();
         current_scene->update();
         current_scene->draw();
     }

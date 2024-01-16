@@ -45,8 +45,7 @@ namespace WidgetComponents {
     
     struct ScoreLabel {
         Rectangle rect;
-        const int *score_ptr;
-        int old_score;
+        int score;
         const char *text;
     };
 
@@ -64,6 +63,6 @@ namespace WidgetComponents {
     entt::entity createDropDownBox(entt::registry &object_registry, const Rectangle rect, const char *text, int *active);
     entt::entity createLabel(entt::registry &object_registry, const Rectangle rect, const char *text);
 
-    entt::entity createScoreLabel(entt::registry &object_registry, const Rectangle rect, const int *score);
+    entt::entity createScoreLabel(entt::registry &object_registry, const Rectangle rect);
 };
 

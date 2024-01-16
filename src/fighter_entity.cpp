@@ -5,8 +5,8 @@
 #include "engine_entity.hpp"
 #include "fighter_weapon_entity.hpp"
 #include "fighter_explosion_entity.hpp"
-#include "game_master_system.hpp"
 #include "graphics_component.hpp"
+#include "message_system.hpp"
 #include "object_component.hpp"
 #include "ship_components.hpp"
 #include "timer_component.hpp"
@@ -45,7 +45,11 @@ namespace FighterEntity {
                         PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
                     else
                         PlaySound(ResourceSystem::getSound("enemy_destroyed_02"));
-                    GameMasterSystem::increaseScore(score);
+                    MessageSystem::Message message = {
+                       .msg = score,
+                       .type = MessageSystem::Type::GAME_MASTER_MESSAGE
+                    };
+                    MessageSystem::sendMessageToEntity(registry, message);
 
                     if (pick_up_chance_spawn >= 8) {
                         rect.width /= 3.f;
