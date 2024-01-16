@@ -12,8 +12,6 @@ namespace GameMasterSystem {
         UP
     };
 
-    int score = 0;
-    
     void proccessFighterSpawn(entt::registry &registry, const entt::entity game_master, TimerComponent::Container &container)
     {
         const int timer_id = 1;
@@ -87,42 +85,27 @@ void GameMasterSystem::update(entt::registry &registry, const entt::entity game_
     switch(game_info.current_difficulty) {
     using  enum GameMasterComponent::GameInfo::Difficulty;
     case EASY:
-        if (score >= 50) 
+        if (game_info.score >= 50) 
             changeDifficultyToPreMedium(game_info, registry.get<TimerComponent::Container>(game_master));
         break;
     case PRE_MEDIUM:
-        if (score >= 5000)
+        if (game_info.score >= 5000)
             game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::MEDIUM;
         break;
     case MEDIUM:
-        if (score >= 8000)
+        if (game_info.score >= 8000)
             game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::PRE_HARD;
         break;
     case PRE_HARD:
-        if (score >= 18000)
+        if (game_info.score >= 18000)
             game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::HARD;
         break;
     case HARD:
-        if (score >= 32000)
+        if (game_info.score >= 32000)
             game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::BOSS;
         break;
     case BOSS:
         ; // Boss fight 
         break;
     }
-}
-
-void GameMasterSystem::increaseScore(const int amount)
-{
-    score += amount;
-}
-
-void GameMasterSystem::resetSystem()
-{
-    score = 0;
-}
-
-const int *GameMasterSystem::getScorePointer()
-{
-    return &score;
 }

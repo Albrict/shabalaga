@@ -1,10 +1,10 @@
 #include "fuel_pickup_entity.hpp"
 #include "clean_up_component.hpp"
 #include "collison_component.hpp"
-#include "fuel_system.hpp"
 #include "graphics_component.hpp"
 #include "hitbox_component.hpp"
 #include "graphics.hpp"
+#include "message_system.hpp"
 #include "object_component.hpp"
 
 namespace FuelPickUpEntity {
@@ -12,7 +12,11 @@ namespace FuelPickUpEntity {
     {
         const auto type = registry.get<ObjectType>(b_entity);
         if (type == ObjectType::PLAYER_SHIP) {
-            FuelSystem::increaseFuelLevel();   
+            MessageSystem::Message message = {
+                .msg = MessageSystem::HudMessage::INCREASE_FUEL,
+                .type = MessageSystem::Type::HUD_MESSAGE
+            };
+            MessageSystem::sendMessageToEntity(registry, message);
             registry.emplace<CleanUpComponent::Component>(a_entity);
         } else {
             return;

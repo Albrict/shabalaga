@@ -4,8 +4,8 @@
 #include "clean_up_component.hpp"
 #include "collison_component.hpp"
 #include "engine_entity.hpp"
-#include "game_master_system.hpp"
 #include "graphics_component.hpp"
+#include "message_system.hpp"
 #include "object_component.hpp"
 #include "ship_components.hpp"
 
@@ -83,6 +83,9 @@ void BomberEntity::destroy(entt::registry &registry, const entt::entity entity)
             PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
         else
             PlaySound(ResourceSystem::getSound("enemy_destroyed_02"));
-        GameMasterSystem::increaseScore(score);
+        MessageSystem::Message message = {
+           .msg = score,
+           .type = MessageSystem::Type::GAME_MASTER_MESSAGE
+        };
     }
 }
