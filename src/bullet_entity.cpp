@@ -35,6 +35,8 @@ entt::entity BulletEntity::create(entt::registry &object_registry, const Rectang
     const Vector2 resolution = Graphics::getCurrentResolution();
     const Vector2 velocity = {0.f, resolution.y / 2.f};
     const std::string_view key = "bullet_projectile";
+    const float custom_bound_x = rect.width * 8.f;
+    const float custom_bound_y = rect.height * 8.f; 
 
     auto &collider = object_registry.emplace<CollisionComponent::Component>(projectile_entity);
     auto &container = object_registry.emplace<HitboxComponent::Container>(projectile_entity, projectile_entity);
@@ -45,7 +47,7 @@ entt::entity BulletEntity::create(entt::registry &object_registry, const Rectang
     object_registry.emplace<ObjectType>(projectile_entity, ObjectType::ENEMY_PROJECTILE);
 
     GraphicsComponent::addAnimationComponent(object_registry, projectile_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
-    collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback);
+    collider = CollisionComponent::create(true, CollisionComponent::Type::CUSTOM_BOUNDS, custom_bound_x, custom_bound_y, collisionCallback);
     HitboxComponent::loadHitboxesInContainer(container, "bullet_projectile", rect);
     return projectile_entity;
 }

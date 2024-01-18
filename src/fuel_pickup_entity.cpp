@@ -18,6 +18,11 @@ namespace FuelPickUpEntity {
             };
             MessageSystem::sendMessageToEntity(registry, message);
             registry.emplace<CleanUpComponent::Component>(a_entity);
+            const int rand_sound = GetRandomValue(0, 1);
+            if (rand_sound)
+                PlaySound(ResourceSystem::getSound("fuel_pickup_01"));
+            else
+                PlaySound(ResourceSystem::getSound("fuel_pickup_02"));
         } else {
             return;
         }

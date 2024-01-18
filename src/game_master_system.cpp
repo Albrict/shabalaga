@@ -16,6 +16,7 @@ namespace GameMasterSystem {
     {
         const int timer_id = 1;
         if (TimerComponent::isDone(container, timer_id)) {
+            const auto &game_info = registry.get<GameMasterComponent::GameInfo>(game_master);
             const Vector2 resolution = Graphics::getCurrentResolution();
             const int rand_ship_amount = GetRandomValue(1, 4);
             const float ship_size = resolution.x / 8.f;
@@ -23,7 +24,7 @@ namespace GameMasterSystem {
                 
             if (rand_x + ship_size * rand_ship_amount >= resolution.x)
                 rand_x -= (ship_size * rand_ship_amount);
-            Fleet::createFleet(registry, {rand_x, -200.f}, rand_ship_amount, Fleet::Type::FIGHTER_FLEET);
+            Fleet::createFleet(registry, {rand_x, -200.f}, rand_ship_amount, Fleet::Type::FIGHTER_FLEET, game_info.current_difficulty);
             TimerComponent::reset(container, timer_id);
         }
     }
@@ -51,6 +52,13 @@ namespace GameMasterSystem {
         const float bomber_spawn_cooldown = 5.f;
         game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::PRE_MEDIUM; 
         TimerComponent::createTimerInContainer(container, bomber_spawn_cooldown, bomber_spawn_timer_id);
+    }
+
+    void changeDifficultyToMedium(GameMasterComponent::GameInfo &game_info, TimerComponent::Container &container)
+    {
+        const int timer_id = 1;
+        const float timer_lifetime = TimerComponent::getTimerLifetime(container, timer_id);
+        game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::MEDIUM; 
     }
 }    
 
@@ -85,19 +93,19 @@ void GameMasterSystem::update(entt::registry &registry, const entt::entity game_
     switch(game_info.current_difficulty) {
     using  enum GameMasterComponent::GameInfo::Difficulty;
     case EASY:
-        if (game_info.score >= 50) 
+        if (game_info.score >= 2000) 
             changeDifficultyToPreMedium(game_info, registry.get<TimerComponent::Container>(game_master));
         break;
     case PRE_MEDIUM:
-        if (game_info.score >= 5000)
-            game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::MEDIUM;
+        if (game_info.score >= 4000)
+            changeDifficultyToMedium(game_info, registry.get<TimerComponent::Container>(game_master));
         break;
     case MEDIUM:
-        if (game_info.score >= 8000)
+        if (game_info.score >= 12000)
             game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::PRE_HARD;
         break;
     case PRE_HARD:
-        if (game_info.score >= 18000)
+        if (game_info.score >= 22000)
             game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::HARD;
         break;
     case HARD:
