@@ -62,11 +62,11 @@ namespace FighterEntity {
     }
 }
 
-entt::entity FighterEntity::create(entt::registry &object_registry, const Rectangle rect)
+entt::entity FighterEntity::create(entt::registry &object_registry, const Rectangle rect, const float fire_cooldown)
 {
-    const auto fighter_weapon = FighterWeaponEntity::create(object_registry, rect);
-    const auto fighter_engine = EngineEntity::create(object_registry, EngineEntity::Type::FIGHTER, rect);
     const auto fighter_entity = object_registry.create();
+    const auto fighter_weapon = FighterWeaponEntity::create(object_registry, rect, fire_cooldown);
+    const auto fighter_engine = EngineEntity::create(object_registry, EngineEntity::Type::FIGHTER, rect);
     const int explosion_tag = 1;
     const int last_frame = 7;
     const Vector2 velocity = {0.f, 400.f};

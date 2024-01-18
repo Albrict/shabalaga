@@ -4,5 +4,5 @@
 
 namespace FighterWeaponEntity {
     void fire(entt::registry &registry, const entt::entity entity);
-    entt::entity create(entt::registry &registry, const Rectangle rect);
+    entt::entity create(entt::registry &registry, const Rectangle rect, const float fire_cooldown);
 }

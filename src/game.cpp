@@ -107,7 +107,9 @@ void Game::loadResources()
     ResourceSystem::loadSound("assets/sound/ui_01.wav", "ui_01");
     ResourceSystem::loadSound("assets/sound/pause_in.wav", "pause_in");
     ResourceSystem::loadSound("assets/sound/pause_out.wav", "pause_out");
-
+    ResourceSystem::loadSound("assets/sound/fuel_pickup_01.wav", "fuel_pickup_01");
+    ResourceSystem::loadSound("assets/sound/fuel_pickup_02.wav", "fuel_pickup_02");
+    
     // Music
     ResourceSystem::loadMusic("assets/sound/systems.mp3", "bg_music");
 }

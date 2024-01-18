@@ -60,11 +60,25 @@ namespace CollisionSystem {
         Rectangle &rect = registry.get<Rectangle>(entity);
         if (rect.x <= 0.f - rect.width * 2.f)
             registry.emplace_or_replace<CleanUpComponent::Component>(entity);
-        if (rect.x + rect.width >= resolution.x + rect.width * 2.f)
+        else if (rect.x + rect.width >= resolution.x + rect.width * 2.f)
             registry.emplace_or_replace<CleanUpComponent::Component>(entity);
-        if (rect.y <= 0.f - rect.height * 2.f)
+        else if (rect.y <= 0.f - rect.height * 2.f)
             registry.emplace_or_replace<CleanUpComponent::Component>(entity);
-        if (rect.y + rect.height >= resolution.y + rect.height * 2.f)
+        else if (rect.y + rect.height >= resolution.y + rect.height * 2.f)
+            registry.emplace_or_replace<CleanUpComponent::Component>(entity);
+    }
+
+    void checkCustomBounds(entt::registry &registry, const entt::entity entity, const float custom_x, const float custom_y)
+    {
+        const Vector2 resolution = Graphics::getCurrentResolution();
+        Rectangle &rect = registry.get<Rectangle>(entity);
+        if (rect.x <= -custom_x)
+            registry.emplace_or_replace<CleanUpComponent::Component>(entity);
+        else if (rect.x + rect.width >= resolution.x + custom_x)
+            registry.emplace_or_replace<CleanUpComponent::Component>(entity);
+        else if (rect.y <= -custom_y)
+            registry.emplace_or_replace<CleanUpComponent::Component>(entity);
+        else if (rect.y + rect.height >= resolution.y + custom_y) 
             registry.emplace_or_replace<CleanUpComponent::Component>(entity);
     }
 }
@@ -83,6 +97,9 @@ void CollisionSystem::update(entt::registry &registry)
                 break;
             case OUT_OF_BOUNDS:
                 checkOutOfBounds(registry, entity);
+                break;
+            case CUSTOM_BOUNDS:
+                checkCustomBounds(registry, entity, collider.custom_bound_x, collider.custom_bound_y);
                 break;
             case NONE:
                 break;

@@ -18,13 +18,13 @@ namespace FighterWeaponEntity {
     }
 }
 
-entt::entity FighterWeaponEntity::create(entt::registry &object_registry, const Rectangle rect)
+entt::entity FighterWeaponEntity::create(entt::registry &object_registry, const Rectangle rect, const float fire_cooldown)
 {
     const entt::entity weapon_entity = object_registry.create();
     const int tag_id = 0;
     const int last_firing_frame = 3;
     const std::string_view key = "fighter_weapon";
-
+    const int timer_id = 1;
     auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
     auto &timer_container = object_registry.emplace<TimerComponent::Container>(weapon_entity);
 
@@ -35,7 +35,7 @@ entt::entity FighterWeaponEntity::create(entt::registry &object_registry, const 
     GraphicsComponent::addAnimationComponent(object_registry, weapon_entity, key, 1, rect, GraphicsComponent::RenderPriority::HIGH);
     GraphicsComponent::addCallback(object_registry, weapon_entity, tag_id, last_firing_frame, animationCallback);
     HitboxComponent::loadHitboxesInContainer(hitbox_container, key, rect);
-    TimerComponent::createTimerInContainer(timer_container, 1.0f, 1);
+    TimerComponent::createFinishedTimerInContainer(timer_container, fire_cooldown, timer_id);
     return weapon_entity;
 }
 
@@ -50,8 +50,8 @@ void FighterWeaponEntity::fire(entt::registry &registry, const entt::entity enti
         for (const auto hitbox : hitboxes) {
             Rectangle rect = hitbox.rect;
             const Vector2 position = {rect.x - rect.width / 2.f, rect.y};
-            rect.width = 16;
-            rect.height = 16;
+            rect.width *= 1.1f;
+            rect.height *= 1.1f;
             BulletEntity::create(registry, rect);
         }
         state = WeaponState::FIRING;

@@ -13,6 +13,7 @@ namespace BehaviorSystem {
         const auto weapon = registry.get<ShipComponents::Container>(entity).weapon;
         const int direction_timer = 1;
         auto &timer_container = registry.get<TimerComponent::Container>(entity);
+        FighterWeaponEntity::fire(registry, weapon);
         if (TimerComponent::isDone(timer_container, direction_timer)) {
             const Vector2 resolution = Graphics::getCurrentResolution();
             const Rectangle position = registry.get<Rectangle>(entity); 
@@ -23,7 +24,6 @@ namespace BehaviorSystem {
                 velocity.velocity.x -= 300.f;
             TimerComponent::reset(timer_container, direction_timer);
         }
-        FighterWeaponEntity::fire(registry, weapon);
     }
 
     void proccessBomberBehavior(entt::registry &registry, const entt::entity entity)
