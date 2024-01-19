@@ -1,5 +1,6 @@
 #pragma once
 #include "../include/entt.hpp"
+#include "fade_component.hpp"
 #include "message_system.hpp"
 #include "scene.hpp"
 
@@ -14,10 +15,10 @@ public:
 private:
     static void playCallback(entt::any data)
     { 
-        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::PLAY,
-                                      .type = MessageSystem::Type::SCENE_MESSAGE };
-        MessageSystem::sendMessage(msg);
+        auto *scene = entt::any_cast<MainMenuScene*>(data);
+        FadeEffect::resume(scene->object_registry.get<FadeEffect::Component>(scene->fade_out));
     }
+
     static void settingsCallback(entt::any data)
     {
         MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::SETTINGS,
@@ -30,4 +31,7 @@ private:
                                       .type = MessageSystem::Type::SCENE_MESSAGE };
         MessageSystem::sendMessage(msg);
     }
+private:
+    entt::entity fade_in = entt::null;
+    entt::entity fade_out = entt::null;
 };
