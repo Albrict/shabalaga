@@ -69,11 +69,13 @@ void Game::loadResources()
     ResourceSystem::loadAseprite("assets/objects/engines/bomber_engine.aseprite", "bomber_engine"); 
     ResourceSystem::loadAseprite("assets/objects/engines/fighter_engine.aseprite", "fighter_engine");
     ResourceSystem::loadAseprite("assets/objects/engines/base_engine_powering.aseprite", "base_engine");
-    
+    ResourceSystem::loadAseprite("assets/objects/engines/scout_engine.aseprite", "scout_engine");    
+
     // Weapons
     ResourceSystem::loadAseprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
     ResourceSystem::loadAseprite("assets/objects/weapons/fighter_weapon.aseprite", "fighter_weapon");
-    
+    ResourceSystem::loadAseprite("assets/objects/weapons/scout_weapon.aseprite", "scout_weapon");
+
     // Projectiles 
     ResourceSystem::loadAseprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
     ResourceSystem::loadAseprite("assets/objects/projectiles/auto_cannon_projectile.aseprite", "auto_cannon_projectile");
@@ -81,13 +83,14 @@ void Game::loadResources()
     // Enemies 
     ResourceSystem::loadAseprite("assets/objects/enemies/bomber.aseprite", "bomber"); 
     ResourceSystem::loadAseprite("assets/objects/enemies/fighter.aseprite", "fighter");
-    
+    ResourceSystem::loadAseprite("assets/objects/enemies/scout.aseprite", "scout"); 
     // Explosions
     ResourceSystem::loadAseprite("assets/effects/player_explosion.aseprite", "player_explosion");
     ResourceSystem::loadAseprite("assets/effects/bomber_explosion.aseprite", "bomber_explosion");
     ResourceSystem::loadAseprite("assets/effects/small_explosion.aseprite", "small_explosion");
     ResourceSystem::loadAseprite("assets/effects/fighter_explosion.aseprite", "fighter_explosion");
-    
+    ResourceSystem::loadAseprite("assets/effects/scout_explosion.aseprite", "scout_explosion");
+
     // Pick ups 
     ResourceSystem::loadAseprite("assets/pickups/fuel.aseprite", "fuel_pickup");
     

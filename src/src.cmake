@@ -45,4 +45,7 @@ set(game_source
     src/bomber_explosion_entity.cpp
     src/fuel_pickup_entity.cpp
     src/fuel_bar.cpp
-    src/fuel_system.cpp)
+    src/fuel_system.cpp
+    src/scout_entity.cpp
+    src/scout_weapon.cpp
+    src/scout_explosion.cpp)

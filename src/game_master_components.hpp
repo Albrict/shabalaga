@@ -12,7 +12,8 @@ namespace GameMasterComponent {
             BOSS
         };
         Difficulty current_difficulty = Difficulty::EASY;
-        int score = 0;
         entt::entity player_entity = entt::null;
+        int score = 0;
+        int scout_amount = 0;
     };
 }

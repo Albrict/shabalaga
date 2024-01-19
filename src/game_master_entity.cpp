@@ -20,11 +20,17 @@ entt::entity GameMasterEntity::create(entt::registry &registry, const entt::enti
     const int fighter_fleet_spawn_timer_id = 1;
     const float initial_cooldown = 2.f;
     auto &timer_container = registry.emplace<TimerComponent::Container>(game_master);
-    
+    auto &game_info = registry.emplace<GameInfo>(game_master);    
+
     registry.emplace<ObjectType>(game_master, ObjectType::GAME_MASTER);
-    registry.emplace<GameInfo>(game_master, GameInfo::Difficulty::EASY, 0, player);
-    
     MessageSystem::registrEntity(registry, game_master, MessageSystem::Type::GAME_MASTER_MESSAGE, proccessMessagesCallback);
     TimerComponent::createTimerInContainer(timer_container, initial_cooldown, fighter_fleet_spawn_timer_id);
+
+    game_info = {
+        .current_difficulty = GameInfo::Difficulty::EASY,
+        .player_entity = player,
+        .score = 0,
+        .scout_amount = 0,
+    };
     return game_master;
 }

@@ -2,6 +2,7 @@
 #include "bomber_entity.hpp"
 #include "game_master_components.hpp"
 #include "graphics.hpp"
+#include "scout_entity.hpp"
 #include "timer_component.hpp"
 #include "fleet.hpp"
 
@@ -32,17 +33,37 @@ namespace GameMasterSystem {
     void proccessBomberSpawn(entt::registry &registry, const entt::entity game_master, const entt::entity player, TimerComponent::Container &container)
     {
         const int timer_id = 2;
-        if (TimerComponent::isDone(container, timer_id)) {
-            const SpawnDirection direction = static_cast<SpawnDirection>(GetRandomValue(LEFT, UP));
-            const Rectangle player_position = registry.get<Rectangle>(player);
+        if (!registry.valid(player))
+            return;
+        else {
+            if (TimerComponent::isDone(container, timer_id)) {
+                const SpawnDirection direction = static_cast<SpawnDirection>(GetRandomValue(LEFT, UP));
+                const Vector2 resolution = Graphics::getCurrentResolution();
+                const Rectangle player_position = registry.get<Rectangle>(player);
+                const float ship_size = resolution.x / 12.f;
+                float rand_x = GetRandomValue(ship_size, resolution.x);
+                if (rand_x + ship_size >= resolution.x)
+                    rand_x -= (ship_size);
+                BomberEntity::create(registry, {rand_x, -200.f, ship_size, ship_size}, player_position);
+                TimerComponent::reset(container, timer_id);
+            }
+        }
+    }
+
+    void proccessScoutSpawn(entt::registry &registry, const entt::entity game_master)
+    {
+        const int scout_timer = 3;
+        auto &container = registry.get<TimerComponent::Container>(game_master);
+        if (TimerComponent::isDone(container, scout_timer)) {
             const Vector2 resolution = Graphics::getCurrentResolution();
-            const int rand_ship_amount = GetRandomValue(1, 2);
-            const float ship_size = resolution.x / 12.f;
-            float rand_x = GetRandomValue(ship_size, resolution.x);
-            if (rand_x + ship_size >= resolution.x)
-                rand_x -= (ship_size);
-            BomberEntity::create(registry, {rand_x, -200.f, ship_size, ship_size}, player_position);
-            TimerComponent::reset(container, timer_id);
+            const float ship_size = resolution.x / 8.f;
+            float first_ship_rand_x = GetRandomValue(ship_size, resolution.x / 2.f);
+            float second_ship_rand_x = resolution.x + GetRandomValue(ship_size, resolution.x / 2.f);
+            if (second_ship_rand_x + ship_size >= resolution.x)
+                second_ship_rand_x -= (ship_size);
+            ScoutEntity::create(registry, {first_ship_rand_x, -200.f, ship_size, ship_size});
+            ScoutEntity::create(registry, {second_ship_rand_x, -200.f, ship_size, ship_size});
+            TimerComponent::reset(container, scout_timer);
         }
     }
 
@@ -56,9 +77,10 @@ namespace GameMasterSystem {
 
     void changeDifficultyToMedium(GameMasterComponent::GameInfo &game_info, TimerComponent::Container &container)
     {
-        const int timer_id = 1;
-        const float timer_lifetime = TimerComponent::getTimerLifetime(container, timer_id);
+        const int timer_id = 3;
+        const float scout_fleet_spawn_cooldown = 10.f;
         game_info.current_difficulty = GameMasterComponent::GameInfo::Difficulty::MEDIUM; 
+        TimerComponent::createTimerInContainer(container, scout_fleet_spawn_cooldown, timer_id);
     }
 }    
 
@@ -76,6 +98,7 @@ void GameMasterSystem::proccessEvents(entt::registry &registry, const entt::enti
     case PRE_HARD:
         [[fallthrough]];
     case MEDIUM:
+        proccessScoutSpawn(registry, game_master);
         [[fallthrough]];
     case PRE_MEDIUM:
         proccessBomberSpawn(registry, game_master, game_info.player_entity, container);
@@ -93,11 +116,11 @@ void GameMasterSystem::update(entt::registry &registry, const entt::entity game_
     switch(game_info.current_difficulty) {
     using  enum GameMasterComponent::GameInfo::Difficulty;
     case EASY:
-        if (game_info.score >= 2000) 
+        if (game_info.score >= 100) 
             changeDifficultyToPreMedium(game_info, registry.get<TimerComponent::Container>(game_master));
         break;
     case PRE_MEDIUM:
-        if (game_info.score >= 4000)
+        if (game_info.score >= 200)
             changeDifficultyToMedium(game_info, registry.get<TimerComponent::Container>(game_master));
         break;
     case MEDIUM:

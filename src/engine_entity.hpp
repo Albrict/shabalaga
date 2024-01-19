@@ -6,7 +6,8 @@ namespace EngineEntity {
     enum class Type {
         BASIC,
         FIGHTER,
-        BOMBER
+        BOMBER,
+        SCOUT
     };
 
     entt::entity create(entt::registry &object_registry, const Type type, const Rectangle rect);
