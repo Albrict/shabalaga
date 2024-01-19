@@ -13,10 +13,10 @@ namespace WidgetComponents {
     }
 }
 
-entt::entity WidgetComponents::createButton(entt::registry &object_registry, const Rectangle rect, const char *text)
+entt::entity WidgetComponents::createButton(entt::registry &object_registry, const Rectangle rect, const char *text, const int icon_id)
 {
     auto entity = object_registry.create();
-    object_registry.emplace<Button>(entity, rect, text);
+    object_registry.emplace<Button>(entity, rect, text, icon_id);
     object_registry.emplace<Type>(entity, Type::BUTTON);
     object_registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::WIDGET);
     object_registry.emplace<ObjectType>(entity, ObjectType::WIDGET);
@@ -56,7 +56,7 @@ entt::entity WidgetComponents::createSlider(entt::registry &object_registry, con
 entt::entity WidgetComponents::createDropDownBox(entt::registry &object_registry, const Rectangle rect, const char *text, int *active)
 {
     auto dropdown_box_entity = object_registry.create();
-    object_registry.emplace<DropdownBox>(dropdown_box_entity, rect, text, active, false);
+    object_registry.emplace<DropdownBox>(dropdown_box_entity, rect, text, active, true);
     object_registry.emplace<Type>(dropdown_box_entity, Type::DROPDOWNBOX);
     object_registry.emplace<ObjectType>(dropdown_box_entity, ObjectType::WIDGET);
     object_registry.emplace<GraphicsComponent::RenderType>(dropdown_box_entity, GraphicsComponent::RenderType::WIDGET);

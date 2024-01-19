@@ -36,6 +36,16 @@ namespace GraphicsComponent {
         Aseprite::Aseprite sprite {};
         int current_frame = 0;
     };
+    
+    inline Sprite createSprite(const std::string_view &key)
+    {
+        return (Sprite) { .sprite = ResourceSystem::getAseprite(key) };
+    }
+    
+    inline Animation createAnimation(const std::string_view &key, const int initial_tag)
+    {
+        return (Animation) { .tag = ResourceSystem::getAsepriteTag(key, initial_tag) };
+    }
 
     inline void addSpriteComponent(entt::registry &registry, const entt::entity entity, const std::string_view &key, 
                                      const Rectangle rect, const RenderPriority priority)

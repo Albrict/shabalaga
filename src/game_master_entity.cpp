@@ -11,6 +11,9 @@ namespace GameMasterEntity {
         int score = entt::any_cast<int>(msg.msg);
         game_info.score += score; 
     }
+    
+    int defineWeapon();
+    int defineEngine();
 }
 
 entt::entity GameMasterEntity::create(entt::registry &registry, const entt::entity player)
@@ -31,6 +34,8 @@ entt::entity GameMasterEntity::create(entt::registry &registry, const entt::enti
         .player_entity = player,
         .score = 0,
         .scout_amount = 0,
+        .engine_type = 0,
+        .weapon_type = 0
     };
     return game_master;
 }

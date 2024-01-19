@@ -15,6 +15,7 @@ namespace WidgetComponents {
     struct Button {
         Rectangle rect;
         const char *text;
+        const int icon;
     };
     
     struct Slider {
@@ -55,7 +56,7 @@ namespace WidgetComponents {
         entt::any data;
     };
     
-    entt::entity createButton(entt::registry &object_registry, const Rectangle rect, const char *text);
+    entt::entity createButton(entt::registry &object_registry, const Rectangle rect, const char *text, const int icon_id = -1);
     entt::entity createPanel(entt::registry &object_registry, const Rectangle rect, const char *text = nullptr);
     entt::entity createSlider(entt::registry &object_registry, const Rectangle rect, 
                               const float min_value, const float max_value, float *value, 
