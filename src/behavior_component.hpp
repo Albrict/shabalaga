@@ -3,6 +3,7 @@
 namespace BehaviorComponent {
     enum class Type {
         FIGHTER,
-        BOMBER
+        BOMBER,
+        SCOUT
     };
 }

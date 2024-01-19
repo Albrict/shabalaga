@@ -18,6 +18,9 @@ entt::entity EngineEntity::create(entt::registry &object_registry, const Type ty
     case Type::BOMBER:
         GraphicsComponent::addAnimationComponent(object_registry, engine_entity, "bomber_engine", 0, rect, GraphicsComponent::RenderPriority::HIGH);
         break;
+    case Type::SCOUT:
+        GraphicsComponent::addAnimationComponent(object_registry, engine_entity, "scout_engine", 0, rect, GraphicsComponent::RenderPriority::HIGH);
+        break;
     }
     return engine_entity;
 }
