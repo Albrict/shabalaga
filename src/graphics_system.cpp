@@ -25,9 +25,11 @@ namespace GraphicsSystem {
     
     void updateFade(entt::registry &registry)
     {
-        auto view = registry.view<FadeComponent::Component>();
-        for (auto [entity, fade] : view.each())
-            fade.alpha += fade.fade_value; 
+        auto view = registry.view<FadeEffect::Component>();
+        for (auto [entity, fade] : view.each()) {
+            if (!fade.paused)
+                fade.lifetime -= GetFrameTime(); 
+        }
     }
 
     void updateAnimation(entt::registry &registry)
@@ -59,11 +61,18 @@ namespace GraphicsSystem {
     
     void renderFade(const entt::registry &registry)
     {
-        const auto &view = registry.view<FadeComponent::Component>();
+        const auto &view = registry.view<FadeEffect::Component>();
         for (auto [entity, fade] : view.each()) {
-            const Vector2 resolution = Graphics::getCurrentResolution();
-            const Rectangle rect = { 0.f, 0.f, resolution.x, resolution.y };
-            DrawRectanglePro(rect, {0.f, 0.f}, 0.f, ColorAlpha(BLACK, fade.alpha));
+            if (!fade.paused) {
+                const Vector2 resolution = Graphics::getCurrentResolution();
+                const Rectangle rect = { 0.f, 0.f, resolution.x, resolution.y };
+                float alpha = 0.f; 
+                if (fade.type == FadeEffect::Type::FADE_OUT)
+                    alpha = fade.lifetime / 1.f;
+                else
+                    alpha = 1.f - (fade.lifetime / 1.f);
+                DrawRectanglePro(rect, {0.f, 0.f}, 0.f, Fade(BLACK, alpha));
+            }
         }
     }
 
@@ -206,4 +215,5 @@ void GraphicsSystem::draw(const entt::registry &registry)
     renderPriorityLow(registry);
     renderWidget(registry);
     renderUI(registry); 
+    renderFade(registry);
 }

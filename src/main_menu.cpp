@@ -1,4 +1,5 @@
 #include "main_menu.hpp"
+#include "fade_component.hpp"
 #include "graphics.hpp"
 #include "resource_system.hpp"
 #include "widget_components.hpp"
@@ -26,14 +27,26 @@ MainMenuScene::MainMenuScene()
     for (size_t i = 0; i < button_callback.size(); ++i) {
         const Rectangle button_rect = {initial_x, initial_y, button_width, button_height};
         const auto entity = WidgetComponents::createButton(object_registry, button_rect, button_labels[i]);
-        object_registry.emplace<WidgetCallback>(entity, button_callback[i], nullptr);
+        if (i == 0)
+            object_registry.emplace<WidgetCallback>(entity, button_callback[i], this);
         initial_y += button_height * 2;
     }
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("menu_background"), -30.f);
+
+    fade_in = object_registry.create();
+    fade_out = object_registry.create();
+
+    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.3f, FadeEffect::Type::FADE_OUT));
+    object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.4f, FadeEffect::Type::FADE_IN, true));
 }
 
 void MainMenuScene::proccessEvents()
 {
+    if (FadeEffect::isDone(object_registry.get<FadeEffect::Component>(fade_out))) {
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::PLAY,
+                                      .type = MessageSystem::Type::SCENE_MESSAGE };
+        MessageSystem::sendMessage(msg);
+    }
     ObjectSystem::proccessEvents(object_registry);
 }
 

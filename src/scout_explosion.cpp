@@ -13,7 +13,7 @@ void ScoutExplosion::create(entt::registry &registry, const Rectangle rect)
 {
     const auto explosion = registry.create();
     const int explosion_tag_id = 0;
-    const int last_frame = 9;
+    const int last_frame = 8;
     const std::string_view key = "scout_explosion";
 
     registry.emplace<Rectangle>(explosion, rect);
