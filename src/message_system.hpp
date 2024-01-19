@@ -15,6 +15,7 @@ namespace MessageSystem {
     enum class SceneMessage {
         MENU,
         PLAY,
+        HANGAR,
         SETTINGS,
         EXIT
     };

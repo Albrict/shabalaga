@@ -2,6 +2,7 @@
 #include "../include/style_cyber.h"
 #include "game.hpp"
 #include "graphics.hpp"
+#include "hangar_scene.hpp"
 #include "main_menu.hpp"
 #include "message_system.hpp"
 #include "resource_system.hpp"
@@ -61,21 +62,30 @@ void Game::loadResources()
     // Backgrounds
     ResourceSystem::loadTexture("assets/backgrounds/main_menu.png", "menu_background");
     ResourceSystem::loadTexture("assets/backgrounds/battle.png", "battle_background");
-    
+
     // Player
     ResourceSystem::loadAseprite("assets/objects/ship/full_health.aseprite", "ship");
-    
-    // Engines
+     
+    // Playe engines 
+    ResourceSystem::loadAseprite("assets/objects/engines/base_engine.aseprite", "base_engine");
+    ResourceSystem::loadAseprite("assets/objects/engines/big_pulse_engine.aseprite", "big_pulse_engine");
+    ResourceSystem::loadAseprite("assets/objects/engines/burst_engine.aseprite", "burst_engine");
+    ResourceSystem::loadAseprite("assets/objects/engines/supercharged_engine.aseprite", "supercharged_engine");
+
+    // Enemy engines 
     ResourceSystem::loadAseprite("assets/objects/engines/bomber_engine.aseprite", "bomber_engine"); 
     ResourceSystem::loadAseprite("assets/objects/engines/fighter_engine.aseprite", "fighter_engine");
-    ResourceSystem::loadAseprite("assets/objects/engines/base_engine_powering.aseprite", "base_engine");
     ResourceSystem::loadAseprite("assets/objects/engines/scout_engine.aseprite", "scout_engine");    
 
-    // Weapons
+    // Player weapons
     ResourceSystem::loadAseprite("assets/objects/weapons/auto_cannon.aseprite", "auto_cannon");
+    ResourceSystem::loadAseprite("assets/objects/weapons/big_space_gun.aseprite", "big_space_gun");
+    ResourceSystem::loadAseprite("assets/objects/weapons/zapper.aseprite", "zapper");
+    
+    // Enemy weapons
     ResourceSystem::loadAseprite("assets/objects/weapons/fighter_weapon.aseprite", "fighter_weapon");
     ResourceSystem::loadAseprite("assets/objects/weapons/scout_weapon.aseprite", "scout_weapon");
-
+    
     // Projectiles 
     ResourceSystem::loadAseprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
     ResourceSystem::loadAseprite("assets/objects/projectiles/auto_cannon_projectile.aseprite", "auto_cannon_projectile");
@@ -141,6 +151,9 @@ void Game::proccessSceneMessages(const MessageSystem::SceneMessage msg)
         break;
     case PLAY:
         current_scene.reset(new GameScene);
+        break;
+    case HANGAR:
+        current_scene.reset(new HangarScene);
         break;
     case SETTINGS:
         current_scene.reset(new SettingsScene);

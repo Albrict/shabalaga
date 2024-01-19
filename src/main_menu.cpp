@@ -7,10 +7,10 @@
 #include "background_component.hpp"
 #include "graphics_system.hpp"
 
-using WidgetComponents::WidgetCallback;
 
 MainMenuScene::MainMenuScene()
 {
+    using WidgetComponents::WidgetCallback;
     const Vector2 resolution = Graphics::getCurrentResolution();
     const float button_width = resolution.x / 10.f;
     const float button_height = resolution.y / 20.f;
@@ -29,6 +29,8 @@ MainMenuScene::MainMenuScene()
         const auto entity = WidgetComponents::createButton(object_registry, button_rect, button_labels[i]);
         if (i == 0)
             object_registry.emplace<WidgetCallback>(entity, button_callback[i], this);
+        else
+            object_registry.emplace<WidgetCallback>(entity, button_callback[i], nullptr);
         initial_y += button_height * 2;
     }
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("menu_background"), -30.f);
@@ -43,7 +45,7 @@ MainMenuScene::MainMenuScene()
 void MainMenuScene::proccessEvents()
 {
     if (FadeEffect::isDone(object_registry.get<FadeEffect::Component>(fade_out))) {
-        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::PLAY,
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::HANGAR,
                                       .type = MessageSystem::Type::SCENE_MESSAGE };
         MessageSystem::sendMessage(msg);
     }
