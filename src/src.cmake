@@ -49,4 +49,5 @@ set(game_source
     src/scout_entity.cpp
     src/scout_weapon.cpp
     src/scout_explosion.cpp
-    src/hangar_scene.cpp)
+    src/hangar_scene.cpp
+    src/weapon_entity.cpp)

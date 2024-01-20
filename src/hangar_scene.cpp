@@ -10,6 +10,7 @@
 #include "widget_components.hpp"
 #include "../include/raygui.h"
 #include "widget_system.hpp"
+#include <fstream>
 
 HangarScene::HangarScene()
 {
@@ -17,11 +18,12 @@ HangarScene::HangarScene()
     fade_in = object_registry.create();
     fade_out = object_registry.create();
 
-    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.8f, FadeEffect::Type::FADE_OUT));
-    object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.4f, FadeEffect::Type::FADE_IN, true));
+    object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.8f, FadeEffect::Type::FADE_OUT));
+    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.4f, FadeEffect::Type::FADE_IN, true));
 
     current_weapon = object_registry.create();
     current_engine = object_registry.create();
+    readSave();
     initSprites();
     initWidgets();
     initShip(); 
@@ -57,6 +59,7 @@ void HangarScene::initWidgets()
     const Rectangle panel_rect = {panel_x, panel_y, panel_width, panel_height};
     initStoreButtonsAndSpriteRecs(panel_rect);
     initButtons(panel_rect);
+    
     WidgetComponents::createPanel(object_registry, panel_rect);
 }
 
@@ -74,6 +77,7 @@ void HangarScene::initStoreButtonsAndSpriteRecs(const Rectangle panel_rect)
         .width = arrow_button_width,
         .height = arrow_button_height
     };
+
     weapon_rect = {
         .x = button_rect.x + texture_width / 6.f,
         .y = panel_rect.y + texture_height / 8.f,
@@ -99,6 +103,14 @@ void HangarScene::initStoreButtonsAndSpriteRecs(const Rectangle panel_rect)
     const auto engine_arrow_button_left = WidgetComponents::createButton(object_registry, button_rect, nullptr, ICON_ARROW_LEFT_FILL);
     button_rect.x += panel_rect.x / 7.f;
     const auto engine_arrow_button_right = WidgetComponents::createButton(object_registry, button_rect, nullptr, ICON_ARROW_RIGHT_FILL);
+    
+    // Label 
+    score_text = std::make_unique<std::string>(TextFormat("Your score is: %d", score));
+
+    button_rect.x = panel_rect.x + arrow_button_width * 0.3f;
+    button_rect.y += panel_rect.y / 3.f;
+    button_rect.width = MeasureText(score_text->c_str(), Graphics::getCurrentFontSize());
+    WidgetComponents::createLabel(object_registry, button_rect, score_text->c_str());
 
     // Sprite rects
     object_registry.emplace<Rectangle>(current_weapon, weapon_rect);
@@ -169,4 +181,14 @@ void HangarScene::drawSprites() const
     Aseprite::DrawAsepritePro(weapons[current_weapon_index].sprite, 0, ship_rect, {0.f, 0.f}, 0.f, WHITE);
     Aseprite::DrawAsepriteTagPro(engines[current_engine_index].tag, ship_rect, {0.f, 0.f}, 0.f, WHITE);
     Aseprite::DrawAsepritePro(ship_sprite.sprite, 0, ship_rect, {0.f, 0.f}, 0.f, WHITE);
+}
+
+void HangarScene::readSave()
+{
+    std::ifstream input("saves/save.data");
+    if (input.is_open()) {
+        input.read(reinterpret_cast<char*>(&score), sizeof(unsigned int)); // read score
+        input.read(reinterpret_cast<char*>(&current_weapon_index), sizeof(unsigned int)); // read current engine 
+        input.read(reinterpret_cast<char*>(&current_engine_index), sizeof(unsigned int)); // read current weapon 
+    }
 }

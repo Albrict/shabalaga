@@ -15,12 +15,12 @@ namespace AutoCannonProjectileEntity {
         if (type == ObjectType::ENEMY_SHIP) {
             const Rectangle rect = registry.get<Rectangle>(a_entity);
             const int sound = GetRandomValue(0, 1);
-            registry.emplace_or_replace<CleanUpComponent::Component>(a_entity);
-            SmallExplosionEntity::create(registry, rect);
             if (sound > 0)
                 PlaySound(ResourceSystem::getSound("hitsound_01"));
             else
                 PlaySound(ResourceSystem::getSound("hitsound_02"));
+            registry.emplace_or_replace<CleanUpComponent::Component>(a_entity);
+            SmallExplosionEntity::create(registry, rect);
         } else {
             return;
         }

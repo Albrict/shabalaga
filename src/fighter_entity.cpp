@@ -11,6 +11,7 @@
 #include "ship_components.hpp"
 #include "timer_component.hpp"
 #include "fuel_pickup_entity.hpp"
+#include "weapon_entity.hpp"
 
 namespace FighterEntity {
     void collisionCallback(entt::registry &registry, const entt::entity a_entity, const entt::entity b_entity)
@@ -50,7 +51,7 @@ namespace FighterEntity {
                        .type = MessageSystem::Type::GAME_MASTER_MESSAGE
                     };
                     MessageSystem::sendMessageToEntity(registry, message);
-
+                    registry.emplace_or_replace<CleanUpComponent::Component>(b_entity);
                     if (pick_up_chance_spawn >= 8) {
                         rect.width /= 3.f;
                         rect.height /= 3.f;
@@ -65,8 +66,8 @@ namespace FighterEntity {
 entt::entity FighterEntity::create(entt::registry &object_registry, const Rectangle rect, const float fire_cooldown)
 {
     const auto fighter_entity = object_registry.create();
-    const auto fighter_weapon = FighterWeaponEntity::create(object_registry, rect, fire_cooldown);
-    const auto fighter_engine = EngineEntity::create(object_registry, EngineEntity::Type::FIGHTER, rect);
+    const auto fighter_weapon = WeaponEntity::create(object_registry, rect, WeaponEntity::EnemyType::FIGHTER_WEAPON, fire_cooldown);
+    const auto fighter_engine = EngineEntity::create(object_registry, EngineEntity::EnemyType::FIGHTER, rect);
     const int explosion_tag = 1;
     const int last_frame = 7;
     const Vector2 velocity = {0.f, 400.f};

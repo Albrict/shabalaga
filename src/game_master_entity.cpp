@@ -2,6 +2,7 @@
 #include "game_master_components.hpp"
 #include "message_system.hpp"
 #include "object_component.hpp"
+#include "ship_components.hpp"
 #include "timer_component.hpp"
 
 namespace GameMasterEntity {
@@ -28,14 +29,11 @@ entt::entity GameMasterEntity::create(entt::registry &registry, const entt::enti
     registry.emplace<ObjectType>(game_master, ObjectType::GAME_MASTER);
     MessageSystem::registrEntity(registry, game_master, MessageSystem::Type::GAME_MASTER_MESSAGE, proccessMessagesCallback);
     TimerComponent::createTimerInContainer(timer_container, initial_cooldown, fighter_fleet_spawn_timer_id);
-
-    game_info = {
-        .current_difficulty = GameInfo::Difficulty::EASY,
+    const auto &ship_components = registry.get<ShipComponents::Container>(player);
+    game_info = { 
         .player_entity = player,
-        .score = 0,
-        .scout_amount = 0,
-        .engine_type = 0,
-        .weapon_type = 0
+        .player_weapon = registry.get<WeaponEntity::PlayerType>(ship_components.weapon),
+        .player_engine = registry.get<EngineEntity::PlayerType>(ship_components.engine)
     };
     return game_master;
 }

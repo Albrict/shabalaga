@@ -1,6 +1,8 @@
 #include "game_scene.hpp"
 #include "background_component.hpp"
 #include "clean_up_system.hpp"
+#include "fade_component.hpp"
+#include "game_master_components.hpp"
 #include "graphics.hpp" 
 #include "graphics_system.hpp"
 #include "input_system.hpp"
@@ -13,6 +15,8 @@
 #include "widget_components.hpp"
 #include "widget_system.hpp"
 #include "fuel_bar.hpp"
+#include <fstream>
+#include <ios>
 
 GameScene::GameScene()
 {
@@ -24,6 +28,11 @@ GameScene::GameScene()
     bg_music = ResourceSystem::getMusic("bg_music");
     SeekMusicStream(bg_music, 0.f);
     PlayMusicStream(bg_music);
+    
+    fade_in = object_registry.create();
+    fade_out = object_registry.create();
+    object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.4f, FadeEffect::Type::FADE_OUT));
+    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.8f, FadeEffect::Type::FADE_IN, true));
 }
 
 void GameScene::proccessEvents()
@@ -34,6 +43,7 @@ void GameScene::proccessEvents()
         switch(msg) {
         case MessageSystem::PlaySceneMessage::PLAYER_DIED:
             current_state = State::GAME_OVER;
+            saveGame();
             break; 
         default:
             break;
@@ -134,7 +144,12 @@ void GameScene::drawGame() const
 void GameScene::proccessGameOver()
 {
     if (IsKeyPressed(KEY_ESCAPE)) {
-        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::MENU,
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::HANGAR,
+                                      .type = MessageSystem::Type::SCENE_MESSAGE };
+        MessageSystem::sendMessage(msg);
+    }
+    if (FadeEffect::isDone(object_registry.get<FadeEffect::Component>(fade_in))) {
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::HANGAR,
                                       .type = MessageSystem::Type::SCENE_MESSAGE };
         MessageSystem::sendMessage(msg);
     }
@@ -143,6 +158,10 @@ void GameScene::proccessGameOver()
 
 void GameScene::updateGameOver()
 {
+    auto view = object_registry.view<FadeEffect::Component>();
+    for (auto [entity, fade] : view.each()) 
+        if (!fade.paused)
+            fade.lifetime -= GetFrameTime(); 
     WidgetSystem::update(game_over_registry);
 }
 
@@ -150,6 +169,19 @@ void GameScene::drawGameOver() const
 {
     GraphicsSystem::draw(object_registry);
     GraphicsSystem::draw(game_over_registry);
+    const auto &view = object_registry.view<FadeEffect::Component>();
+    for (auto [entity, fade] : view.each()) {
+        if (!fade.paused) {
+            const Vector2 resolution = Graphics::getCurrentResolution();
+            const Rectangle rect = { 0.f, 0.f, resolution.x, resolution.y };
+            float alpha = 0.f; 
+            if (fade.type == FadeEffect::Type::FADE_OUT)
+                alpha = fade.lifetime / 1.f;
+            else
+                alpha = 1.f - (fade.lifetime / 1.f);
+            DrawRectanglePro(rect, {0.f, 0.f}, 0.f, Fade(BLACK, alpha));
+        }
+    }
 }
 
 void GameScene::initGameObjects()
@@ -160,10 +192,9 @@ void GameScene::initGameObjects()
     const float fuel_bar_height = resolution.y / 6.f;
     const Rectangle rect = {resolution.x / 2.f, resolution.y / 1.2f, size, size};
     const Rectangle fuel_bar_rect = {resolution.x - resolution.x / 10.f, resolution.y - fuel_bar_height * 1.2f, 50.f, fuel_bar_height};
-    const std::string_view engine_sprite = "engine"; 
      
     player = PlayerEntity::create(object_registry, rect);
-    GameMasterEntity::create(object_registry, player);
+    game_master = GameMasterEntity::create(object_registry, player);
     
     WidgetComponents::createScoreLabel(object_registry, score_rect); 
     FuelBar::create(object_registry, fuel_bar_rect);
@@ -199,14 +230,36 @@ void GameScene::initGameOverWidgets()
     const float initial_x = resolution.x / 2 - button_width / 2;
     const char *continue_label = "Restart";
     const char *back_to_menu = "Main menu";
+    const char *back_to_hangar = "Back to hangar"; 
 
     float initial_y = resolution.y / 3 - button_height;
+    
+    // Reset 
     Rectangle button_rect = {initial_x, initial_y, button_width, button_height};
     auto entity = WidgetComponents::createButton(game_over_registry, button_rect, continue_label);
     game_over_registry.emplace<WidgetCallback>(entity, restartCallback, nullptr);
     initial_y += button_height * 2;
+    
+    // Hangar button
+    button_rect = {initial_x, initial_y, button_width, button_height};
+    entity = WidgetComponents::createButton(game_over_registry, button_rect, back_to_hangar);
+    game_over_registry.emplace<WidgetCallback>(entity, backToHangarCallback, this);
+    initial_y += button_height * 2;
 
+    // Back to menu
     button_rect = {initial_x, initial_y, button_width, button_height};
     entity = WidgetComponents::createButton(game_over_registry, button_rect, back_to_menu);
     game_over_registry.emplace<WidgetCallback>(entity, exitCallback, nullptr);
+}
+
+void GameScene::saveGame()
+{
+    const char *path = "saves/save.data";
+    auto &game_info = object_registry.get<GameMasterComponent::GameInfo>(game_master);
+    std::ofstream output(path, std::ios_base::binary);
+    
+    // Save player data
+    output.write(reinterpret_cast<char*>(&game_info.score), sizeof(unsigned int)); // Write score 
+    output.write(reinterpret_cast<char*>(&game_info.player_weapon), sizeof(unsigned int)); // Write player weapon 
+    output.write(reinterpret_cast<char*>(&game_info.player_engine), sizeof(unsigned int)); // Write player engine
 }

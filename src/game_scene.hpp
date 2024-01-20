@@ -1,4 +1,5 @@
 #pragma once
+#include "fade_component.hpp"
 #include "message_system.hpp"
 #include "scene.hpp"
 #include "../include/entt.hpp"
@@ -13,6 +14,8 @@ public:
     void update() override;
     void draw() const override;
 private:
+    void saveGame();
+
     // Pause state
     void proccessPause();
     void updatePause();
@@ -40,6 +43,12 @@ private:
         ResumeMusicStream(scene->bg_music);
     }
     
+    static void backToHangarCallback(entt::any data)
+    {
+        auto *scene = entt::any_cast<GameScene*>(data);
+        FadeEffect::resume(scene->object_registry.get<FadeEffect::Component>(scene->fade_in));
+    }
+
     static void restartCallback(entt::any data)
     {
         MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::PLAY,
@@ -61,6 +70,10 @@ private:
         GAME_OVER
     };
     entt::entity player = entt::null;
+    entt::entity game_master = entt::null;
+    entt::entity fade_in = entt::null;
+    entt::entity fade_out = entt::null;
+
     State current_state = State::GAME;
     entt::registry pause_registry {};
     entt::registry game_over_registry {};

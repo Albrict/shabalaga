@@ -12,6 +12,7 @@
 #include "ship_components.hpp"
 #include "scout_weapon.hpp"
 #include "timer_component.hpp"
+#include "weapon_entity.hpp"
 
 namespace ScoutEntity {
     void collisionCallback(entt::registry &registry, const entt::entity a_entity, const entt::entity b_entity)
@@ -66,8 +67,8 @@ namespace ScoutEntity {
 void ScoutEntity::create(entt::registry &registry, const Rectangle rect)
 {
     const auto scout = registry.create();
-    const auto weapon = ScoutWeapon::create(registry, rect);
-    const auto engine = EngineEntity::create(registry, EngineEntity::Type::SCOUT, rect);
+    const auto weapon = WeaponEntity::create(registry, rect, WeaponEntity::EnemyType::SCOUT_WEAPON);
+    const auto engine = EngineEntity::create(registry, EngineEntity::EnemyType::SCOUT, rect);
     const Vector2 resolution = Graphics::getCurrentResolution();
     const Vector2 velocity = {0.f, resolution.y / 3.f};
     const std::string_view sprite_key = "scout";
