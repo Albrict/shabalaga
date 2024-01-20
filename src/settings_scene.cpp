@@ -54,7 +54,7 @@ void SettingsScene::initResolutionDropdownBox(const Rectangle slider_rect)
     const float dropdown_box_y = slider_rect.y + slider_rect.height;
     const Rectangle dropdown_box_rect = { dropdown_box_x, dropdown_box_y, dropdown_box_width, dropdown_box_height };
     const char *label_text = "Resolution:";
-    const Rectangle label_rect = { dropdown_box_x - MeasureText(label_text, 27), dropdown_box_y, 
+    const Rectangle label_rect = { dropdown_box_x - MeasureText(label_text, Graphics::getCurrentFontSize()), dropdown_box_y, 
                                 static_cast<float>(MeasureText(label_text, Graphics::getCurrentFontSize())), static_cast<float>(Graphics::getCurrentFontSize())};
 
     for (size_t i = 0; i < resolution_vector.size(); ++i) {

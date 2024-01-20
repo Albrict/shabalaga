@@ -1,6 +1,7 @@
 #pragma once
 #include "graphics_component.hpp"
 #include "scene.hpp"
+#include <memory>
 #include "../include/raylib.h"
 
 class HangarScene : public Scene {
@@ -12,6 +13,7 @@ public:
     void update() override;
     void draw() const override;
 private:
+    void readSave();
     void initStoreButtonsAndSpriteRecs(const Rectangle panel_rect);
     void initButtons(const Rectangle panel_rect);
     void initWidgets();    
@@ -73,6 +75,8 @@ private:
 private:
     std::array<GraphicsComponent::Sprite, 3> weapons {};
     std::array<GraphicsComponent::Animation, 4> engines {};
+    std::unique_ptr<std::string> score_text {};
+
     GraphicsComponent::Sprite ship_sprite {};    
 
     entt::entity ship = entt::null;
@@ -80,8 +84,10 @@ private:
     entt::entity current_engine = entt::null;
     entt::entity fade_in = entt::null;
     entt::entity fade_out = entt::null;
+    entt::entity score_info_label = entt::null;
     size_t current_weapon_index = 0;
     size_t current_engine_index = 0;
     Rectangle engine_rect {};
     Rectangle weapon_rect {};
+    int score = 0;
 };

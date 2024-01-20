@@ -89,6 +89,8 @@ void Game::loadResources()
     // Projectiles 
     ResourceSystem::loadAseprite("assets/objects/projectiles/bullet.aseprite", "bullet_projectile");
     ResourceSystem::loadAseprite("assets/objects/projectiles/auto_cannon_projectile.aseprite", "auto_cannon_projectile");
+    ResourceSystem::loadAseprite("assets/objects/projectiles/big_space_gun_projectile.aseprite", "big_space_gun_projectile");
+    ResourceSystem::loadAseprite("assets/objects/projectiles/zapper_projectile.aseprite", "zapper_projectile");
 
     // Enemies 
     ResourceSystem::loadAseprite("assets/objects/enemies/bomber.aseprite", "bomber"); 

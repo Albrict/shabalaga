@@ -34,7 +34,7 @@ void BomberEntity::create(entt::registry &object_registry, const Rectangle rect,
 {
     const auto bomber = object_registry.create();
     const auto weapon = object_registry.create();
-    const auto engine = EngineEntity::create(object_registry, EngineEntity::Type::BOMBER, rect);
+    const auto engine = EngineEntity::create(object_registry, EngineEntity::EnemyType::BOMBER, rect);
     const std::string_view bomber_sprite_key = "bomber";
     const float time_to_travel = 0.8f;
     Vector2 velocity =  {0.f, 0.f};

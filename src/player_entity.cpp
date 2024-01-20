@@ -1,5 +1,4 @@
 #include "player_entity.hpp"
-#include "auto_cannon_entity.hpp"
 #include "clean_up_component.hpp"
 #include "collison_component.hpp"
 #include "engine_entity.hpp"
@@ -10,6 +9,7 @@
 #include "object_component.hpp"
 #include "player_explosion_entity.hpp"
 #include "ship_components.hpp"
+#include "weapon_entity.hpp"
 
 namespace PlayerEntity {
     void moveLeft(entt::registry &registry, const entt::entity entity)
@@ -92,8 +92,8 @@ namespace PlayerEntity {
 entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectangle rect)
 {
     const auto player_entity = object_registry.create();
-    const auto engine = EngineEntity::create(object_registry, EngineEntity::Type::BASIC, rect);
-    const auto weapon = AutoCannonEntity::create(object_registry, rect);
+    const auto engine = EngineEntity::create(object_registry, EngineEntity::PlayerType::BURST_ENGINE, rect);
+    const auto weapon = WeaponEntity::create(object_registry, rect, WeaponEntity::PlayerType::AUTO_CANNON); 
     const std::string_view player_sprite_key = "ship";
 
     auto &input_container = object_registry.emplace<InputComponent::Container>(player_entity);
