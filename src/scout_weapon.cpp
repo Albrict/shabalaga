@@ -1,8 +1,8 @@
 #include "scout_weapon.hpp"
-#include "bullet_entity.hpp"
 #include "graphics_component.hpp"
 #include "hitbox_component.hpp"
 #include "object_component.hpp"
+#include "projectile_entity.hpp"
 #include "timer_component.hpp"
 
 namespace ScoutWeapon {
@@ -56,7 +56,7 @@ void ScoutWeapon::fire(entt::registry &registry, const entt::entity entity)
             const Vector2 position = {rect.x - rect.width / 2.f, rect.y};
             rect.width *= 1.1f;
             rect.height *= 1.1f;
-            BulletEntity::create(registry, rect);
+            ProjectileEntity::create(registry, rect, ProjectileEntity::Type::BULLET_PROJECTILE);
         }
         state = WeaponState::FIRING;
         sprite.current_tag_id = 0;

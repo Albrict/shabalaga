@@ -2,12 +2,12 @@
 #include "clean_up_component.hpp"
 #include "collison_component.hpp"
 #include "engine_entity.hpp"
+#include "explosion_entity.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
 #include "input_component.hpp"
 #include "message_system.hpp"
 #include "object_component.hpp"
-#include "player_explosion_entity.hpp"
 #include "ship_components.hpp"
 #include "weapon_entity.hpp"
 
@@ -65,6 +65,7 @@ namespace PlayerEntity {
     {
         const entt::entity engine = object_registry.get<ShipComponents::Container>(player).engine; 
         const Vector2 resolution = Graphics::getCurrentResolution();
+        const Rectangle rect = object_registry.get<Rectangle>(player);
         const float velocity_y = resolution.y / 3.f;
         const float velocity_x = GetRandomValue(-resolution.x / 2.f, resolution.x / 2.f);
         auto &engine_animation = object_registry.get<GraphicsComponent::Animation>(engine);
@@ -74,7 +75,7 @@ namespace PlayerEntity {
         object_registry.emplace<VelocityComponent>(player, (VelocityComponent){velocity_x, velocity_y});
         object_registry.remove<InputComponent::Container>(player);
         object_registry.emplace_or_replace<CollisionComponent::Component>(player, 
-             CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr));
+             CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback));
     }
 
     void proccessMessagesCallback(entt::registry &registry, const entt::entity entity, MessageSystem::Message msg)
@@ -92,13 +93,13 @@ namespace PlayerEntity {
 entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectangle rect)
 {
     const auto player_entity = object_registry.create();
-    const auto engine = EngineEntity::create(object_registry, EngineEntity::PlayerType::BURST_ENGINE, rect);
-    const auto weapon = WeaponEntity::create(object_registry, rect, WeaponEntity::PlayerType::AUTO_CANNON); 
+    const auto engine = EngineEntity::create(object_registry, EngineEntity::PlayerType::BASIC, rect);
+    const auto weapon = WeaponEntity::create(object_registry, rect, WeaponEntity::PlayerType::BIG_SPACE_GUN); 
     const std::string_view player_sprite_key = "ship";
 
     auto &input_container = object_registry.emplace<InputComponent::Container>(player_entity);
     auto &collider = object_registry.emplace<CollisionComponent::Component>(player_entity, 
-                         CollisionComponent::create(true, CollisionComponent::Type::BOUNDS, collisionCallback, nullptr));
+                         CollisionComponent::create(true, false, CollisionComponent::Type::BOUNDS, collisionCallback));
     
     GraphicsComponent::addSpriteComponent(object_registry, player_entity, player_sprite_key, rect, 
                                           GraphicsComponent::RenderPriority::MIDDLE);
@@ -120,14 +121,11 @@ void PlayerEntity::destroy(entt::registry &registry, const entt::entity player)
         const auto &sprite = registry.get<GraphicsComponent::Sprite>(player); 
         const auto &rectangle = registry.get<Rectangle>(player); 
 
-        registry.emplace<CleanUpComponent::Component>(ship_components->engine); 
-        registry.emplace<CleanUpComponent::Component>(ship_components->weapon); 
-
-        registry.remove<ShipComponents::Container>(player);
-        registry.remove<CollisionComponent::Component>(player);
-        registry.emplace<CleanUpComponent::Component>(player); 
+        registry.emplace_or_replace<CleanUpComponent::Component>(ship_components->engine); 
+        registry.emplace_or_replace<CleanUpComponent::Component>(ship_components->weapon); 
+        registry.emplace_or_replace<CleanUpComponent::Component>(player); 
         
-        PlayerExplosionEntity::create(registry, rectangle);
+        ExplosionEntity::create(registry, rectangle, ExplosionEntity::Type::PLAYER_EXPLOSION);
         PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
         MessageSystem::unregistrEntity(registry, player, MessageSystem::Type::PLAYER_MESSAGE);
     }

@@ -3,14 +3,13 @@
 #include "clean_up_component.hpp"
 #include "collison_component.hpp"
 #include "engine_entity.hpp"
+#include "explosion_entity.hpp"
 #include "fuel_pickup_entity.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
 #include "message_system.hpp"
 #include "object_component.hpp"
-#include "scout_explosion.hpp"
 #include "ship_components.hpp"
-#include "scout_weapon.hpp"
 #include "timer_component.hpp"
 #include "weapon_entity.hpp"
 
@@ -42,7 +41,7 @@ namespace ScoutEntity {
                     registry.remove<CollisionComponent::Component>(a_entity);
                     registry.emplace<CleanUpComponent::Component>(a_entity); 
                     
-                    ScoutExplosion::create(registry, rect);
+                    ExplosionEntity::create(registry, rect, ExplosionEntity::Type::SCOUT_EXPLOSION);
                     if (sound > 0)
                         PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
                     else
@@ -78,7 +77,7 @@ void ScoutEntity::create(entt::registry &registry, const Rectangle rect)
     const float collision_timer_lifetime = ((rect.y * -1.f) + rect.height) / velocity.y;
 
     registry.emplace<CollisionComponent::Component>(scout, 
-                                             CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr));
+                                             CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback));
     registry.emplace<VelocityComponent>(scout, velocity);
     registry.emplace<ObjectComponent::Score>(scout, 150); 
     registry.emplace<BehaviorComponent::Type>(scout, BehaviorComponent::Type::SCOUT);

@@ -1,9 +1,9 @@
 #include "bomber_entity.hpp"
 #include "behavior_component.hpp"
-#include "bomber_explosion_entity.hpp"
 #include "clean_up_component.hpp"
 #include "collison_component.hpp"
 #include "engine_entity.hpp"
+#include "explosion_entity.hpp"
 #include "graphics_component.hpp"
 #include "message_system.hpp"
 #include "object_component.hpp"
@@ -57,7 +57,7 @@ void BomberEntity::create(entt::registry &object_registry, const Rectangle rect,
     object_registry.emplace<BehaviorComponent::Type>(bomber, BehaviorComponent::Type::BOMBER);
     object_registry.emplace<ObjectComponent::PlayerPosition>(bomber, player_position); 
     object_registry.emplace<CollisionComponent::Component>(bomber, 
-                                             CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr));
+                                             CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback));
     ShipComponents::addShipComponents(object_registry, bomber, bomber_sprite_key, rect, ObjectType::ENEMY_SHIP, 50);     
     ShipComponents::attachComponents(object_registry, bomber, weapon, engine);
     GraphicsComponent::addSpriteComponent(object_registry, bomber, bomber_sprite_key, rect, 
@@ -78,7 +78,7 @@ void BomberEntity::destroy(entt::registry &registry, const entt::entity entity)
         registry.remove<ShipComponents::Container>(entity);
         registry.emplace<CleanUpComponent::Component>(entity); 
          
-        BomberExplosionEntity::create(registry, rect);
+        ExplosionEntity::create(registry, rect, ExplosionEntity::Type::BOMBER_EXPLOSION);
         if (sound > 0)
             PlaySound(ResourceSystem::getSound("enemy_destroyed_01"));
         else

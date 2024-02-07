@@ -43,6 +43,6 @@ void FuelPickUpEntity::create(entt::registry &object_registry, const Rectangle r
     object_registry.emplace<ObjectType>(fuel, ObjectType::PICK_UP);
 
     GraphicsComponent::addAnimationComponent(object_registry, fuel, key, 0, rect, GraphicsComponent::RenderPriority::LOW);
-    collider = CollisionComponent::create(true, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback, nullptr);
+    collider = CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback);
     HitboxComponent::loadHitboxesInContainer(container, key, rect);
 }

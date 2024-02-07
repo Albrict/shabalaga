@@ -29,25 +29,19 @@ set(game_source
     src/ship_components_system.cpp
     src/graphics_system.cpp
     src/clean_up_system.cpp
-    src/auto_cannon_entity.cpp
     src/fighter_weapon_entity.cpp
     src/behavior_system.cpp
-    src/auto_cannon_projectile_entity.cpp
-    src/bullet_entity.cpp
-    src/small_explosion_entity.cpp
     src/timer_system.cpp
     src/fleet.cpp
-    src/fighter_explosion_entity.cpp
-    src/player_explosion_entity.cpp
     src/score_label_system.cpp
     src/aseprite.cpp
     src/bomber_entity.cpp
-    src/bomber_explosion_entity.cpp
     src/fuel_pickup_entity.cpp
     src/fuel_bar.cpp
     src/fuel_system.cpp
     src/scout_entity.cpp
     src/scout_weapon.cpp
-    src/scout_explosion.cpp
     src/hangar_scene.cpp
-    src/weapon_entity.cpp)
+    src/weapon_entity.cpp
+    src/projectile_entity.cpp
+    src/explosion_entity.cpp)

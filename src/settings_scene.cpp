@@ -26,7 +26,7 @@ void SettingsScene::initWidgets()
     const Rectangle panel_rect = {panel_x, panel_y, panel_width, panel_height};
 
     Rectangle slider_rect = initBrightnessSlider(panel_rect);
-    initResolutionDropdownBox(slider_rect);
+//    initResolutionDropdownBox(slider_rect);
     initButtons(panel_rect);
     WidgetComponents::createPanel(object_registry, panel_rect, "Settings");
 }

@@ -99,10 +99,11 @@ void Game::loadResources()
     // Explosions
     ResourceSystem::loadAseprite("assets/effects/player_explosion.aseprite", "player_explosion");
     ResourceSystem::loadAseprite("assets/effects/bomber_explosion.aseprite", "bomber_explosion");
-    ResourceSystem::loadAseprite("assets/effects/small_explosion.aseprite", "small_explosion");
     ResourceSystem::loadAseprite("assets/effects/fighter_explosion.aseprite", "fighter_explosion");
     ResourceSystem::loadAseprite("assets/effects/scout_explosion.aseprite", "scout_explosion");
 
+    ResourceSystem::loadAseprite("assets/effects/small_explosion.aseprite", "small_explosion");
+    ResourceSystem::loadAseprite("assets/effects/bsg_explosion.aseprite", "bsg_explosion");
     // Pick ups 
     ResourceSystem::loadAseprite("assets/pickups/fuel.aseprite", "fuel_pickup");
     

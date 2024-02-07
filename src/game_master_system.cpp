@@ -116,11 +116,11 @@ void GameMasterSystem::update(entt::registry &registry, const entt::entity game_
     switch(game_info.current_difficulty) {
     using  enum GameMasterComponent::GameInfo::Difficulty;
     case EASY:
-        if (game_info.score >= 100) 
+        if (game_info.score >= 200) 
             changeDifficultyToPreMedium(game_info, registry.get<TimerComponent::Container>(game_master));
         break;
     case PRE_MEDIUM:
-        if (game_info.score >= 200)
+        if (game_info.score >= 4000)
             changeDifficultyToMedium(game_info, registry.get<TimerComponent::Container>(game_master));
         break;
     case MEDIUM:

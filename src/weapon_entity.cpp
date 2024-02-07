@@ -1,9 +1,9 @@
 #include "weapon_entity.hpp"
-#include "auto_cannon_projectile_entity.hpp"
 #include "graphics_component.hpp"
 #include "hitbox_component.hpp"
 #include "input_component.hpp"
 #include "object_component.hpp"
+#include "projectile_entity.hpp"
 #include "timer_component.hpp"
 
 namespace WeaponEntity {
@@ -22,7 +22,7 @@ namespace WeaponEntity {
                     rect.x -= rect.width / 2.f;
                     rect.width *= 2;
                     rect.height *= 2;
-                    AutoCannonProjectileEntity::create(registry, rect);
+                    ProjectileEntity::create(registry, rect, ProjectileEntity::Type::AUTO_CANNON_PROJECTILE);
                 }
                 state = WeaponState::FIRING;
                 sprite.tag = ResourceSystem::getAsepriteTag(key, 1);
@@ -144,11 +144,49 @@ namespace WeaponEntity {
             sprite.tag =  ResourceSystem::getAsepriteTag("big_space_gun", 2);
             state = WeaponState::IDLE;
         }
+        
+        void chargeShot(entt::registry &registry, const entt::entity entity)
+        {
+            auto &state = registry.get<WeaponState>(entity);
+            auto &sprite = registry.get<GraphicsComponent::Animation>(entity);
 
+            if (state == WeaponState::IDLE) {
+                state = WeaponState::FIRING;
+                sprite.tag = ResourceSystem::getAsepriteTag("big_space_gun", 0);
+                sprite.current_tag_id = 0;
+            }
+        }
+
+        void fire(entt::registry &registry, const entt::entity entity)
+        {
+            const int sound = GetRandomValue(0, 1);
+            const int idle_tag = 2;
+            const std::string_view key = "big_space_gun";
+            
+            auto &state = registry.get<WeaponState>(entity);
+            auto &sprite = registry.get<GraphicsComponent::Animation>(entity);
+                     
+            auto rect = registry.get<HitboxComponent::Container>(entity).hitboxes[0].rect; // get hitboxes from container
+            rect.height *= 6;
+            ProjectileEntity::create(registry, rect, ProjectileEntity::Type::BIG_SPACE_GUN_PROJECTILE);
+
+            if (sound > 0) 
+                PlaySound(ResourceSystem::getSound("attack_01"));
+            else
+                PlaySound(ResourceSystem::getSound("attack_02"));
+
+            state = WeaponState::IDLE;
+            sprite.tag = ResourceSystem::getAsepriteTag("big_space_gun", idle_tag);
+            sprite.current_tag_id = idle_tag;
+        }
+        
         void create(entt::registry &registry, const Rectangle rect, const entt::entity weapon_entity)
         {
             const int init_tag = 1;
             const int last_init_frame = 10;
+            const int fire_tag = 0;
+            const int last_fire_frame = 6;
+
             const std::string_view key = "big_space_gun";
 
             auto &container = registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
@@ -158,9 +196,10 @@ namespace WeaponEntity {
             registry.emplace<WeaponState>(weapon_entity, WeaponState::INIT);
             registry.emplace<ObjectType>(weapon_entity, ObjectType::SHIP_COMPONENT);
             
-//            InputComponent::create(input_container, fireAutoCannon, KEY_SPACE, InputComponent::Type::DOWN);
+            InputComponent::create(input_container, chargeShot, KEY_SPACE, InputComponent::Type::DOWN);
             GraphicsComponent::addAnimationComponent(registry, weapon_entity, key, init_tag, rect, GraphicsComponent::RenderPriority::HIGH);
             GraphicsComponent::addCallback(registry, weapon_entity, init_tag, last_init_frame, initAnimationCallback);
+            GraphicsComponent::addCallback(registry, weapon_entity, fire_tag, last_fire_frame, fire);
             HitboxComponent::loadHitboxesInContainer(container, key, rect);
         }
     }

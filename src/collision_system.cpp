@@ -26,7 +26,13 @@ namespace CollisionSystem {
             if (registry.valid(a_entity) && registry.valid(b_entity)) {
                 const Rectangle &a_rect = registry.get<Rectangle>(a_entity);
                 const Rectangle &b_rect = registry.get<Rectangle>(b_entity);
-                if (CheckCollisionRecs(a_rect, b_rect)) {
+                if (a_collider.high_preccision == true || b_collider.high_preccision == true) {
+                    const auto &a_container = registry.get<HitboxComponent::Container>(a_entity);
+                    const auto &b_container = registry.get<HitboxComponent::Container>(b_entity);
+                    if (checkCollisionHitboxes(a_container, b_container))
+                        a_collider.onCollide(registry, a_entity, b_entity);
+                    continue;
+                } else if (CheckCollisionRecs(a_rect, b_rect)) {
                     const auto &a_container = registry.get<HitboxComponent::Container>(a_entity);
                     const auto &b_container = registry.get<HitboxComponent::Container>(b_entity);
                     

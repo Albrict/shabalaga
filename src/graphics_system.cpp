@@ -213,8 +213,8 @@ void GraphicsSystem::draw(const entt::registry &registry)
     renderPriorityHigh(registry);
     renderPriorityMiddle(registry);
     renderPriorityLow(registry);
-    renderHitboxes(registry);
     renderWidget(registry);
+    renderHitboxes(registry);
     renderUI(registry); 
     renderFade(registry);
 }
