@@ -1,7 +1,7 @@
 #include "scout_entity.hpp"
 #include "behavior_component.hpp"
 #include "clean_up_component.hpp"
-#include "collison_component.hpp"
+#include "collision_component.hpp"
 #include "engine_entity.hpp"
 #include "explosion_entity.hpp"
 #include "fuel_pickup_entity.hpp"
@@ -33,13 +33,9 @@ namespace ScoutEntity {
                     const auto &sprite = registry.get<GraphicsComponent::Sprite>(a_entity); 
                     const int score = registry.get<ObjectComponent::Score>(a_entity).score; 
 
-                    registry.emplace<CleanUpComponent::Component>(ship_components->engine); 
-                    registry.emplace<CleanUpComponent::Component>(ship_components->weapon); 
-
-                    registry.remove<BehaviorComponent::Type>(a_entity);  
-                    registry.remove<ShipComponents::Container>(a_entity);
-                    registry.remove<CollisionComponent::Component>(a_entity);
-                    registry.emplace<CleanUpComponent::Component>(a_entity); 
+                    registry.emplace_or_replace<CleanUpComponent::Component>(ship_components->engine); 
+                    registry.emplace_or_replace<CleanUpComponent::Component>(ship_components->weapon); 
+                    registry.emplace_or_replace<CleanUpComponent::Component>(a_entity); 
                     
                     ExplosionEntity::create(registry, rect, ExplosionEntity::Type::SCOUT_EXPLOSION);
                     if (sound > 0)
@@ -76,16 +72,15 @@ void ScoutEntity::create(entt::registry &registry, const Rectangle rect)
     const float timer_lifetime = 2.f;
     const float collision_timer_lifetime = ((rect.y * -1.f) + rect.height) / velocity.y;
 
-    registry.emplace<CollisionComponent::Component>(scout, 
-                                             CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback));
     registry.emplace<VelocityComponent>(scout, velocity);
     registry.emplace<ObjectComponent::Score>(scout, 150); 
     registry.emplace<BehaviorComponent::Type>(scout, BehaviorComponent::Type::SCOUT);
 
-    ShipComponents::addShipComponents(registry, scout, sprite_key, rect, ObjectType::ENEMY_SHIP, 50);     
+    ShipComponents::addShipComponents(registry, scout, rect, ObjectType::ENEMY_SHIP, 50);     
     ShipComponents::attachComponents(registry, scout, weapon, engine);
     GraphicsComponent::addSpriteComponent(registry, scout, sprite_key, rect, 
                                           GraphicsComponent::RenderPriority::MIDDLE);
     TimerComponent::createTimer(registry, scout, timer_lifetime, direction_timer);
     TimerComponent::createTimer(registry, scout, collision_timer_lifetime, collision_timer_id);
+    Collision::addDynamicCollisionFromAseprite(registry, scout, sprite_key, true, Collision::Type::OUT_OF_BOUNDS, collisionCallback);
 }

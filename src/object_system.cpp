@@ -1,7 +1,6 @@
 #include "object_system.hpp"
 #include "behavior_system.hpp"
 #include "fuel_system.hpp"
-#include "hitbox_system.hpp"
 #include "object_component.hpp"
 #include "ship_components_system.hpp"
 #include "widget_system.hpp"
@@ -50,5 +49,4 @@ void ObjectSystem::update(entt::registry &registry)
     TimerSystem::update(registry);
     BehaviorSystem::update(registry);
     ShipComponentsSystem::update(registry);
-    HitboxSystem::update(registry);
 }

@@ -5,7 +5,7 @@
 #include "graphics.hpp"
 #include "graphics_component.hpp"
 #include "label_system.hpp"
-#include "hitbox_component.hpp"
+#include "collision_component.hpp"
 #include "object_component.hpp"
 #include "panel_system.hpp"
 #include "score_label_system.hpp"
@@ -147,9 +147,14 @@ namespace GraphicsSystem {
      
     void renderHitboxes(const entt::registry &registry)
     {
-        const auto &view = registry.view<HitboxComponent::Container>();
-        for (auto [entity, container] : view.each()) {
-            for (const auto &hitbox : container.hitboxes)
+        const auto &dynamic_collider_view = registry.view<Collision::DynamicComponent>();
+        for (auto [entity, dynamic_collider] : dynamic_collider_view.each()) {
+            for (const auto &hitbox : dynamic_collider.hitboxes)
+                DrawRectangleLinesEx(hitbox.rect, 1.f, RED);
+        }
+        const auto &static_collider_view = registry.view<Collision::StaticComponent>();
+        for (auto [entity, static_collider] : static_collider_view.each()) {
+            for (const auto &hitbox : static_collider.hitboxes)
                 DrawRectangleLinesEx(hitbox.rect, 1.f, RED);
         }
     }

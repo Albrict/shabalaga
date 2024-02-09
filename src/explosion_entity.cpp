@@ -1,9 +1,8 @@
 #include "explosion_entity.hpp"
 #include "clean_up_component.hpp"
-#include "collison_component.hpp"
+#include "collision_component.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
-#include "hitbox_component.hpp"
 #include "message_system.hpp"
 #include "object_component.hpp"
 
@@ -48,8 +47,7 @@ namespace ExplosionEntity {
     namespace BomberExplosion {
         void animationCallbackRemoveComponents(entt::registry &registry, const entt::entity entity)
         {
-            registry.remove<CollisionComponent::Component>(entity);
-            registry.remove<HitboxComponent::Container>(entity);
+            registry.remove<Collision::DynamicComponent>(entity);
         }
         
         void animationCallback(entt::registry &registry, const entt::entity entity)
@@ -77,19 +75,15 @@ namespace ExplosionEntity {
             const int last_frame = 8;
             const int last_explosion_frame = 5;
             const std::string_view key = "bomber_explosion";
-            auto &collider = registry.emplace<CollisionComponent::Component>(explosion, 
-                                 CollisionComponent::create(true, true, CollisionComponent::Type::NONE, collisionCallback));
-            auto &container = registry.emplace<HitboxComponent::Container>(explosion, explosion);
-           
-            registry.emplace<DamageComponent>(explosion, 100);
-            registry.emplace<Rectangle>(explosion, rect);
 
+            registry.emplace<Rectangle>(explosion, rect);
+            registry.emplace<DamageComponent>(explosion, 100);
             registry.emplace<ObjectType>(explosion, ObjectType::EXPLOSION);
 
             GraphicsComponent::addAnimationComponent(registry, explosion, key, 0, rect, GraphicsComponent::RenderPriority::LOW);
             GraphicsComponent::addCallback(registry, explosion, explosion_tag_id, last_frame, animationCallback);
             GraphicsComponent::addCallback(registry, explosion, explosion_tag_id, last_explosion_frame, animationCallbackRemoveComponents);
-            HitboxComponent::loadHitboxesInContainer(container, key, rect);
+            Collision::addDynamicCollisionFromAseprite(registry, explosion, key, true, Collision::Type::OUT_OF_BOUNDS, collisionCallback);
         }
     }
     
@@ -148,26 +142,24 @@ namespace ExplosionEntity {
             const int explosion_tag_id = 0;
             const int last_frame = 6;
             const std::string_view key = sprite_keys[BSG_EXPLOSION];
-            HitboxComponent::Hitbox hitbox;
-            hitbox.rect = rect;
-            hitbox.rect.width = resolution.x / 3.f;
-            hitbox.rect.height *= 1.5f;
-            hitbox.rect.x = -resolution.x;
-            hitbox.rect.y -= hitbox.rect.height;
+            std::vector<Collision::Hitbox> hitboxes;
+            const Collision::Hitbox hitbox = {
+                .rect = {
+                    .x = rect.x - rect.width * 2.f,
+                    .y = rect.y,
+                    .width = rect.width * 4.f,
+                    .height = rect.height 
+                }
+            };
+            hitboxes.push_back(hitbox);
 
-            hitbox.x_padding = -resolution.x / 8.f;
-            hitbox.y_padding = 0.f;
-
-            auto &collider = registry.emplace<CollisionComponent::Component>(explosion, 
-                                 CollisionComponent::create(true, true, CollisionComponent::Type::NONE, collisionCallback));
-            auto &container = registry.emplace<HitboxComponent::Container>(explosion, explosion);
-            container.hitboxes.push_back(hitbox); 
             registry.emplace<DamageComponent>(explosion, 200);
             registry.emplace<Rectangle>(explosion, rect);
-            
             registry.emplace<ObjectType>(explosion, ObjectType::EXPLOSION);
+
             GraphicsComponent::addAnimationComponent(registry, explosion, key, 0, rect, GraphicsComponent::RenderPriority::LOW);
             GraphicsComponent::addCallback(registry, explosion, explosion_tag_id, last_frame, animationCallback);
+            Collision::addStaticCollision(registry, explosion, key, hitboxes, true, collisionCallback);
         }
     }
 }

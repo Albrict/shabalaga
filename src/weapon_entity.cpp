@@ -1,6 +1,6 @@
 #include "weapon_entity.hpp"
 #include "graphics_component.hpp"
-#include "hitbox_component.hpp"
+#include "collision_component.hpp"
 #include "input_component.hpp"
 #include "object_component.hpp"
 #include "projectile_entity.hpp"
@@ -14,7 +14,7 @@ namespace WeaponEntity {
             auto &sprite = registry.get<GraphicsComponent::Animation>(entity);
                      
             if (state == WeaponState::IDLE) {
-                const auto hitboxes = registry.get<HitboxComponent::Container>(entity).hitboxes; // get hitboxes from container
+                const auto &hitboxes = registry.get<Collision::DynamicComponent>(entity).hitboxes; // get hitboxes from container
                 const int sound = GetRandomValue(0, 1);
                 const std::string_view key = "auto_cannon";
                 for (const auto hitbox : hitboxes) {
@@ -47,21 +47,21 @@ namespace WeaponEntity {
 
         void create(entt::registry &object_registry, const Rectangle rect, const entt::entity weapon_entity)
         {
-                const int firing_tag_id = 1;
-                const int firing_last_frame = 5;
-                const std::string_view key = "auto_cannon";
+            const int firing_tag_id = 1;
+            const int firing_last_frame = 5;
+            const std::string_view key = "auto_cannon";
 
-                auto &container = object_registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
-                auto &input_container = object_registry.emplace<InputComponent::Container>(weapon_entity);
+            auto &input_container = object_registry.emplace<InputComponent::Container>(weapon_entity);
 
-                object_registry.emplace<Rectangle>(weapon_entity, rect);
-                object_registry.emplace<WeaponState>(weapon_entity, WeaponState::IDLE);
-                object_registry.emplace<ObjectType>(weapon_entity, ObjectType::SHIP_COMPONENT);
-                
-                InputComponent::create(input_container, fireAutoCannon, KEY_SPACE, InputComponent::Type::DOWN);
-                GraphicsComponent::addAnimationComponent(object_registry, weapon_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
-                GraphicsComponent::addCallback(object_registry, weapon_entity, firing_tag_id, firing_last_frame, animationCallback);
-                HitboxComponent::loadHitboxesInContainer(container, "auto_cannon", rect);
+            object_registry.emplace<Rectangle>(weapon_entity, rect);
+            object_registry.emplace<WeaponState>(weapon_entity, WeaponState::IDLE);
+            object_registry.emplace<ObjectType>(weapon_entity, ObjectType::SHIP_COMPONENT);
+            
+            InputComponent::create(input_container, fireAutoCannon, KEY_SPACE, InputComponent::Type::DOWN);
+            GraphicsComponent::addAnimationComponent(object_registry, weapon_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
+            GraphicsComponent::addCallback(object_registry, weapon_entity, firing_tag_id, firing_last_frame, animationCallback);
+            
+            Collision::addDynamicCollisionFromAseprite(object_registry, weapon_entity, key, false, Collision::Type::NONE, nullptr);
         }
     }
     namespace FighterWeapon {
@@ -82,7 +82,6 @@ namespace WeaponEntity {
             const int last_firing_frame = 3;
             const std::string_view key = "fighter_weapon";
             const int timer_id = 1;
-            auto &hitbox_container = object_registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
             auto &timer_container = object_registry.emplace<TimerComponent::Container>(weapon_entity);
 
             object_registry.emplace<Rectangle>(weapon_entity, rect);
@@ -91,8 +90,9 @@ namespace WeaponEntity {
 
             GraphicsComponent::addAnimationComponent(object_registry, weapon_entity, key, 1, rect, GraphicsComponent::RenderPriority::HIGH);
             GraphicsComponent::addCallback(object_registry, weapon_entity, tag_id, last_firing_frame, animationCallback);
-            HitboxComponent::loadHitboxesInContainer(hitbox_container, key, rect);
+
             TimerComponent::createFinishedTimerInContainer(timer_container, fire_cooldown, timer_id);
+            Collision::addDynamicCollisionFromAseprite(object_registry, weapon_entity, key, false, Collision::Type::NONE, nullptr);
             return weapon_entity;
         }
     }
@@ -118,8 +118,6 @@ namespace WeaponEntity {
             const int timer_id = 1;
             const float fire_cooldown = 0.6;
             const std::string_view key = "scout_weapon";
-
-            auto &hitbox_container = registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
             auto &timer_container = registry.emplace<TimerComponent::Container>(weapon_entity);
 
             registry.emplace<Rectangle>(weapon_entity, rect);
@@ -128,8 +126,8 @@ namespace WeaponEntity {
 
             GraphicsComponent::addAnimationComponent(registry, weapon_entity, key, initial_tag_idle, rect, GraphicsComponent::RenderPriority::HIGH);
             GraphicsComponent::addCallback(registry, weapon_entity, firing_tag_id, last_firing_frame, animationCallback);
-            HitboxComponent::loadHitboxesInContainer(hitbox_container, key, rect);
             TimerComponent::createFinishedTimerInContainer(timer_container, fire_cooldown, timer_id);
+            Collision::addDynamicCollisionFromAseprite(registry, weapon_entity, key, false, Collision::Type::NONE, nullptr);
             return weapon_entity;
         }
     }
@@ -165,11 +163,10 @@ namespace WeaponEntity {
             
             auto &state = registry.get<WeaponState>(entity);
             auto &sprite = registry.get<GraphicsComponent::Animation>(entity);
-                     
-            auto rect = registry.get<HitboxComponent::Container>(entity).hitboxes[0].rect; // get hitboxes from container
+            auto rect = registry.get<Collision::DynamicComponent>(entity).hitboxes[0].rect; // get hitboxes from container
             rect.height *= 6;
-            ProjectileEntity::create(registry, rect, ProjectileEntity::Type::BIG_SPACE_GUN_PROJECTILE);
 
+            ProjectileEntity::create(registry, rect, ProjectileEntity::Type::BIG_SPACE_GUN_PROJECTILE);
             if (sound > 0) 
                 PlaySound(ResourceSystem::getSound("attack_01"));
             else
@@ -188,8 +185,6 @@ namespace WeaponEntity {
             const int last_fire_frame = 6;
 
             const std::string_view key = "big_space_gun";
-
-            auto &container = registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
             auto &input_container = registry.emplace<InputComponent::Container>(weapon_entity);
 
             registry.emplace<Rectangle>(weapon_entity, rect);
@@ -200,7 +195,7 @@ namespace WeaponEntity {
             GraphicsComponent::addAnimationComponent(registry, weapon_entity, key, init_tag, rect, GraphicsComponent::RenderPriority::HIGH);
             GraphicsComponent::addCallback(registry, weapon_entity, init_tag, last_init_frame, initAnimationCallback);
             GraphicsComponent::addCallback(registry, weapon_entity, fire_tag, last_fire_frame, fire);
-            HitboxComponent::loadHitboxesInContainer(container, key, rect);
+            Collision::addDynamicCollisionFromAseprite(registry, weapon_entity, key, false, Collision::Type::NONE, nullptr);
         }
     }
 
@@ -220,8 +215,6 @@ namespace WeaponEntity {
             const int init_tag = 2;
             const int last_init_frame = 13;
             const std::string_view key = "zapper";
-
-            auto &container = registry.emplace<HitboxComponent::Container>(weapon_entity, weapon_entity);
             auto &input_container = registry.emplace<InputComponent::Container>(weapon_entity);
 
             registry.emplace<Rectangle>(weapon_entity, rect);
@@ -231,7 +224,7 @@ namespace WeaponEntity {
 //            InputComponent::create(input_container, fireAutoCannon, KEY_SPACE, InputComponent::Type::DOWN);
             GraphicsComponent::addAnimationComponent(registry, weapon_entity, key, init_tag, rect, GraphicsComponent::RenderPriority::HIGH);
             GraphicsComponent::addCallback(registry, weapon_entity, init_tag, last_init_frame, initAnimationCallback);
-            HitboxComponent::loadHitboxesInContainer(container, key, rect);
+            Collision::addDynamicCollisionFromAseprite(registry, weapon_entity, key, false, Collision::Type::NONE, nullptr);
         }
     }
 }

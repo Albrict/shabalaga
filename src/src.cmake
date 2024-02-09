@@ -19,9 +19,9 @@ set(game_source
     src/background_component.cpp
     src/player_entity.cpp
     src/engine_entity.cpp
-    src/hitbox_system.cpp
     src/physics_system.cpp
     src/input_system.cpp
+    src/collision_component.cpp
     src/collision_system.cpp
     src/fighter_entity.cpp
     src/game_master_entity.cpp

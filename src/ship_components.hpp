@@ -1,6 +1,5 @@
 #pragma once
 #include "../include/entt.hpp"
-#include "hitbox_component.hpp"
 #include "object_component.hpp"
 
 namespace ShipComponents {
@@ -19,15 +18,12 @@ namespace ShipComponents {
             .engine = engine
         };
     }
-    inline void addShipComponents(entt::registry &registry, const entt::entity entity, 
-            const std::string_view &sprite_key, const Rectangle rect, const ObjectType object_type, 
-            const int health)
+
+    inline void addShipComponents(entt::registry &registry, const entt::entity entity, const Rectangle rect, const ObjectType object_type, int health)
     {
         registry.emplace<Rectangle>(entity, rect);
         registry.emplace<HealthComponent>(entity, health);
         registry.emplace<ShipComponents::Container>(entity);
         registry.emplace<ObjectType>(entity, object_type);
-        auto &hitbox_container = registry.emplace<HitboxComponent::Container>(entity, entity);
-        HitboxComponent::loadHitboxesInContainer(hitbox_container, sprite_key, rect);
     }
 }

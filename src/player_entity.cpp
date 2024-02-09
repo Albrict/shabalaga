@@ -1,6 +1,6 @@
 #include "player_entity.hpp"
 #include "clean_up_component.hpp"
-#include "collison_component.hpp"
+#include "collision_component.hpp"
 #include "engine_entity.hpp"
 #include "explosion_entity.hpp"
 #include "graphics.hpp"
@@ -65,7 +65,6 @@ namespace PlayerEntity {
     {
         const entt::entity engine = object_registry.get<ShipComponents::Container>(player).engine; 
         const Vector2 resolution = Graphics::getCurrentResolution();
-        const Rectangle rect = object_registry.get<Rectangle>(player);
         const float velocity_y = resolution.y / 3.f;
         const float velocity_x = GetRandomValue(-resolution.x / 2.f, resolution.x / 2.f);
         auto &engine_animation = object_registry.get<GraphicsComponent::Animation>(engine);
@@ -74,8 +73,8 @@ namespace PlayerEntity {
         
         object_registry.emplace<VelocityComponent>(player, (VelocityComponent){velocity_x, velocity_y});
         object_registry.remove<InputComponent::Container>(player);
-        object_registry.emplace_or_replace<CollisionComponent::Component>(player, 
-             CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback));
+
+        Collision::addDynamicCollisionFromAseprite(object_registry, player, "ship", true, Collision::Type::BOUNDS, collisionCallback);
     }
 
     void proccessMessagesCallback(entt::registry &registry, const entt::entity entity, MessageSystem::Message msg)
@@ -95,22 +94,22 @@ entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectang
     const auto player_entity = object_registry.create();
     const auto engine = EngineEntity::create(object_registry, EngineEntity::PlayerType::BASIC, rect);
     const auto weapon = WeaponEntity::create(object_registry, rect, WeaponEntity::PlayerType::BIG_SPACE_GUN); 
-    const std::string_view player_sprite_key = "ship";
+    const std::string_view key = "ship";
 
     auto &input_container = object_registry.emplace<InputComponent::Container>(player_entity);
-    auto &collider = object_registry.emplace<CollisionComponent::Component>(player_entity, 
-                         CollisionComponent::create(true, false, CollisionComponent::Type::BOUNDS, collisionCallback));
-    
-    GraphicsComponent::addSpriteComponent(object_registry, player_entity, player_sprite_key, rect, 
+    GraphicsComponent::addSpriteComponent(object_registry, player_entity, key, rect, 
                                           GraphicsComponent::RenderPriority::MIDDLE);
+
     MessageSystem::registrEntity(object_registry, player_entity, MessageSystem::Type::PLAYER_MESSAGE, proccessMessagesCallback);
-    ShipComponents::addShipComponents(object_registry, player_entity, player_sprite_key, rect, ObjectType::PLAYER_SHIP, 100);     
+    ShipComponents::addShipComponents(object_registry, player_entity, rect, ObjectType::PLAYER_SHIP, 100);     
     ShipComponents::attachComponents(object_registry, player_entity, weapon, engine);
 
     InputComponent::create(input_container, moveLeft, KEY_A, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveRight, KEY_D, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveUp, KEY_W, InputComponent::Type::DOWN);
     InputComponent::create(input_container, moveDown, KEY_S, InputComponent::Type::DOWN);
+
+    Collision::addDynamicCollisionFromAseprite(object_registry, player_entity, key, true, Collision::Type::BOUNDS, collisionCallback);
     return player_entity;
 }
 
