@@ -1,7 +1,7 @@
 #include "fighter_entity.hpp"
 #include "behavior_component.hpp"
 #include "clean_up_component.hpp"
-#include "collison_component.hpp"
+#include "collision_component.hpp"
 #include "engine_entity.hpp"
 #include "explosion_entity.hpp"
 #include "graphics_component.hpp"
@@ -38,21 +38,20 @@ entt::entity FighterEntity::create(entt::registry &object_registry, const Rectan
     const int last_frame = 7;
     const Vector2 velocity = {0.f, 400.f};
     const int random_direction_timer = 1;
-    const std::string_view fighter_sprite_key = "fighter";
+    const std::string_view key = "fighter";
 
     auto &timer_container = object_registry.emplace<TimerComponent::Container>(fighter_entity); 
 
-    object_registry.emplace<CollisionComponent::Component>(fighter_entity, 
-                                             CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback));
     object_registry.emplace<VelocityComponent>(fighter_entity, velocity);
     object_registry.emplace<ObjectComponent::Score>(fighter_entity, 50); 
     object_registry.emplace<BehaviorComponent::Type>(fighter_entity, BehaviorComponent::Type::FIGHTER);
 
-    ShipComponents::addShipComponents(object_registry, fighter_entity, fighter_sprite_key, rect, ObjectType::ENEMY_SHIP, 50);     
+    ShipComponents::addShipComponents(object_registry, fighter_entity, rect, ObjectType::ENEMY_SHIP, 50);     
     ShipComponents::attachComponents(object_registry, fighter_entity, fighter_weapon, fighter_engine);
-    GraphicsComponent::addSpriteComponent(object_registry, fighter_entity, fighter_sprite_key, rect, 
+    GraphicsComponent::addSpriteComponent(object_registry, fighter_entity, key, rect, 
                                           GraphicsComponent::RenderPriority::MIDDLE);
     TimerComponent::createTimerInContainer(timer_container, 1.f, random_direction_timer);
+    Collision::addDynamicCollisionFromAseprite(object_registry, fighter_entity, key, true, Collision::Type::OUT_OF_BOUNDS, collisionCallback);
     return fighter_entity;
 }
 

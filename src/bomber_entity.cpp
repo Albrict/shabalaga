@@ -1,7 +1,7 @@
 #include "bomber_entity.hpp"
 #include "behavior_component.hpp"
 #include "clean_up_component.hpp"
-#include "collison_component.hpp"
+#include "collision_component.hpp"
 #include "engine_entity.hpp"
 #include "explosion_entity.hpp"
 #include "graphics_component.hpp"
@@ -35,7 +35,7 @@ void BomberEntity::create(entt::registry &object_registry, const Rectangle rect,
     const auto bomber = object_registry.create();
     const auto weapon = object_registry.create();
     const auto engine = EngineEntity::create(object_registry, EngineEntity::EnemyType::BOMBER, rect);
-    const std::string_view bomber_sprite_key = "bomber";
+    const std::string_view key = "bomber";
     const float time_to_travel = 0.8f;
     Vector2 velocity =  {0.f, 0.f};
     
@@ -56,12 +56,11 @@ void BomberEntity::create(entt::registry &object_registry, const Rectangle rect,
     object_registry.emplace<ObjectComponent::Score>(bomber, 200); 
     object_registry.emplace<BehaviorComponent::Type>(bomber, BehaviorComponent::Type::BOMBER);
     object_registry.emplace<ObjectComponent::PlayerPosition>(bomber, player_position); 
-    object_registry.emplace<CollisionComponent::Component>(bomber, 
-                                             CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback));
-    ShipComponents::addShipComponents(object_registry, bomber, bomber_sprite_key, rect, ObjectType::ENEMY_SHIP, 50);     
+    ShipComponents::addShipComponents(object_registry, bomber, rect, ObjectType::ENEMY_SHIP, 50);     
     ShipComponents::attachComponents(object_registry, bomber, weapon, engine);
-    GraphicsComponent::addSpriteComponent(object_registry, bomber, bomber_sprite_key, rect, 
+    GraphicsComponent::addSpriteComponent(object_registry, bomber, key, rect, 
                                           GraphicsComponent::RenderPriority::MIDDLE);
+    Collision::addDynamicCollisionFromAseprite(object_registry, bomber, key, true, Collision::Type::OUT_OF_BOUNDS, collisionCallback);
 }
 
 void BomberEntity::destroy(entt::registry &registry, const entt::entity entity)
@@ -72,11 +71,8 @@ void BomberEntity::destroy(entt::registry &registry, const entt::entity entity)
         const auto &sprite = registry.get<GraphicsComponent::Sprite>(entity); 
         const int score = registry.get<ObjectComponent::Score>(entity).score; 
         const Rectangle rect = registry.get<Rectangle>(entity);
-        registry.emplace<CleanUpComponent::Component>(ship_components->engine); 
-        
-        registry.remove<BehaviorComponent::Type>(entity);  
-        registry.remove<ShipComponents::Container>(entity);
-        registry.emplace<CleanUpComponent::Component>(entity); 
+        registry.emplace_or_replace<CleanUpComponent::Component>(ship_components->engine); 
+        registry.emplace_or_replace<CleanUpComponent::Component>(entity); 
          
         ExplosionEntity::create(registry, rect, ExplosionEntity::Type::BOMBER_EXPLOSION);
         if (sound > 0)

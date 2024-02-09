@@ -1,10 +1,9 @@
 #include "projectile_entity.hpp"
 #include "clean_up_component.hpp"
-#include "collison_component.hpp"
+#include "collision_component.hpp"
 #include "explosion_entity.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
-#include "hitbox_component.hpp"
 #include "object_component.hpp"
 
 namespace ProjectileEntity {
@@ -32,9 +31,7 @@ namespace ProjectileEntity {
             const Vector2 resolution = Graphics::getCurrentResolution();
             const Vector2 velocity = {0.f, resolution.y / -1.5f};
             const std::string_view key = "auto_cannon_projectile";
-            auto &collider = object_registry.emplace<CollisionComponent::Component>(projectile_entity);
-            auto &container = object_registry.emplace<HitboxComponent::Container>(projectile_entity, projectile_entity);
-            
+
             object_registry.emplace<Rectangle>(projectile_entity, rect);
             object_registry.emplace<DamageComponent>(projectile_entity, 100);
             object_registry.emplace<VelocityComponent>(projectile_entity, velocity);
@@ -42,9 +39,7 @@ namespace ProjectileEntity {
             object_registry.emplace<Type>(projectile_entity, Type::AUTO_CANNON_PROJECTILE);
 
             GraphicsComponent::addAnimationComponent(object_registry, projectile_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
-            collider = CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback);
-
-            HitboxComponent::loadHitboxesInContainer(container, "auto_cannon_projectile", rect);
+            Collision::addDynamicCollisionFromAseprite(object_registry, projectile_entity, key, true, Collision::Type::OUT_OF_BOUNDS, collisionCallback);
             return projectile_entity;
         }
     }
@@ -75,8 +70,6 @@ namespace ProjectileEntity {
             const Vector2 resolution = Graphics::getCurrentResolution();
             const Vector2 velocity = {0.f, resolution.y / -1.5f};
             const std::string_view key = "big_space_gun_projectile";
-            auto &collider = object_registry.emplace<CollisionComponent::Component>(projectile_entity);
-            auto &container = object_registry.emplace<HitboxComponent::Container>(projectile_entity, projectile_entity);
             
             object_registry.emplace<Rectangle>(projectile_entity, rect);
             object_registry.emplace<DamageComponent>(projectile_entity, 100);
@@ -85,9 +78,7 @@ namespace ProjectileEntity {
             object_registry.emplace<Type>(projectile_entity, Type::BIG_SPACE_GUN_PROJECTILE);
 
             GraphicsComponent::addAnimationComponent(object_registry, projectile_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
-            collider = CollisionComponent::create(true, false, CollisionComponent::Type::OUT_OF_BOUNDS, collisionCallback);
-
-            HitboxComponent::loadHitboxesInContainer(container, "big_space_gun_projectile", rect);
+            Collision::addDynamicCollisionFromAseprite(object_registry, projectile_entity, key, true, Collision::Type::OUT_OF_BOUNDS, collisionCallback);
             return projectile_entity;
         }
     }
@@ -121,9 +112,6 @@ namespace ProjectileEntity {
             const std::string_view key = "bullet_projectile";
             const float custom_bound_x = rect.width * 8.f;
             const float custom_bound_y = rect.height * 8.f; 
-
-            auto &collider = object_registry.emplace<CollisionComponent::Component>(projectile_entity);
-            auto &container = object_registry.emplace<HitboxComponent::Container>(projectile_entity, projectile_entity);
             
             object_registry.emplace<Rectangle>(projectile_entity, rect);
             object_registry.emplace<DamageComponent>(projectile_entity, 33); 
@@ -131,9 +119,7 @@ namespace ProjectileEntity {
             object_registry.emplace<ObjectType>(projectile_entity, ObjectType::ENEMY_PROJECTILE);
 
             GraphicsComponent::addAnimationComponent(object_registry, projectile_entity, key, 0, rect, GraphicsComponent::RenderPriority::HIGH);
-            collider = CollisionComponent::create(true, false, custom_bound_x, custom_bound_y, 
-                    collisionCallback);
-            HitboxComponent::loadHitboxesInContainer(container, "bullet_projectile", rect);
+            Collision::addDynamicCollisionFromAseprite(object_registry, projectile_entity, key, true, custom_bound_x, custom_bound_y, collisionCallback);
             return projectile_entity;
         }
     }
