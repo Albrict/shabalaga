@@ -106,17 +106,6 @@ namespace CollisionSystem {
             registry.emplace_or_replace<CleanUpComponent::Component>(entity);
     }
 
-    void updateHitboxes(entt::registry &registry)
-    {
-        const auto &view = registry.view<Collision::DynamicComponent>(); 
-        for (auto [entity, collider] : view.each()) {
-            const Rectangle &rect = registry.get<Rectangle>(entity);
-            for (auto &hitbox : collider.hitboxes) {
-                hitbox.rect.x = rect.x + hitbox.x_padding;
-                hitbox.rect.y = rect.y + hitbox.y_padding; 
-            }
-        }
-    }
 }
 
 void CollisionSystem::update(entt::registry &registry)
@@ -149,6 +138,16 @@ void CollisionSystem::update(entt::registry &registry)
         if (static_collider.visible)
             checkStaticCollisions(registry, entity, static_collider.hitboxes, static_collider.onCollide);
     }
-    updateHitboxes(registry);
 }
 
+void CollisionSystem::updateHitboxes(entt::registry &registry)
+{
+    const auto &view = registry.view<Collision::DynamicComponent>(); 
+    for (auto [entity, collider] : view.each()) {
+        const Rectangle &rect = registry.get<Rectangle>(entity);
+        for (auto &hitbox : collider.hitboxes) {
+            hitbox.rect.x = rect.x + hitbox.x_padding;
+            hitbox.rect.y = rect.y + hitbox.y_padding; 
+        }
+    }
+}

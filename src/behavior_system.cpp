@@ -1,12 +1,11 @@
 #include "behavior_system.hpp"
 #include "behavior_component.hpp"
 #include "bomber_entity.hpp"
-#include "fighter_weapon_entity.hpp"
 #include "graphics.hpp"
 #include "object_component.hpp"
-#include "scout_weapon.hpp"
 #include "ship_components.hpp"
 #include "timer_component.hpp"
+#include "weapon_entity.hpp"
 
 namespace BehaviorSystem {
     void proccessFighterBehavior(entt::registry &registry, const entt::entity entity)
@@ -14,7 +13,8 @@ namespace BehaviorSystem {
         const auto weapon = registry.get<ShipComponents::Container>(entity).weapon;
         const int direction_timer = 1;
         auto &timer_container = registry.get<TimerComponent::Container>(entity);
-        FighterWeaponEntity::fire(registry, weapon);
+
+        WeaponEntity::fire(registry, weapon, WeaponEntity::EnemyType::FIGHTER_WEAPON);
         if (TimerComponent::isDone(timer_container, direction_timer)) {
             const Vector2 resolution = Graphics::getCurrentResolution();
             const Rectangle position = registry.get<Rectangle>(entity); 
@@ -45,11 +45,10 @@ namespace BehaviorSystem {
         const int direction_timer = 1;
         const int collision_timer = 2;
         const Vector2 resolution = Graphics::getCurrentResolution();
-        ScoutWeapon::fire(registry, weapon);
         auto &timer_container = registry.get<TimerComponent::Container>(entity);
         auto &velocity = registry.get<VelocityComponent>(entity);
         
-
+        WeaponEntity::fire(registry, weapon, WeaponEntity::EnemyType::SCOUT_WEAPON);
         if (TimerComponent::isDone(timer_container, direction_timer)) {
             const Vector2 resolution = Graphics::getCurrentResolution();
             const float velocity_x = resolution.x / 4.f;

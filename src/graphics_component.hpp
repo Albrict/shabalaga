@@ -64,6 +64,13 @@ namespace GraphicsComponent {
         registry.emplace<GraphicsComponent::RenderPriority>(entity, priority); 
         registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::ANIMATION);
     }
+    
+    inline void changeAsepriteTag(Animation &animation, const unsigned int tag_id, const std::string_view &key)
+    {
+            animation.tag.currentFrame = 1;
+            animation.tag =  ResourceSystem::getAsepriteTag(key, tag_id);
+            animation.current_tag_id = tag_id; 
+    }
 
     inline void addCallback(entt::registry &registry, const entt::entity entity, const int tag_id, const int tag_frame, animationCallback cb)
     {

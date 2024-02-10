@@ -19,6 +19,7 @@ enum class WeaponState {
     INIT,
     IDLE,
     FIRING,
+    DECHARGE
 };
 
 struct VelocityComponent {
