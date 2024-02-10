@@ -29,7 +29,6 @@ set(game_source
     src/ship_components_system.cpp
     src/graphics_system.cpp
     src/clean_up_system.cpp
-    src/fighter_weapon_entity.cpp
     src/behavior_system.cpp
     src/timer_system.cpp
     src/fleet.cpp
@@ -40,7 +39,6 @@ set(game_source
     src/fuel_bar.cpp
     src/fuel_system.cpp
     src/scout_entity.cpp
-    src/scout_weapon.cpp
     src/hangar_scene.cpp
     src/weapon_entity.cpp
     src/projectile_entity.cpp

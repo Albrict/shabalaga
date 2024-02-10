@@ -6,6 +6,7 @@ namespace ProjectileEntity {
     enum class Type {
         AUTO_CANNON_PROJECTILE,
         BIG_SPACE_GUN_PROJECTILE,
+        ZAPPER_PROJECTILE,
         BULLET_PROJECTILE,
     };
 
