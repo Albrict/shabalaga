@@ -89,11 +89,12 @@ namespace PlayerEntity {
     }
 }
 
-entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectangle rect)
+entt::entity PlayerEntity::create(entt::registry &object_registry, const Rectangle rect, 
+        const WeaponEntity::PlayerType weapon_type, const EngineEntity::PlayerType engine_type)
 {
     const auto player_entity = object_registry.create();
-    const auto engine = EngineEntity::create(object_registry, EngineEntity::PlayerType::BASIC, rect);
-    const auto weapon = WeaponEntity::create(object_registry, rect, WeaponEntity::PlayerType::ZAPPER); 
+    const auto weapon = WeaponEntity::create(object_registry, rect, weapon_type); 
+    const auto engine = EngineEntity::create(object_registry, engine_type, rect);
     const std::string_view key = "ship";
 
     auto &input_container = object_registry.emplace<InputComponent::Container>(player_entity);
