@@ -1,6 +1,7 @@
 #pragma once
 #include "fade_component.hpp"
 #include "message_system.hpp"
+#include "save_system.hpp"
 #include "scene.hpp"
 #include "../include/entt.hpp"
 #include "../include/raylib.h"
@@ -15,7 +16,7 @@ public:
     void draw() const override;
 private:
     void saveGame();
-
+    void readSave();
     // Pause state
     void proccessPause();
     void updatePause();
@@ -69,6 +70,7 @@ private:
         GAME,
         GAME_OVER
     };
+    std::optional<SaveSystem::Save> save;
     entt::entity player = entt::null;
     entt::entity game_master = entt::null;
     entt::entity fade_in = entt::null;

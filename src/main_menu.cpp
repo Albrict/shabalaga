@@ -38,7 +38,7 @@ MainMenuScene::MainMenuScene()
     fade_in = object_registry.create();
     fade_out = object_registry.create();
 
-    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.3f, FadeEffect::Type::FADE_OUT));
+    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.4f, FadeEffect::Type::FADE_OUT));
     object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.4f, FadeEffect::Type::FADE_IN, true));
 }
 

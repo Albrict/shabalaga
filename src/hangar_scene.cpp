@@ -2,6 +2,7 @@
 #include "aseprite.hpp"
 #include "background_component.hpp"
 #include "button_system.hpp"
+#include "engine_entity.hpp"
 #include "fade_component.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
@@ -10,7 +11,6 @@
 #include "widget_components.hpp"
 #include "../include/raygui.h"
 #include "widget_system.hpp"
-#include <fstream>
 
 HangarScene::HangarScene()
 {
@@ -18,13 +18,11 @@ HangarScene::HangarScene()
     fade_in = object_registry.create();
     fade_out = object_registry.create();
 
-    object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.8f, FadeEffect::Type::FADE_OUT));
+    object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.4f, FadeEffect::Type::FADE_OUT));
     object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.4f, FadeEffect::Type::FADE_IN, true));
 
-    current_weapon = object_registry.create();
-    current_engine = object_registry.create();
     readSave();
-    initSprites();
+    initShopItems();
     initWidgets();
     initShip(); 
 }
@@ -36,8 +34,9 @@ void HangarScene::proccessEvents()
 
 void HangarScene::update()
 {
+    const auto &engine = &std::get<GraphicsComponent::Animation>(engines[current_engine_index]->graphic_item).tag;
     WidgetSystem::update(object_registry);
-    Aseprite::UpdateAsepriteTag(&engines[current_engine_index].tag);
+    Aseprite::UpdateAsepriteTag(engine);
     GraphicsSystem::update(object_registry); 
 }
 
@@ -45,7 +44,7 @@ void HangarScene::draw() const
 {
     Graphics::beginRender();
         GraphicsSystem::draw(object_registry);
-        drawSprites();
+        drawShopItems();
     Graphics::endRender();
 }
 
@@ -68,6 +67,7 @@ void HangarScene::initStoreButtonsAndSpriteRecs(const Rectangle panel_rect)
     const Vector2 resolution = Graphics::getCurrentResolution();
     const float arrow_button_width = resolution.x / 40.f;
     const float arrow_button_height = resolution.y / 40.f; 
+    const float buy_button_width = resolution.x / 15.f;
     const float texture_width = resolution.x / 10.f;
     const float texture_height = resolution.y / 10.f;
 
@@ -85,11 +85,20 @@ void HangarScene::initStoreButtonsAndSpriteRecs(const Rectangle panel_rect)
         .height = texture_height
     };
 
+    Rectangle buy_button_rect = {
+        .x = panel_rect.x + panel_rect.width - buy_button_width * 1.5f,
+        .y = 0.f,
+        .width = buy_button_width,
+        .height = arrow_button_height
+    };
+
     // Weapon spinner
     const auto weapon_arrow_button_left = WidgetComponents::createButton(object_registry, button_rect, nullptr, ICON_ARROW_LEFT_FILL);
     button_rect.x += panel_rect.x / 7.f;
     const auto weapon_arrow_button_right = WidgetComponents::createButton(object_registry, button_rect, nullptr, ICON_ARROW_RIGHT_FILL);
-
+    
+    buy_button_rect.y = button_rect.y;
+    const auto buy_weapon_button = WidgetComponents::createButton(object_registry, buy_button_rect, "Buy");
     // Engine spinner
     button_rect.x = panel_rect.x + arrow_button_width * 0.3f,
     button_rect.y += panel_rect.y / 3.f;
@@ -103,6 +112,8 @@ void HangarScene::initStoreButtonsAndSpriteRecs(const Rectangle panel_rect)
     const auto engine_arrow_button_left = WidgetComponents::createButton(object_registry, button_rect, nullptr, ICON_ARROW_LEFT_FILL);
     button_rect.x += panel_rect.x / 7.f;
     const auto engine_arrow_button_right = WidgetComponents::createButton(object_registry, button_rect, nullptr, ICON_ARROW_RIGHT_FILL);
+    buy_button_rect.y = button_rect.y;
+    const auto buy_engine_button = WidgetComponents::createButton(object_registry, buy_button_rect, "Buy");
     
     // Label 
     score_text = std::make_unique<std::string>(TextFormat("Your score is: %d", score));
@@ -112,16 +123,27 @@ void HangarScene::initStoreButtonsAndSpriteRecs(const Rectangle panel_rect)
     button_rect.width = MeasureText(score_text->c_str(), Graphics::getCurrentFontSize());
     WidgetComponents::createLabel(object_registry, button_rect, score_text->c_str());
 
-    // Sprite rects
-    object_registry.emplace<Rectangle>(current_weapon, weapon_rect);
-    object_registry.emplace<Rectangle>(current_engine, engine_rect);
-
     // Callbacks
     object_registry.emplace<WidgetComponents::WidgetCallback>(weapon_arrow_button_left, leftWeaponButtonCallback, this);
     object_registry.emplace<WidgetComponents::WidgetCallback>(weapon_arrow_button_right, rightWeaponButtonCallback, this);
 
     object_registry.emplace<WidgetComponents::WidgetCallback>(engine_arrow_button_left, leftEngineButtonCallback, this);
     object_registry.emplace<WidgetComponents::WidgetCallback>(engine_arrow_button_right, rightEngineButtonCallback, this);
+    
+    object_registry.emplace<WidgetComponents::WidgetCallback>(buy_weapon_button, buyWeaponCallback, this);
+    object_registry.emplace<WidgetComponents::WidgetCallback>(buy_engine_button, buyEngineCallback, this);
+
+    weapon_price_rect = weapon_rect;
+    engine_price_rect = engine_rect;
+
+    weapon_price_rect.width /= 2.f;
+    weapon_price_rect.height /= 1.5f;
+    weapon_price_rect.x += weapon_price_rect.width / 2.f;
+
+    engine_price_rect.width /= 2.f;
+    engine_price_rect.height /= 2.f;
+    engine_price_rect.x += engine_price_rect.width / 2.f;
+    engine_price_rect.y += engine_price_rect.height / 1.5f;
 }
 
 void HangarScene::initButtons(const Rectangle panel_rect)
@@ -137,21 +159,7 @@ void HangarScene::initButtons(const Rectangle panel_rect)
         .height = start_button_height
     };
     const auto start_button = WidgetComponents::createButton(object_registry, button_rect, start_button_text);
-    object_registry.emplace<WidgetComponents::WidgetCallback>(start_button, startCallback, nullptr);
-}
-
-void HangarScene::initSprites()
-{
-    weapons[0] = GraphicsComponent::createSprite("auto_cannon");
-    weapons[1] = GraphicsComponent::createSprite("zapper");
-    weapons[2] = GraphicsComponent::createSprite("big_space_gun");
-
-    engines[0] = GraphicsComponent::createAnimation("base_engine", 0);
-    engines[1] = GraphicsComponent::createAnimation("big_pulse_engine", 0);
-    engines[2] = GraphicsComponent::createAnimation("burst_engine", 0);
-    engines[3] = GraphicsComponent::createAnimation("supercharged_engine", 0);
-
-    ship_sprite = GraphicsComponent::createSprite("ship");
+    object_registry.emplace<WidgetComponents::WidgetCallback>(start_button, startCallback, this);
 }
 
 void HangarScene::initShip()
@@ -169,26 +177,144 @@ void HangarScene::initShip()
     object_registry.emplace<Rectangle>(ship, ship_rect);
 }
 
-void HangarScene::drawSprites() const
+void HangarScene::drawShopItems() const
 {
     const auto &ship_sprite = object_registry.get<GraphicsComponent::Sprite>(ship);
     const auto &ship_rect = object_registry.get<Rectangle>(ship);
-
-    Aseprite::DrawAsepritePro(weapons[current_weapon_index].sprite, 0, weapon_rect, {0.f, 0.f}, 0.f, WHITE);
-    Aseprite::DrawAsepriteTagPro(engines[current_engine_index].tag, engine_rect, {0.f, 0.f}, 0.f, WHITE);
+    const auto weapon_sprite = std::get<GraphicsComponent::Sprite>(weapons[current_weapon_index]->graphic_item).sprite;
+    const auto engine_animation = std::get<GraphicsComponent::Animation>(engines[current_engine_index]->graphic_item).tag;
+     
+    Aseprite::DrawAsepritePro(weapon_sprite, 0, weapon_rect, {0.f, 0.f}, 0.f, WHITE);
+    Aseprite::DrawAsepriteTagPro(engine_animation, engine_rect, {0.f, 0.f}, 0.f, WHITE);
     
+    
+    if (!weapons[current_weapon_index]->unclocked) {
+        const float text_size = MeasureText(TextFormat("%d", weapons[current_weapon_index]->price), Graphics::getCurrentFontSize());
+        Color text_color = WHITE;
+        Rectangle text_rect = weapon_price_rect;
+        DrawRectangleRec(weapon_price_rect, ColorAlpha(BLACK, 0.6f));
+        text_rect.x += text_rect.width / 2.f - text_size / 2.f;
+        text_rect.y += text_rect.height / 2.f - text_size / 2.5f;
+
+        if (weapons[current_weapon_index]->price <= score)
+            text_color = GREEN;
+        else
+            text_color = RED;
+        DrawText(TextFormat("%d", weapons[current_weapon_index]->price), 
+                text_rect.x, text_rect.y,Graphics::getCurrentFontSize(), text_color);
+    }
+    
+    if (!engines[current_engine_index]->unclocked) {
+        const float text_size = MeasureText(TextFormat("%d", engines[current_engine_index]->price), Graphics::getCurrentFontSize());
+        Color text_color = WHITE;
+        Rectangle text_rect = engine_price_rect;
+        DrawRectangleRec(engine_price_rect, ColorAlpha(BLACK, 0.6f));
+        text_rect.x += text_rect.width / 2.f - text_size / 2.f; 
+        text_rect.y += text_rect.height / 2.f - text_size / 2.5f;
+
+        if (engines[current_engine_index]->price <= score)
+            text_color = GREEN;
+        else
+            text_color = RED;
+        DrawText(TextFormat("%d", engines[current_engine_index]->price), 
+                text_rect.x, text_rect.y, Graphics::getCurrentFontSize(), text_color);
+    }
+
     // Draw ship
-    Aseprite::DrawAsepritePro(weapons[current_weapon_index].sprite, 0, ship_rect, {0.f, 0.f}, 0.f, WHITE);
-    Aseprite::DrawAsepriteTagPro(engines[current_engine_index].tag, ship_rect, {0.f, 0.f}, 0.f, WHITE);
+    Aseprite::DrawAsepritePro(weapon_sprite, 0, ship_rect, {0.f, 0.f}, 0.f, WHITE);
+    Aseprite::DrawAsepriteTagPro(engine_animation, ship_rect, {0.f, 0.f}, 0.f, WHITE);
     Aseprite::DrawAsepritePro(ship_sprite.sprite, 0, ship_rect, {0.f, 0.f}, 0.f, WHITE);
+}
+
+void HangarScene::initShopItems()
+{
+    if (save.has_value()) {
+        // Weapons
+        weapons[0] = std::make_unique<ShopItem>("auto_cannon", GraphicsComponent::RenderType::SPRITE, 0, true, 
+                                                WeaponEntity::PlayerType::AUTO_CANNON);
+        weapons[1] = std::make_unique<ShopItem>("zapper", GraphicsComponent::RenderType::SPRITE, 4000, save->weapons[1], 
+                                                WeaponEntity::PlayerType::ZAPPER);
+        weapons[2] = std::make_unique<ShopItem>("big_space_gun", GraphicsComponent::RenderType::SPRITE, 12000, save->weapons[2], 
+                                                WeaponEntity::PlayerType::BIG_SPACE_GUN);
+        // Engines
+        engines[0] = std::make_unique<ShopItem>("base_engine", GraphicsComponent::RenderType::ANIMATION, 0, true, EngineEntity::PlayerType::BASIC);
+        engines[1] = std::make_unique<ShopItem>("big_pulse_engine", GraphicsComponent::RenderType::ANIMATION, 6000, save->engines[1], 
+                                                EngineEntity::PlayerType::BIG_PULSE_ENGINE);
+        engines[2] = std::make_unique<ShopItem>("burst_engine", GraphicsComponent::RenderType::ANIMATION, 8000, save->engines[2], 
+                                                EngineEntity::PlayerType::BURST_ENGINE);
+        engines[3] = std::make_unique<ShopItem>("supercharged_engine", GraphicsComponent::RenderType::ANIMATION, 12000, save->engines[3], 
+                                            EngineEntity::PlayerType::SUPERCHARGED_ENGINE);
+    } else {
+        weapons[0] = std::make_unique<ShopItem>("auto_cannon", GraphicsComponent::RenderType::SPRITE, 0, true, WeaponEntity::PlayerType::AUTO_CANNON);
+        weapons[1] = std::make_unique<ShopItem>("zapper", GraphicsComponent::RenderType::SPRITE, 4000, false, WeaponEntity::PlayerType::ZAPPER);
+        weapons[2] = std::make_unique<ShopItem>("big_space_gun", GraphicsComponent::RenderType::SPRITE, 12000, false, WeaponEntity::BIG_SPACE_GUN);
+
+        engines[0] = std::make_unique<ShopItem>("base_engine", GraphicsComponent::RenderType::ANIMATION, 0, true, EngineEntity::PlayerType::BASIC);
+        engines[1] = std::make_unique<ShopItem>("big_pulse_engine", GraphicsComponent::RenderType::ANIMATION, 6000, false, 
+                                                EngineEntity::PlayerType::BIG_PULSE_ENGINE);
+        engines[2] = std::make_unique<ShopItem>("burst_engine", GraphicsComponent::RenderType::ANIMATION, 8000, false, 
+                                                EngineEntity::PlayerType::BURST_ENGINE);
+        engines[3] = std::make_unique<ShopItem>("supercharged_engine", GraphicsComponent::RenderType::ANIMATION, 12000, false, 
+                                                EngineEntity::PlayerType::SUPERCHARGED_ENGINE);
+
+    }
+    ship_sprite = GraphicsComponent::createSprite("ship");
+}
+
+void HangarScene::saveData()
+{
+    SaveSystem::Save save = {
+        .score = score,
+        .equiped_weapon = choosen_weapon,
+        .equiped_engine = choosen_engine
+    };
+
+    for (const auto &weapon : weapons)
+        save.weapons.push_back(weapon->unclocked);
+    for (const auto &engine : engines)
+        save.engines.push_back(engine->unclocked);
+
+    SaveSystem::save(save, "saves/save.data");
 }
 
 void HangarScene::readSave()
 {
-    std::ifstream input("saves/save.data");
-    if (input.is_open()) {
-        input.read(reinterpret_cast<char*>(&score), sizeof(unsigned int)); // read score
-        input.read(reinterpret_cast<char*>(&current_weapon_index), sizeof(unsigned int)); // read current engine 
-        input.read(reinterpret_cast<char*>(&current_engine_index), sizeof(unsigned int)); // read current weapon 
+    save = SaveSystem::load("saves/save.data"); 
+    if (save.has_value()) {
+        score = save->score;
+        current_weapon_index = save->equiped_weapon;
+        current_engine_index = save->equiped_engine;
+        choosen_weapon = save->equiped_weapon;
+        choosen_engine = save->equiped_engine;
+    }
+}
+
+void HangarScene::buyWeaponCallback(entt::any data)
+{
+    auto *scene = entt::any_cast<HangarScene*>(data);
+    const unsigned int weapon_price = scene->weapons[scene->current_weapon_index]->price;
+    if (scene->score < weapon_price || scene->weapons[scene->current_weapon_index]->unclocked) {
+        return;
+    } else {
+        scene->score -= weapon_price;
+        *scene->score_text = TextFormat("Your score is: %d", scene->score);
+        scene->weapons[scene->current_weapon_index]->unclocked = true;
+        scene->choosen_weapon = static_cast<WeaponEntity::PlayerType>(scene->current_weapon_index);
+        scene->saveData();
+    }
+}
+
+void HangarScene::buyEngineCallback(entt::any data)
+{
+    auto *scene = entt::any_cast<HangarScene*>(data);
+    const unsigned int engine_price = scene->engines[scene->current_engine_index]->price;
+    if (scene->score < engine_price || scene->engines[scene->current_engine_index]->unclocked) {
+        return;
+    } else {
+        scene->score -= engine_price;
+        *scene->score_text = TextFormat("Your score is: %d", scene->score);
+        scene->engines[scene->current_engine_index]->unclocked = true;
+        scene->choosen_engine = static_cast<EngineEntity::PlayerType>(scene->current_engine_index);
+        scene->saveData();
     }
 }

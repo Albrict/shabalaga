@@ -42,4 +42,5 @@ set(game_source
     src/hangar_scene.cpp
     src/weapon_entity.cpp
     src/projectile_entity.cpp
-    src/explosion_entity.cpp)
+    src/explosion_entity.cpp
+    src/save_system.cpp)

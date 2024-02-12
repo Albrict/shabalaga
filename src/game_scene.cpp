@@ -15,11 +15,11 @@
 #include "widget_components.hpp"
 #include "widget_system.hpp"
 #include "fuel_bar.hpp"
-#include <fstream>
-#include <ios>
+#include <filesystem>
 
 GameScene::GameScene()
 {
+    save = SaveSystem::load("saves/save.data");
     initGameObjects();
     initPauseWidgets();
     initGameOverWidgets();
@@ -32,7 +32,7 @@ GameScene::GameScene()
     fade_in = object_registry.create();
     fade_out = object_registry.create();
     object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.4f, FadeEffect::Type::FADE_OUT));
-    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.8f, FadeEffect::Type::FADE_IN, true));
+    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.4f, FadeEffect::Type::FADE_IN, true));
 }
 
 void GameScene::proccessEvents()
@@ -193,7 +193,7 @@ void GameScene::initGameObjects()
     const Rectangle rect = {resolution.x / 2.f, resolution.y / 1.2f, size, size};
     const Rectangle fuel_bar_rect = {resolution.x - resolution.x / 10.f, resolution.y - fuel_bar_height * 1.2f, 50.f, fuel_bar_height};
      
-    player = PlayerEntity::create(object_registry, rect);
+    player = PlayerEntity::create(object_registry, rect, save->equiped_weapon, save->equiped_engine);
     game_master = GameMasterEntity::create(object_registry, player);
     
     WidgetComponents::createScoreLabel(object_registry, score_rect); 
@@ -255,11 +255,24 @@ void GameScene::initGameOverWidgets()
 void GameScene::saveGame()
 {
     const char *path = "saves/save.data";
-    auto &game_info = object_registry.get<GameMasterComponent::GameInfo>(game_master);
-    std::ofstream output(path, std::ios_base::binary);
-    
-    // Save player data
-    output.write(reinterpret_cast<char*>(&game_info.score), sizeof(unsigned int)); // Write score 
-    output.write(reinterpret_cast<char*>(&game_info.player_weapon), sizeof(unsigned int)); // Write player weapon 
-    output.write(reinterpret_cast<char*>(&game_info.player_engine), sizeof(unsigned int)); // Write player engine
+    save = SaveSystem::load(path);
+    if (save.has_value()) {
+        const auto &game_info = object_registry.get<GameMasterComponent::GameInfo>(game_master);
+        save->score += game_info.score;        
+        save->equiped_weapon = game_info.player_weapon;
+        save->equiped_engine = game_info.player_engine;
+        SaveSystem::save(save.value(), path);
+    } else {
+        const auto &game_info = object_registry.get<GameMasterComponent::GameInfo>(game_master);
+        SaveSystem::Save save = {
+            .score = game_info.score,
+            .equiped_weapon = game_info.player_weapon,
+            .equiped_engine = game_info.player_engine,
+        };
+        SaveSystem::save(save, path);
+    }
+}
+
+void GameScene::readSave()
+{
 }
