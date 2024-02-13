@@ -25,9 +25,11 @@ void SettingsScene::initWidgets()
     const float panel_y = resolution.y / 2.f - panel_height / 2.f;
     const Rectangle panel_rect = {panel_x, panel_y, panel_width, panel_height};
 
-    Rectangle slider_rect = initBrightnessSlider(panel_rect);
+    Rectangle brightness_slider_rect = initBrightnessSlider(panel_rect);
+    Rectangle sound_slider_rect = initSoundSlider(brightness_slider_rect);
 //    initResolutionDropdownBox(slider_rect);
     initButtons(panel_rect);
+    
     WidgetComponents::createPanel(object_registry, panel_rect, "Settings");
 }
 
@@ -42,6 +44,18 @@ Rectangle SettingsScene::initBrightnessSlider(const Rectangle panel_rect)
     const float max_value = 0.0f;
     const Rectangle slider_rect = {slider_x, slider_y, slider_width, slider_height };
     WidgetComponents::createSlider(object_registry, slider_rect, min_value, max_value, &brightness_value, "Brightness");
+    return slider_rect;
+}
+
+Rectangle SettingsScene::initSoundSlider(const Rectangle brightness_slider)
+{
+    const float slider_y = brightness_slider.y + brightness_slider.height;
+    const float min_value = 0.f;
+    const float max_value = 1.f;
+    Rectangle slider_rect = brightness_slider; 
+    slider_rect.y = slider_y;
+    WidgetComponents::createSlider(object_registry, slider_rect, min_value, max_value, &general_volume, "Sound");
+    
     return slider_rect;
 }
 
@@ -117,6 +131,7 @@ void SettingsScene::proccessEvents()
 {
     ObjectSystem::proccessEvents(object_registry);
     Graphics::setBrightness(brightness_value);
+    SetMasterVolume(general_volume);
 }
 
 void SettingsScene::update() 

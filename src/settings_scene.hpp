@@ -13,6 +13,8 @@ public:
 private:
     void initWidgets();
     Rectangle initBrightnessSlider(const Rectangle panel_rect);
+    Rectangle initSoundSlider(const Rectangle brightness_slider);
+
     void initResolutionDropdownBox(const Rectangle slider_rect);
     void initButtons(const Rectangle panel_rect);
 
@@ -21,6 +23,8 @@ private:
 private:
     int choosen_resolution = Graphics::getCurrentVideoModeId();
     float brightness_value = Graphics::getBrightnessValue();
+    float general_volume = 0.5f;
+    
     std::vector<Vector2> resolution_vector {};
     std::unique_ptr<std::string> resolution_list {};
 };
