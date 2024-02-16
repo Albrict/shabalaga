@@ -19,7 +19,7 @@ private:
     void initFullscreenCheckBox(const Rectangle sound_slider_rect);
     void initResolutionDropdownBox(const Rectangle slider_rect);
     void initButtons(const Rectangle panel_rect);
-    
+        
     static void saveValueCallback(entt::any data);
     static void backToMainMenuCallback(entt::any data);
 private:

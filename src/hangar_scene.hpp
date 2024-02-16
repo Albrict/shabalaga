@@ -107,6 +107,15 @@ private:
         MessageSystem::sendMessage(msg);
     }
 
+    static void backToMainMenuCallback(entt::any data)
+    {
+        auto *scene = entt::any_cast<HangarScene*>(data);
+        scene->saveData();
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::MENU,
+                                      .type = MessageSystem::Type::SCENE_MESSAGE };
+        MessageSystem::sendMessage(msg);
+    }
+
     static void buyWeaponCallback(entt::any data);
     static void buyEngineCallback(entt::any data);
 private:
@@ -122,6 +131,7 @@ private:
     entt::entity ship = entt::null;
     entt::entity fade_in = entt::null;
     entt::entity fade_out = entt::null;
+    entt::entity fade_in_menu = entt::null;
     entt::entity score_info_label = entt::null;
     size_t current_weapon_index = 0;
     size_t current_engine_index = 0;

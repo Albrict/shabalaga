@@ -17,10 +17,10 @@ HangarScene::HangarScene()
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("menu_background"), -30.f);
     fade_in = object_registry.create();
     fade_out = object_registry.create();
+    fade_in_menu = object_registry.create();
 
     object_registry.emplace<FadeEffect::Component>(fade_out, FadeEffect::create(0.4f, FadeEffect::Type::FADE_OUT));
-    object_registry.emplace<FadeEffect::Component>(fade_in, FadeEffect::create(0.4f, FadeEffect::Type::FADE_IN, true));
-
+    
     readSave();
     initShopItems();
     initWidgets();
@@ -29,6 +29,12 @@ HangarScene::HangarScene()
 
 void HangarScene::proccessEvents()
 {
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        saveData();
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::MENU,
+                                      .type = MessageSystem::Type::SCENE_MESSAGE };
+        MessageSystem::sendMessage(msg);
+    }
     ButtonSystem::proccessEvents(object_registry);
 }
 
@@ -150,16 +156,28 @@ void HangarScene::initButtons(const Rectangle panel_rect)
 {
     const Vector2 resolution = Graphics::getCurrentResolution();
     const char *start_button_text = "Start"; 
-    const float start_button_width = resolution.x / 10.f;
-    const float start_button_height = resolution.y / 20.f;
-    const Rectangle button_rect = {
-        .x = panel_rect.x + panel_rect.width / 2.f - start_button_width / 2.f,
-        .y = panel_rect.y + panel_rect.height - start_button_height * 1.2f,
-        .width = start_button_width,
-        .height = start_button_height
+    const char *back_to_main_menu_button_text = "Back to main menu"; 
+    const float button_width = resolution.x / 10.f;
+    const float button_height = resolution.y / 20.f;
+    const Rectangle start_button_rect = {
+        .x = panel_rect.x + panel_rect.width / 2.f - button_width / 2.f,
+        .y = panel_rect.y + panel_rect.height - button_height * 1.2f,
+        .width =  button_width,
+        .height = button_height
     };
-    const auto start_button = WidgetComponents::createButton(object_registry, button_rect, start_button_text);
+    
+    const Rectangle back_to_menu_rect = {
+        .x = button_width / 2.f,
+        .y = button_height,
+        .width = button_width * 1.5f,
+        .height = button_height
+    };
+
+    const auto start_button = WidgetComponents::createButton(object_registry, start_button_rect, start_button_text);
     object_registry.emplace<WidgetComponents::WidgetCallback>(start_button, startCallback, this);
+
+    const auto back_to_menu_button = WidgetComponents::createButton(object_registry, back_to_menu_rect, back_to_main_menu_button_text);
+    object_registry.emplace<WidgetComponents::WidgetCallback>(back_to_menu_button, backToMainMenuCallback, this);
 }
 
 void HangarScene::initShip()
