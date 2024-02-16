@@ -1,15 +1,47 @@
 set(game_source
     src/main.cpp
+    src/game.cpp
     src/main_menu.cpp
     src/button_system.cpp
     src/settings_scene.cpp
-    src/game.cpp
     src/slider_system.cpp
     src/panel_system.cpp
     src/widget_system.cpp
     src/dropdown_box_system.cpp
     src/label_system.cpp
-    src/background_system.cpp
     src/gui.cpp
     src/resource_system.cpp
-    src/graphics.cpp)
+    src/graphics.cpp
+    src/game_scene.cpp
+    src/object_system.cpp
+    src/message_system.cpp
+    src/widget_components.cpp
+    src/background_component.cpp
+    src/player_entity.cpp
+    src/engine_entity.cpp
+    src/physics_system.cpp
+    src/input_system.cpp
+    src/collision_component.cpp
+    src/collision_system.cpp
+    src/fighter_entity.cpp
+    src/game_master_entity.cpp
+    src/game_master_system.cpp
+    src/ship_components_system.cpp
+    src/graphics_system.cpp
+    src/clean_up_system.cpp
+    src/behavior_system.cpp
+    src/timer_system.cpp
+    src/fleet.cpp
+    src/score_label_system.cpp
+    src/aseprite.cpp
+    src/bomber_entity.cpp
+    src/fuel_pickup_entity.cpp
+    src/fuel_bar.cpp
+    src/fuel_system.cpp
+    src/scout_entity.cpp
+    src/hangar_scene.cpp
+    src/weapon_entity.cpp
+    src/projectile_entity.cpp
+    src/explosion_entity.cpp
+    src/save_system.cpp
+    src/checkbox_system.cpp)

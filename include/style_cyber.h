@@ -11,6 +11,7 @@
 //                                                                              //
 //////////////////////////////////////////////////////////////////////////////////
 #include <string.h>
+#include <stdlib.h>
 
 #define CYBER_STYLE_PROPS_COUNT  16
 
