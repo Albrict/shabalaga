@@ -15,7 +15,6 @@
 #include "widget_components.hpp"
 #include "widget_system.hpp"
 #include "fuel_bar.hpp"
-#include <filesystem>
 
 GameScene::GameScene()
 {
@@ -98,6 +97,12 @@ void GameScene::draw() const
 
 void GameScene::proccessPause()
 {
+
+    if (FadeEffect::isDone(object_registry.get<FadeEffect::Component>(fade_in))) {
+        MessageSystem::Message msg = {.msg = MessageSystem::SceneMessage::HANGAR,
+                                      .type = MessageSystem::Type::SCENE_MESSAGE };
+        MessageSystem::sendMessage(msg);
+    }
     if (IsKeyPressed(KEY_ESCAPE)) {
         PlaySound(ResourceSystem::getSound("pause_out"));
         ResumeMusicStream(bg_music);
@@ -109,12 +114,30 @@ void GameScene::proccessPause()
 void GameScene::updatePause()
 {
     WidgetSystem::update(pause_registry);
+    auto view = object_registry.view<FadeEffect::Component>();
+    for (auto [entity, fade] : view.each()) {
+        if (!fade.paused)
+            fade.lifetime -= GetFrameTime(); 
+    }
 }
 
 void GameScene::drawPause() const
 {
     GraphicsSystem::draw(object_registry);
     GraphicsSystem::draw(pause_registry);
+    const auto &view = object_registry.view<FadeEffect::Component>();
+    for (auto [entity, fade] : view.each()) {
+        if (!fade.paused) {
+            const Vector2 resolution = Graphics::getCurrentResolution();
+            const Rectangle rect = { 0.f, 0.f, resolution.x, resolution.y };
+            float alpha = 0.f; 
+            if (fade.type == FadeEffect::Type::FADE_OUT)
+                alpha = fade.lifetime / 1.f;
+            else
+                alpha = 1.f - (fade.lifetime / 1.f);
+            DrawRectanglePro(rect, {0.f, 0.f}, 0.f, Fade(BLACK, alpha));
+        }
+    }
 }
 
 void GameScene::proccessGame()
@@ -209,13 +232,22 @@ void GameScene::initPauseWidgets()
     const float initial_x = resolution.x / 2 - button_width / 2;
     const char *continue_label = "Continue";
     const char *back_to_menu = "Main menu";
-
+    const char *back_to_hangar = "Back to hangar"; 
+    
+    // Continue button
     float initial_y = resolution.y / 3 - button_height;
     Rectangle button_rect = {initial_x, initial_y, button_width, button_height};
     auto entity = WidgetComponents::createButton(pause_registry, button_rect, continue_label);
     pause_registry.emplace<WidgetCallback>(entity, continueCallback, this);
     initial_y += button_height * 2;
 
+    // Hangar button
+    button_rect = {initial_x, initial_y, button_width, button_height};
+    entity = WidgetComponents::createButton(pause_registry, button_rect, back_to_hangar);
+    pause_registry.emplace<WidgetCallback>(entity, backToHangarCallback, this);
+    initial_y += button_height * 2;
+    
+    // Back to menu button
     button_rect = {initial_x, initial_y, button_width, button_height};
     entity = WidgetComponents::createButton(pause_registry, button_rect, back_to_menu);
     pause_registry.emplace<WidgetCallback>(entity, exitCallback, nullptr);
@@ -271,8 +303,4 @@ void GameScene::saveGame()
         };
         SaveSystem::save(save, path);
     }
-}
-
-void GameScene::readSave()
-{
 }
