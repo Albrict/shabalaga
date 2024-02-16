@@ -32,6 +32,20 @@ std::optional<SaveSystem::Save> SaveSystem::load(const char *path)
     }
 }
 
+std::optional<SaveSystem::Settings> SaveSystem::loadSettings(const char *path)
+{
+    Settings settings {};
+    std::ifstream input(path);
+    if (input.is_open()) {
+        input.read(reinterpret_cast<char*>(&settings.brightness), sizeof(float)); // read saved brightness value 
+        input.read(reinterpret_cast<char*>(&settings.sound), sizeof(float)); // read sound value 
+        input.read(reinterpret_cast<char*>(&settings.is_fullscreen), sizeof(bool)); // read fullscreen bool 
+        return settings;
+    } else {
+        return {};
+    }
+}
+
 void SaveSystem::save(Save &data, const char *path)
 {
     size_t weapons_deque_size = data.weapons.size();
@@ -50,5 +64,14 @@ void SaveSystem::save(Save &data, const char *path)
 
     output.write(reinterpret_cast<char*>(&data.weapons[0]), data.weapons.size() * sizeof(bool)); // Write unlockable weapons
     output.write(reinterpret_cast<char*>(&data.engines[0]), data.engines.size() * sizeof(bool)); // Write unlockable engines
-    
+}
+
+void SaveSystem::save(Settings &data, const char *path)
+{
+    std::filesystem::remove(path);
+    std::ofstream output(path, std::ios_base::binary);
+
+    output.write(reinterpret_cast<char*>(&data.brightness), sizeof(float)); // Write score 
+    output.write(reinterpret_cast<char*>(&data.sound), sizeof(float)); // Write player weapon 
+    output.write(reinterpret_cast<char*>(&data.is_fullscreen), sizeof(bool)); // Write player engine
 }

@@ -4,6 +4,7 @@
 #include "graphics_system.hpp"
 #include "message_system.hpp"
 #include "object_system.hpp"
+#include "save_system.hpp"
 #include "widget_components.hpp"
 #include "resource_system.hpp"
 
@@ -12,9 +13,19 @@ SettingsScene::SettingsScene()
     resolution_list = std::make_unique<std::string>();
     resolution_vector = Graphics::getPossibleResolutions();
     choosen_resolution = resolution_vector.size() - 1;
+    readSettings(); 
     initWidgets();
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("menu_background"));
-    
+}
+
+void SettingsScene::readSettings()
+{
+    auto settings = SaveSystem::loadSettings("saves/settings.data");
+    if (settings.has_value()) {
+        this->brightness_value = settings->brightness;
+        this->general_volume = settings->sound;
+        this->is_fullscreen = settings->is_fullscreen;
+    }
 }
 
 void SettingsScene::initWidgets()
@@ -123,12 +134,18 @@ void SettingsScene::initButtons(const Rectangle panel_rect)
 
 void SettingsScene::saveValueCallback(entt::any data)
 {
+    SettingsScene *scene = entt::any_cast<SettingsScene*>(data);
+    SaveSystem::Settings settings = {
+        .brightness = scene->brightness_value,
+        .sound = scene->general_volume,
+        .is_fullscreen = scene->is_fullscreen
+    };
     MessageSystem::Message msg = {
         .msg = MessageSystem::SceneMessage::SETTINGS,
         .type = MessageSystem::Type::SCENE_MESSAGE 
     };
-
-    SettingsScene *scene = entt::any_cast<SettingsScene*>(data);
+    
+    SaveSystem::save(settings, "saves/settings.data");
     Graphics::setVideoMode(scene->choosen_resolution);
     MessageSystem::sendMessage(msg); // Redraw Scene
 }
@@ -148,15 +165,11 @@ void SettingsScene::proccessEvents()
     Graphics::setBrightness(brightness_value);
     SetMasterVolume(general_volume);
     if (is_fullscreen) {
-        if (!is_fullscreen_set) {
+        if (!IsWindowFullscreen())
             ToggleFullscreen(); 
-            is_fullscreen_set = true;
-        }
     } else {
-        if (is_fullscreen_set) {
-            ToggleFullscreen(); 
-            is_fullscreen_set = false;
-        }
+        if (IsWindowFullscreen())
+            ToggleFullscreen();
     }
 }
 

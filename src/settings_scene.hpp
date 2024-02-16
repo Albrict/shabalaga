@@ -15,6 +15,7 @@ private:
     Rectangle initBrightnessSlider(const Rectangle panel_rect);
     Rectangle initSoundSlider(const Rectangle brightness_slider);
     
+    void readSettings();
     void initFullscreenCheckBox(const Rectangle sound_slider_rect);
     void initResolutionDropdownBox(const Rectangle slider_rect);
     void initButtons(const Rectangle panel_rect);
@@ -26,7 +27,6 @@ private:
     float brightness_value = Graphics::getBrightnessValue();
     float general_volume = 0.5f;
     bool is_fullscreen = false;    
-    bool is_fullscreen_set = false;
     std::vector<Vector2> resolution_vector {};
     std::unique_ptr<std::string> resolution_list {};
 };

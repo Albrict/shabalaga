@@ -13,6 +13,15 @@ namespace SaveSystem {
         std::deque<bool> weapons {};
         std::deque<bool> engines {};
     };
+
+    struct Settings {
+        float brightness = 0.f;
+        float sound = 0.f;
+        bool is_fullscreen = false;
+    };
+
     std::optional<Save> load(const char *path); 
+    std::optional<Settings> loadSettings(const char *path); 
     void save(Save &data, const char *path);
+    void save(Settings &data, const char *path);
 }
