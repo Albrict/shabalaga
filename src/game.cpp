@@ -21,6 +21,7 @@ namespace Game {
     void update();
     void draw();
     void loadResources();
+    void readSettings();
 }
 
 void Game::init()
@@ -31,11 +32,12 @@ void Game::init()
     Graphics::init();
     InitAudioDevice();
     loadResources();
-       
+         
     current_scene = std::make_unique<MainMenuScene>();
 
     running = true;
     SetExitKey(KEY_NULL);
+    readSettings();
 }
 
 void Game::run()
@@ -167,7 +169,18 @@ void Game::proccessSceneMessages(const MessageSystem::SceneMessage msg)
     } 
 }
 
-void Game::proccessGameSceneMessages(const MessageSystem::PlaySceneMessage msg)
+void Game::readSettings()
 {
-
+    const auto settings = SaveSystem::loadSettings("saves/settings.data");
+    if (settings.has_value()) {
+        Graphics::setBrightness(settings->brightness);
+        SetMasterVolume(settings->sound);
+        if (settings->is_fullscreen) {
+            if (!IsWindowFullscreen())
+                ToggleFullscreen(); 
+        } else {
+            if (IsWindowFullscreen())
+                ToggleFullscreen();
+        }
+    }
 }
