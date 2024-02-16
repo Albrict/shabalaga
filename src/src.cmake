@@ -43,4 +43,5 @@ set(game_source
     src/weapon_entity.cpp
     src/projectile_entity.cpp
     src/explosion_entity.cpp
-    src/save_system.cpp)
+    src/save_system.cpp
+    src/checkbox_system.cpp)

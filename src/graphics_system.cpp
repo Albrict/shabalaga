@@ -1,6 +1,7 @@
 #include "graphics_system.hpp"
 #include "background_component.hpp"
 #include "button_system.hpp"
+#include "checkbox_system.hpp"
 #include "dropdown_box_system.hpp"
 #include "graphics.hpp"
 #include "graphics_component.hpp"
@@ -140,6 +141,9 @@ namespace GraphicsSystem {
                 break;
             case SCORE_LABEL:
                 ScoreLabelSystem::draw(registry);
+                break;
+            case CHECKBOX:
+                CheckBoxSystem::draw(registry);
                 break;
             }
         }

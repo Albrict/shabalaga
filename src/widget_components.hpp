@@ -9,7 +9,8 @@ namespace WidgetComponents {
         DROPDOWNBOX,
         LABEL,
         SCORE_LABEL,
-        PANEL
+        PANEL,
+        CHECKBOX
     };
 
     struct Button {
@@ -56,6 +57,13 @@ namespace WidgetComponents {
         entt::any data;
     };
     
+    struct CheckBox {
+        Rectangle rect {};
+        bool *checked = nullptr;
+        const char *text;
+        
+    };
+
     entt::entity createButton(entt::registry &object_registry, const Rectangle rect, const char *text, const int icon_id = -1);
     entt::entity createPanel(entt::registry &object_registry, const Rectangle rect, const char *text = nullptr);
     entt::entity createSlider(entt::registry &object_registry, const Rectangle rect, 
@@ -63,7 +71,7 @@ namespace WidgetComponents {
                               const char *text_left = nullptr, const char *text_right = nullptr);
     entt::entity createDropDownBox(entt::registry &object_registry, const Rectangle rect, const char *text, int *active);
     entt::entity createLabel(entt::registry &object_registry, const Rectangle rect, const char *text);
-
     entt::entity createScoreLabel(entt::registry &object_registry, const Rectangle rect);
+    entt::entity createCheckBox(entt::registry &registry, const Rectangle rect, bool *checked, const char *text = nullptr);
 };
 

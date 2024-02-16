@@ -14,6 +14,7 @@ SettingsScene::SettingsScene()
     choosen_resolution = resolution_vector.size() - 1;
     initWidgets();
     BackgroundComponent::create(object_registry, ResourceSystem::getTexture("menu_background"));
+    
 }
 
 void SettingsScene::initWidgets()
@@ -29,7 +30,7 @@ void SettingsScene::initWidgets()
     Rectangle sound_slider_rect = initSoundSlider(brightness_slider_rect);
 //    initResolutionDropdownBox(slider_rect);
     initButtons(panel_rect);
-    
+    initFullscreenCheckBox(sound_slider_rect);    
     WidgetComponents::createPanel(object_registry, panel_rect, "Settings");
 }
 
@@ -57,6 +58,20 @@ Rectangle SettingsScene::initSoundSlider(const Rectangle brightness_slider)
     WidgetComponents::createSlider(object_registry, slider_rect, min_value, max_value, &general_volume, "Sound");
     
     return slider_rect;
+}
+
+void SettingsScene::initFullscreenCheckBox(const Rectangle sound_slider_rect)
+{
+    const float width = Graphics::getCurrentResolution().x / 30.f;
+    const float height = sound_slider_rect.height;
+
+    const Rectangle checkbox_rect = {
+        .x = sound_slider_rect.x,
+        .y = sound_slider_rect.y + sound_slider_rect.height * 2.f,
+        .width = width,
+        .height = height
+    };
+    WidgetComponents::createCheckBox(object_registry, checkbox_rect, &is_fullscreen, "Fullscreen");
 }
 
 void SettingsScene::initResolutionDropdownBox(const Rectangle slider_rect)
@@ -132,6 +147,17 @@ void SettingsScene::proccessEvents()
     ObjectSystem::proccessEvents(object_registry);
     Graphics::setBrightness(brightness_value);
     SetMasterVolume(general_volume);
+    if (is_fullscreen) {
+        if (!is_fullscreen_set) {
+            ToggleFullscreen(); 
+            is_fullscreen_set = true;
+        }
+    } else {
+        if (is_fullscreen_set) {
+            ToggleFullscreen(); 
+            is_fullscreen_set = false;
+        }
+    }
 }
 
 void SettingsScene::update() 

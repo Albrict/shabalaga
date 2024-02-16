@@ -90,3 +90,20 @@ entt::entity WidgetComponents::createScoreLabel(entt::registry &object_registry,
     MessageSystem::registrEntity(object_registry, entity, MessageSystem::Type::GAME_MASTER_MESSAGE, proccessMessagesScoreLabelCallback);
     return entity;
 }
+
+entt::entity WidgetComponents::createCheckBox(entt::registry &registry, const Rectangle rect, bool *checked, const char *text)
+{
+    const auto entity = registry.create();
+    CheckBox checkbox = {
+        .rect = rect,
+        .checked = checked,
+        .text = text
+    };
+    
+    registry.emplace<Type>(entity, Type::CHECKBOX);
+    registry.emplace<ObjectType>(entity, ObjectType::WIDGET);
+    registry.emplace<GraphicsComponent::RenderType>(entity, GraphicsComponent::RenderType::WIDGET);
+    registry.emplace<CheckBox>(entity, checkbox);
+
+    return entity;
+}
