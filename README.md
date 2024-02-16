@@ -2,7 +2,7 @@
 Shabalaga is a simple top down shooter in space. Game is playable, but lacks some features and game balance.
 The goal of the project was to implement a game in data-oriented way using ECS system.
 I may add some new features, but currently I'm done with this project.
-Created by using [raylib](https://github.com/raysan5/raylib), [raygui](https://github.com/raysan5/raygui) and [entt](https://github.com/skypjack/entt).
+Created by using [raylib](https://github.com/raysan5/raylib), [raylib-aseprite](https://github.com/RobLoach/raylib-aseprite), [raygui](https://github.com/raysan5/raygui) and [entt](https://github.com/skypjack/entt).
 
 To summarize what I learned and achieved:
 - How to use ECS system via entt library
