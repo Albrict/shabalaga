@@ -71,7 +71,6 @@ private:
             ++scene->current_weapon_index;
         else
             scene->current_weapon_index = 0;
-        scene->choosen_weapon = static_cast<WeaponEntity::PlayerType>(scene->current_weapon_index);
         if (scene->weapons[scene->current_weapon_index]->unclocked)
             scene->choosen_weapon = static_cast<WeaponEntity::PlayerType>(scene->current_weapon_index);
     }
@@ -94,7 +93,7 @@ private:
             ++scene->current_engine_index;
         else
             scene->current_engine_index = 0;
-        if (scene->engines[scene->current_engine_index]->unclocked)
+        if (scene->engines[scene->current_engine_index]->unclocked == true)
             scene->choosen_engine = static_cast<EngineEntity::PlayerType>(scene->current_engine_index);
     }
 
