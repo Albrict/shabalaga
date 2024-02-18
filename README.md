@@ -54,5 +54,6 @@ https://opengameart.org/content/512-sound-effects-8-bit-style
 
 Thanks to BDragon1727 for some explosions and UI sprites:
 https://bdragon1727.itch.io/
+
 Thanks to Chad Crouch for in game music:
 https://freemusicarchive.org/music/Chad_Crouch/
