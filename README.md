@@ -30,6 +30,11 @@ And then compile it(You can compile it in DEBUG mode, but be aware of that this 
 
 `cd build && cmake .. -DCMAKE_BUILD_TYPE=RELEASE`
 
+
+And type
+
+`make`
+
 After that copy **assets** directory into build direcory and also create **saves** direcory
 
 `cp -rf ../assets . && mkdir saves`
